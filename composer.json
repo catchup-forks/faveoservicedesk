@@ -7,34 +7,54 @@
     ],
     "license": "MIT",
     "type": "project",
+    "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "optimize-autoloader": true
+    },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
     "require": {
-        "laravel/framework": "5.2.*",
-        "illuminate/html": "5.*",
-        "vsmoraes/laravel-pdf": "1.0.1",
-        "propaganistas/laravel-phone": "~2.0",
-        "bugsnag/bugsnag-laravel": "1.*",
-        "filp/whoops": "~1.0",
-        "thomaswelton/laravel-gravatar": "~1.0",
-        "neitanod/forceutf8": "dev-master",
-        "nicolaslopezj/searchable": "1.*",
-        "chumper/datatable": "dev-develop",
-        "chumper/zipper": "0.6.x",
-        "tymon/jwt-auth": "0.5.*",
         "php": ">=5.5.9",
-        "davejamesmiller/laravel-breadcrumbs": "^3.0",
-        "davibennun/laravel-push-notification": "dev-laravel5",
-        "brozot/laravel-fcm": "^1.0",
-        "barryvdh/laravel-debugbar": "^2.2",
         "aws/aws-sdk-php": "~3.0",
-        "predis/predis": "~1.0",
-        "mremi/url-shortener": "^1.0",
-        "maatwebsite/excel": "~2.1.0",
+        "barryvdh/laravel-debugbar": "~2.2",
+        "brozot/laravel-fcm": "~1.0",
+        "bugsnag/bugsnag-laravel": "1.*",
+        "chumper/datatable": "dev-develop",
+        "chumper/zipper": "~0.6",
+
+
+        "davejamesmiller/laravel-breadcrumbs": "~3.0",
+        "davibennun/laravel-push-notification": "dev-laravel5",
+        "doctrine/dbal": "^2.5",
+        "filp/whoops": "~1.0",
+        "illuminate/html": "5.*",
+        "laravel/framework": "5.2.*",
         "laravelcollective/bus": "^5.2",
         "laravel/socialite": "^2.0",
-        "tedivm/fetch": "0.6.*",
-        "unisharp/laravel-filemanager": "^1.6",
+        "maatwebsite/excel": "~2.1",
+        "mremi/url-shortener": "^1.0",
+
+        "neitanod/forceutf8": "dev-master",
+        "nicolaslopezj/searchable": "~1.0",
+        "nwidart/laravel-modules": "~1.0",
+        "predis/predis": "~1.0",
+
+        "propaganistas/laravel-phone": "~2.0",
+        "tedivm/fetch": "~0.6.",
+        "thomaswelton/laravel-gravatar": "~1.0",
+        "torann/geoip": "~1.0",
+
+        "tymon/jwt-auth": "0.5.*",
+
         "unisharp/laravel-ckeditor": "^4.5",
-        "torann/geoip": "^1.0",
+
+        "unisharp/laravel-filemanager": "^1.6",
+
+
+
+        "vsmoraes/laravel-pdf": "~1.0",
+
         "yajra/laravel-datatables-oracle": "~6.0"
     },
     "require-dev": {
@@ -48,7 +68,8 @@
             "database"
         ],
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "app/",
+            "Modules\\": "Modules/"
         }
     },
     "autoload-dev": {
@@ -69,8 +90,5 @@
             "php -r \"copy('.env.example', '.env');\"",
             "php artisan key:generate"
         ]
-    },
-    "config": {
-        "preferred-install": "dist"
     }
 }
