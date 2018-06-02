@@ -7,7 +7,7 @@ $sd_impact_types = \App\Itil\Models\Changes\SdImpacttypes::lists('name', 'id')->
 $sd_locations = \App\Itil\Models\Releases\SdLocations::lists('title', 'id')->toArray();
 $users = \App\Itil\Models\Common\Cab::lists('name', 'id')->toArray();
 if (isAsset() == true) {
-    $assets = \App\Itil\Models\Assets\SdAssets::lists('name', 'id')->toArray();
+    $assets = \App\Plugins\ServiceDesk\Model\Assets\SdAssets::lists('name', 'id')->toArray();
 }
 $requester = App\User::where('role', 'agent')->orWhere('role', 'admin')->lists('email', 'id')->toArray();
 ?>

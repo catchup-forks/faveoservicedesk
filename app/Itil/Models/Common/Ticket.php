@@ -31,7 +31,7 @@ class Ticket extends Tickets
     {
         $problem = new \App\Itil\Models\Problem\SdProblem();
         if (isAsset() == true) {
-            $asset = new \App\Itil\Models\Assets\SdAssets();
+            $asset = new \App\Plugins\ServiceDesk\Model\Assets\SdAssets();
         }
         $change = new \App\Itil\Models\Changes\SdChanges();
         switch ($table) {

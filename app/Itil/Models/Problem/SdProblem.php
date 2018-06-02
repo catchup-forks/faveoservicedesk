@@ -66,7 +66,7 @@ class SdProblem extends Model
         $assets = '';
         if (isAsset() == true) {
             $ids = $this->assets();
-            $asset = new \App\Itil\Models\Assets\SdAssets();
+            $asset = new \App\Plugins\ServiceDesk\Model\Assets\SdAssets();
             if (count($ids) > 0) {
                 foreach ($ids as $id) {
                     $ass = $asset->find($id);

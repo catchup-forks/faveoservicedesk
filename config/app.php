@@ -102,7 +102,7 @@ return [
     /*
       |--------------------------------------------------------------------------
       | Logging Configuration
-      |--------------------------------------------------------------------------
+      |--------------------------5------------------------------------------------
       |
       | Here you may configure the log settings for your application. Out of
       | the box, Laravel uses the Monolog PHP logging library. This gives
@@ -187,6 +187,8 @@ return [
         Yajra\Datatables\DatatablesServiceProvider::class,
         Collective\Bus\BusServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
+        App\Itil\ItilServiceProvider::class,
+        App\Plugins\ServiceDesk\ServiceProvider::class,
 
 
     ],

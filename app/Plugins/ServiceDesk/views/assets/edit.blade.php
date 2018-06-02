@@ -98,7 +98,7 @@
                 <div class="form-group col-md-6 {{ $errors->has('asset_type_id') ? 'has-error' : '' }}">
 
                     <label class="control-label">{{Lang::get('service::lang.asset_type')}}</label>
-                    {!! Form::select('asset_type_id',$sd_asset_types,null,['class'=>'form-control','id'=>'type']) !!}
+                    {{--{!! Form::select('asset_type_id',$sd_asset_types,null,['class'=>'form-control','id'=>'type']) !!}--}}
 
                 </div>
                 <div class="form-group col-md-6 {{ $errors->has('assigned_on') ? 'has-error' : '' }}">
@@ -183,9 +183,9 @@
                 asset_type(type);
             });
 
-            function asset_type(type) {
+            /*function asset_type(type) {
                 $.ajax({
-                    url: "{{url('service-desk/asset-types/form/'.$asset->id)}}",
+                    url: "{{//url('service-desk/asset-types/form/'.$asset->id)}}",
                     dataType: "html",
                     data: {'asset_type': type},
                     success: function (response) {
@@ -195,7 +195,7 @@
                         $("#asset-form").html(response);
                     }
                 });
-            }
+            }*/
         });
 
         function submit() {

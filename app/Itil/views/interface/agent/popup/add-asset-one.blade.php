@@ -17,7 +17,7 @@
                 <div class="row">
                     <div class="col-md-12 ui-widget">
                         <?php
-                        $types = App\Itil\Models\Assets\SdAssettypes::lists('name', 'id')->toArray();
+                        $types = App\Plugins\ServiceDesk\Model\Assets\SdAssettypes::lists('name', 'id')->toArray();
                         ?>
                         {!! Form::select('asset_type',$types,null,['class'=>'form-control','id'=>'type']) !!}
                     </div>

@@ -226,7 +226,7 @@ class SdChanges extends Model
         $ids = $this->assets();
         $assets = '';
         if (isAsset() == true) {
-            $asset = new \App\Itil\Models\Assets\SdAssets();
+            $asset = new \App\Plugins\ServiceDesk\Model\Assets\SdAssets();
             if (count($ids) > 0) {
                 foreach ($ids as $id) {
                     $ass = $asset->find($id);

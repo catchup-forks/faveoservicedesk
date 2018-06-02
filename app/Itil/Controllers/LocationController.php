@@ -189,7 +189,7 @@ class LocationController extends BaseServiceDeskController
     public function getLocationsForForm(Request $request)
     {
         $id = $request->input('id');
-        $assets = new \App\Itil\Model\Assets\SdAssets();
+        $assets = new \App\Plugins\ServiceDesk\Model\Assets\SdAssets();
         $asset = $assets->find($id);
         $location_id = '';
         $select = '';

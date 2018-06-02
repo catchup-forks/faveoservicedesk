@@ -61,7 +61,7 @@ class SdReleases extends Model
 
     public function locationRelation()
     {
-        return $this->belongsTo('App\Itil\Models\Assets\SdLocations', 'location_id');
+        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Assets\SdLocations', 'location_id');
     }
 
     /**
@@ -166,7 +166,7 @@ class SdReleases extends Model
         $assets = '';
         if (isAsset() == true) {
             $ids = $this->assets();
-            $asset = new \App\Itil\Models\Assets\SdAssets();
+            $asset = new \App\Plugins\ServiceDesk\Model\Assets\SdAssets();
             if (count($ids) > 0) {
                 foreach ($ids as $id) {
                     $ass = $asset->find($id);

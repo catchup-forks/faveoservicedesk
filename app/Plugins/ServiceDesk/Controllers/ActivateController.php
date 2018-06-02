@@ -12,19 +12,19 @@ class ActivateController extends Controller
 {
     public function activate()
     {
-        try {
+        /*try {
             if (!Schema::hasTable('sd_assets')) {
                 $this->migrate();
                 $this->seed();
             }
         } catch (Exception $ex) {
             dd($ex);
-        }
+        }*/
     }
 
     public function migrate()
     {
-        try {
+        /*try {
             $path = 'app' . DIRECTORY_SEPARATOR . 'Plugins' . DIRECTORY_SEPARATOR . 'ServiceDesk' . DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migrations';
             Artisan::call('migrate', [
                 '--path' => $path,
@@ -32,24 +32,24 @@ class ActivateController extends Controller
             ]);
         } catch (Exception $ex) {
             dd($ex);
-        }
+        }*/
     }
 
     public function seed()
     {
-        try {
+        /*try {
             $controller = new ServiceDeskSeeder();
             $controller->run();
 
             return 1;
         } catch (Exception $ex) {
             dd($ex);
-        }
+        }*/
     }
 
     public function publish()
     {
-        try {
+        /*try {
             $publish = 'vendor:publish';
             $provider = 'App\Plugins\ServiceDesk\ServiceProvider';
             $tag = 'migrations';
@@ -57,6 +57,6 @@ class ActivateController extends Controller
             //dd($r);
         } catch (Exception $ex) {
             dd($ex);
-        }
+        }*/
     }
 }

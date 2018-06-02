@@ -4,7 +4,7 @@ $sd_release_priorities = \App\Itil\Models\Releases\SdReleasepriorities::lists('n
 $sd_release_types = App\Itil\Models\Releases\SdReleasetypes::lists('name', 'id')->toArray();
 $sd_locations = App\Itil\Models\Releases\SdLocations::lists('title', 'id')->toArray();
 if (isAsset() == true) {
-    $assets = \App\Itil\Models\Assets\SdAssets::lists('name', 'id')->toArray();
+    $assets = \App\Plugins\ServiceDesk\Model\Assets\SdAssets::lists('name', 'id')->toArray();
 }
 ?>
 <div class="modal fade" id="releasenew{{$change->id}}">

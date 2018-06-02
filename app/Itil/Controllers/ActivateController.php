@@ -48,14 +48,14 @@ class ActivateController extends Controller
 
     public function publish()
     {
-        /*try {
+        try {
             $publish = 'vendor:publish';
             $provider = 'App\Itil\ItilServiceProvider';
-            $tag = 'migrations';
-            $r = Artisan::call($publish, ['--provider' => $provider, '--tag' => [$tag]]);
+            //$tag = 'migrations';
+            $r = Artisan::call($publish, ['--provider' => $provider]);
             //dd($r);
         } catch (Exception $ex) {
             dd($ex);
-        }*/
+        }
     }
 }

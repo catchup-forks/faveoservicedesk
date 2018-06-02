@@ -37,11 +37,11 @@ class ItilServiceProvider extends ServiceProvider
     public function register()
     {
         // Add routes
-        if (isInstall()) {
+        //if (isInstall()) {
             $routes = app_path('/Itil/routes.php');
             if (file_exists($routes)) {
                 require $routes;
             }
-        }
+        //}
     }
 }

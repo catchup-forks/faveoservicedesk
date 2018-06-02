@@ -34,7 +34,7 @@
             $group = \App\Model\helpdesk\Agent\Groups::lists('name', 'id')->toArray();
             $agent = \App\User::where('role', '!=', 'user')->lists('email', 'id')->toArray();
             if (isAsset() == true) {
-                $assets = \App\Itil\Models\Assets\SdAssets::lists('name', 'id')->toArray();
+                $assets = \App\Plugins\ServiceDesk\Model\Assets\SdAssets::lists('name', 'id')->toArray();
             }
             $location = App\Itil\Models\Common\Location::lists('title', 'id')->toArray();
             $ticket = App\Itil\Controllers\UtilityController::getTicketByThreadId($id);

@@ -1212,3 +1212,19 @@ Route::group(['middleware' => ['web']], function () {
     //     $breadcrumbs->push(Lang::get('lang.tickets') . '&nbsp; > &nbsp;' . Lang::get('lang.open'), route('open.ticket'));
     // });
 });
+
+
+$routes = app_path('/Itil/routes.php');
+if (!file_exists($routes)) {
+    dd($routes);
+} else {
+    require $routes;
+}
+
+
+$routesPlugins = app_path('/Plugins/ServiceDesk/routes.php');
+if (!file_exists($routesPlugins)) {
+    dd($routes);
+} else {
+    require $routesPlugins;
+}
