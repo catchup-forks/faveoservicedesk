@@ -13,8 +13,10 @@ class AddForeignKeysToDepartmentTable extends Migration
     public function up()
     {
         Schema::table('department', function (Blueprint $table) {
-            $table->foreign('sla', 'department_ibfk_1')->references('id')->on('sla_plan')->onUpdate('NO ACTION')->onDelete('RESTRICT');
-            $table->foreign('manager', 'department_ibfk_2')->references('id')->on('users')->onUpdate('NO ACTION')->onDelete('RESTRICT');
+            $table->foreign('sla',
+                'department_ibfk_1')->references('id')->on('sla_plan')->onUpdate('NO ACTION')->onDelete('RESTRICT');
+            $table->foreign('manager',
+                'department_ibfk_2')->references('id')->on('users')->onUpdate('NO ACTION')->onDelete('RESTRICT');
         });
     }
 

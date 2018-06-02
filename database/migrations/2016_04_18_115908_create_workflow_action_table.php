@@ -20,7 +20,8 @@ class CreateWorkflowActionTable extends Migration
             $table->timestamps();
         });
         Schema::table('workflow_action', function (Blueprint $table) {
-            $table->foreign('workflow_id', 'workflow_action_1')->references('id')->on('workflow_name')->onUpdate('NO ACTION')->onDelete('RESTRICT');
+            $table->foreign('workflow_id',
+                'workflow_action_1')->references('id')->on('workflow_name')->onUpdate('NO ACTION')->onDelete('RESTRICT');
         });
     }
 

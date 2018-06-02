@@ -26,7 +26,7 @@ class PageRequest extends Request
         $slug = $this->segment(2);
 
         return [
-            'name' => 'required|unique:kb_pages,slug,'.$slug,
+            'name' => 'required|unique:kb_pages,slug,' . $slug,
         ];
     }
 }

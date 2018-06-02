@@ -39,11 +39,6 @@ class SdReleases extends Model
         return $value;
     }
 
-    public function locationRelation()
-    {
-        return $this->belongsTo('App\Itil\Models\Assets\SdLocations', 'location_id');
-    }
-
     /**
      * get the location name.
      *
@@ -57,16 +52,16 @@ class SdReleases extends Model
             $attrs = $this->locationRelation()->first();
 
             if ($attrs) {
-                $value = '<a href='.url('service-desk/location-types/'.$attr.'/show').">$attrs->title</a>";
+                $value = '<a href=' . url('service-desk/location-types/' . $attr . '/show') . ">$attrs->title</a>";
             }
         }
 
         return ucfirst($value);
     }
 
-    public function status()
+    public function locationRelation()
     {
-        return $this->belongsTo('App\Itil\Models\Releases\SdReleasestatus', 'status_id');
+        return $this->belongsTo('App\Itil\Models\Assets\SdLocations', 'location_id');
     }
 
     /**
@@ -88,9 +83,9 @@ class SdReleases extends Model
         return ucfirst($value);
     }
 
-    public function priority()
+    public function status()
     {
-        return $this->belongsTo('App\Itil\Models\Releases\SdReleasepriorities', 'priority_id');
+        return $this->belongsTo('App\Itil\Models\Releases\SdReleasestatus', 'status_id');
     }
 
     /**
@@ -112,9 +107,9 @@ class SdReleases extends Model
         return ucfirst($value);
     }
 
-    public function releaseType()
+    public function priority()
     {
-        return $this->belongsTo('App\Itil\Models\Releases\SdReleasetypes', 'release_type_id');
+        return $this->belongsTo('App\Itil\Models\Releases\SdReleasepriorities', 'priority_id');
     }
 
     public function releaseTypes()
@@ -129,6 +124,11 @@ class SdReleases extends Model
         }
 
         return ucfirst($value);
+    }
+
+    public function releaseType()
+    {
+        return $this->belongsTo('App\Itil\Models\Releases\SdReleasetypes', 'release_type_id');
     }
 
     /**
@@ -161,6 +161,26 @@ class SdReleases extends Model
         return $attachment;
     }
 
+    public function getAssets()
+    {
+        $assets = '';
+        if (isAsset() == true) {
+            $ids = $this->assets();
+            $asset = new \App\Itil\Models\Assets\SdAssets();
+            if (count($ids) > 0) {
+                foreach ($ids as $id) {
+                    $ass = $asset->find($id);
+                    if ($ass) {
+                        $value = '<a href=' . url('service-desk/assets/' . $id . '/show') . '>' . ucfirst($ass->name) . '</a>';
+                        $assets .= $value . '</br>';
+                    }
+                }
+            }
+        }
+
+        return $assets;
+    }
+
     public function assets()
     {
         $ids = [];
@@ -178,24 +198,12 @@ class SdReleases extends Model
         return $ids;
     }
 
-    public function getAssets()
+    public function delete()
     {
-        $assets = '';
-        if (isAsset() == true) {
-            $ids = $this->assets();
-            $asset = new \App\Itil\Models\Assets\SdAssets();
-            if (count($ids) > 0) {
-                foreach ($ids as $id) {
-                    $ass = $asset->find($id);
-                    if ($ass) {
-                        $value = '<a href='.url('service-desk/assets/'.$id.'/show').'>'.ucfirst($ass->name).'</a>';
-                        $assets .= $value.'</br>';
-                    }
-                }
-            }
-        }
-
-        return $assets;
+        $id = $this->id;
+        $this->deleteAttachment($id);
+        $this->detachRelation($id);
+        parent::delete();
     }
 
     public function deleteAttachment($id)
@@ -213,14 +221,6 @@ class SdReleases extends Model
         if ($relation) {
             $relation->delete();
         }
-    }
-
-    public function delete()
-    {
-        $id = $this->id;
-        $this->deleteAttachment($id);
-        $this->detachRelation($id);
-        parent::delete();
     }
 
     public function table()
@@ -255,7 +255,7 @@ class SdReleases extends Model
     {
         $id = $this->attributes['id'];
         $title = $this->attributes['subject'];
-        $subject = '<a href='.url('service-desk/releases/'.$id.'/show').'>'.$title.'</a>';
+        $subject = '<a href=' . url('service-desk/releases/' . $id . '/show') . '>' . $title . '</a>';
 
         return $subject;
     }

@@ -7,7 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class SdVendors extends Model
 {
     protected $table = 'sd_vendors';
-    protected $fillable = ['id', 'name', 'primarycontact', 'email', 'description', 'address', 'status', 'created_at', 'updated_at',
+    protected $fillable = [
+        'id',
+        'name',
+        'primarycontact',
+        'email',
+        'description',
+        'address',
+        'status',
+        'created_at',
+        'updated_at',
 
     ];
 

@@ -9,6 +9,7 @@ class Priority extends BaseModel
     public $timestamps = false;
     protected $table = 'priority';
     protected $fillable = [
-        'id', 'name',
+        'id',
+        'name',
     ];
 }

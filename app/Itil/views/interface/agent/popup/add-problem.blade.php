@@ -1,7 +1,6 @@
-
 <style>
     .table .table-bordered {
-        width: 100%     !important;
+        width: 100% !important;
     }
 </style>
 <div class="btn-group">
@@ -12,44 +11,46 @@
     </button>
     <ul class="dropdown-menu" role="menu">
         <li><a href="#problem" data-toggle="modal" data-target="#problemnew{{$id}}">Attach New Problem</a></li>
-        <li><a href="#problem"  data-toggle="modal" data-target="#problemexisting{{$id}}">Attach Existing Problem</a></li>
+        <li><a href="#problem" data-toggle="modal" data-target="#problemexisting{{$id}}">Attach Existing Problem</a>
+        </li>
     </ul>
 </div>
 <div class="modal fade" id="problemnew{{$id}}">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title">New Problems</h4>
             </div>
             <div class="modal-body">
-                <?php
-                $subject = \App\Itil\Controllers\UtilityController::getSubjectByThreadId($id);
-                $content = \App\Itil\Controllers\UtilityController::getBodyByThreadMaxId($id);
-                $requester = \App\User::lists('email', 'email')->toArray();
-                $status = \App\Model\helpdesk\Ticket\Ticket_Status::lists('name', 'id')->toArray();
-                $priority = \App\Model\helpdesk\Ticket\Ticket_Priority::lists('priority', 'priority_id')->toArray();
-                $impact = App\Itil\Models\Problem\Impact::lists('name', 'id')->toArray();
-                $group = \App\Model\helpdesk\Agent\Groups::lists('name', 'id')->toArray();
-                $agent = \App\User::where('role', '!=', 'user')->lists('email', 'id')->toArray();
-                if(isAsset()==true){
-                    $assets = \App\Itil\Models\Assets\SdAssets::lists('name', 'id')->toArray();
-                }
-                $location = App\Itil\Models\Common\Location::lists('title', 'id')->toArray();
-                $ticket = App\Itil\Controllers\UtilityController::getTicketByThreadId($id);
-                ?>
-                <!-- Form  -->
+            <?php
+            $subject = \App\Itil\Controllers\UtilityController::getSubjectByThreadId($id);
+            $content = \App\Itil\Controllers\UtilityController::getBodyByThreadMaxId($id);
+            $requester = \App\User::lists('email', 'email')->toArray();
+            $status = \App\Model\helpdesk\Ticket\Ticket_Status::lists('name', 'id')->toArray();
+            $priority = \App\Model\helpdesk\Ticket\Ticket_Priority::lists('priority', 'priority_id')->toArray();
+            $impact = App\Itil\Models\Problem\Impact::lists('name', 'id')->toArray();
+            $group = \App\Model\helpdesk\Agent\Groups::lists('name', 'id')->toArray();
+            $agent = \App\User::where('role', '!=', 'user')->lists('email', 'id')->toArray();
+            if (isAsset() == true) {
+                $assets = \App\Itil\Models\Assets\SdAssets::lists('name', 'id')->toArray();
+            }
+            $location = App\Itil\Models\Common\Location::lists('title', 'id')->toArray();
+            $ticket = App\Itil\Controllers\UtilityController::getTicketByThreadId($id);
+            ?>
+            <!-- Form  -->
                 {!! Form::open(['url'=>'service-desk/attach-problem/ticket/new']) !!}
                 {!! Form::hidden('ticketid',$ticket->id) !!}
                 <div class="row">
 
 
                     <div class="form-group col-md-6 {{ $errors->has('from') ? 'has-error' : '' }}">
-                        {!! Form::label('from',Lang::get('itil::lang.from')) !!} 
+                        {!! Form::label('from',Lang::get('itil::lang.from')) !!}
                         {!! Form::select('from',$requester,null,['class' => 'form-control']) !!}
                     </div>
                     <div class="form-group col-md-6 {{ $errors->has('subject') ? 'has-error' : '' }}">
-                        {!! Form::label('subject',Lang::get('itil::lang.subject')) !!} 
+                        {!! Form::label('subject',Lang::get('itil::lang.subject')) !!}
                         {!! Form::text('subject',$subject,['class' => 'form-control']) !!}
                     </div>
                     <div class="form-group col-md-12 {{ $errors->has('description') ? 'has-error' : '' }}">
@@ -85,10 +86,10 @@
                         {!! Form::select('assigned_id',$agent,null,['class' => 'form-control']) !!}
                     </div>
                     @if(isAsset()==true)
-                    <div class="form-group col-md-6 {{ $errors->has('asset') ? 'has-error' : '' }}">
-                        {!! Form::label('asset',Lang::get('itil::lang.asset')) !!}
-                        {!! Form::select('asset',$assets,null,['class' => 'form-control']) !!}
-                    </div>
+                        <div class="form-group col-md-6 {{ $errors->has('asset') ? 'has-error' : '' }}">
+                            {!! Form::label('asset',Lang::get('itil::lang.asset')) !!}
+                            {!! Form::select('asset',$assets,null,['class' => 'form-control']) !!}
+                        </div>
                     @endif
 
                     <div class="form-group col-md-6 {{ $errors->has('attachment') ? 'has-error' : '' }}">
@@ -97,9 +98,7 @@
                     </div>
 
 
-
                 </div>
-
 
 
             </div>
@@ -108,11 +107,11 @@
                 <input type="submit" class="btn btn-primary" value="{{Lang::get('lang.save')}}">
             </div>
 
-            {!! Form::close() !!}
-            <!-- /Form -->
+        {!! Form::close() !!}
+        <!-- /Form -->
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->  
+</div><!-- /.modal -->
 
 
 <!-- Existing Problem-->
@@ -120,7 +119,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title">Existing Problems</h4>
             </div>
             <div class="modal-body">
@@ -144,11 +144,11 @@
                 <input type="submit" class="btn btn-primary" value="{{Lang::get('lang.save')}}">
             </div>
 
-            {!! Form::close() !!}
-            <!-- /Form -->
+        {!! Form::close() !!}
+        <!-- /Form -->
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->  
+</div><!-- /.modal -->
 <script type="text/javascript">
     $(function () {
         $("#description").wysihtml5();

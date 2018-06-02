@@ -9,7 +9,8 @@ class SdAssetTypeSeeder extends Seeder
 {
     public function run()
     {
-        $types = [['name' => 'Services', 'parent_id' => ''],
+        $types = [
+            ['name' => 'Services', 'parent_id' => ''],
             ['name' => 'Cloud', 'parent_id' => ''],
             ['name' => 'Hardware', 'parent_id' => ''],
             ['name' => 'Software', 'parent_id' => ''],
@@ -57,8 +58,12 @@ class SdAssetTypeSeeder extends Seeder
             $created_at = date('Y-d-m H:m:i');
             $updated_at = date('Y-d-m H:m:i');
             if ($types[$i]) {
-                DB::table('sd_asset_types')->insert(['id' => $n, 'name' => $types[$i]['name'], 'parent_id' => $types[$i]['parent_id'],
-                    'created_at'                          => $created_at, 'updated_at' => $updated_at,
+                DB::table('sd_asset_types')->insert([
+                    'id' => $n,
+                    'name' => $types[$i]['name'],
+                    'parent_id' => $types[$i]['parent_id'],
+                    'created_at' => $created_at,
+                    'updated_at' => $updated_at,
                 ]);
             }
         }

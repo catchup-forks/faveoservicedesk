@@ -1,6 +1,6 @@
-<?php 
+<?php
 //$info = $problem->general();
-$symptom ="";
+$symptom = "";
 if ($problem->getGeneralByIdentifier('symptoms')) {
     $symptom = $problem->getGeneralByIdentifier('symptoms')->value;
 }
@@ -10,7 +10,8 @@ if ($problem->getGeneralByIdentifier('symptoms')) {
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title">Symptoms</h4>
                 {!! Form::open(['url'=>'service-desk/general/'.$problem->id.'/sd_problem','files'=>true]) !!}
             </div>
@@ -18,13 +19,13 @@ if ($problem->getGeneralByIdentifier('symptoms')) {
                 <!-- Form  -->
                 <div class="row">
                     <div class="col-md-12">
-                       {!! Form::label('symptoms','Symptoms') !!}
-                       {!! Form::textarea('symptoms',$symptom,['class'=>'form-control','id'=>'symptoms']) !!}
-                       {!! Form::hidden('identifier','symptom') !!}
+                        {!! Form::label('symptoms','Symptoms') !!}
+                        {!! Form::textarea('symptoms',$symptom,['class'=>'form-control','id'=>'symptoms']) !!}
+                        {!! Form::hidden('identifier','symptom') !!}
                     </div>
                     <div class="col-md-12">
-                       {!! Form::label('attachment','Attachment') !!}
-                       {!! Form::file('attachment[]') !!}
+                        {!! Form::label('attachment','Attachment') !!}
+                        {!! Form::file('attachment[]') !!}
                     </div>
                 </div>
 

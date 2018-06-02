@@ -5,18 +5,18 @@ namespace App\Http\Controllers\Admin\helpdesk;
 // controllers
 use App\Http\Controllers\Common\PhpMailController;
 use App\Http\Controllers\Controller;
-// requests
 use App\Http\Requests\helpdesk\DiagnosRequest;
 use App\Http\Requests\helpdesk\TemplateRequest;
 use App\Http\Requests\helpdesk\TemplateUdate;
-// models
 use App\Model\helpdesk\Email\Emails;
 use App\Model\helpdesk\Email\Template;
 use App\Model\helpdesk\Utility\Languages;
-// classes
 use Exception;
-use Illuminate\Http\Request;
 use Input;
+
+// requests
+// models
+// classes
 
 /**
  * TemplateController.
@@ -115,7 +115,7 @@ class TemplateController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param type           $id
+     * @param type $id
      * @param type Template  $template
      * @param type Languages $language
      *
@@ -123,20 +123,21 @@ class TemplateController extends Controller
      */
     public function listdirectories()
     {
-        $path = \Config::get('view.paths')[0].'/emails/';
+        $path = \Config::get('view.paths')[0] . '/emails/';
         $directories = scandir($path);
         $directory = str_replace('/', '-', $path);
 
-        return view('themes.default1.admin.helpdesk.emails.template.listdirectories', compact('directories', 'directory'));
+        return view('themes.default1.admin.helpdesk.emails.template.listdirectories',
+            compact('directories', 'directory'));
     }
 
     public function listtemplates($template, $path)
     {
         $paths = str_replace('-', '/', $path);
-        $directory2 = $paths.$template;
+        $directory2 = $paths . $template;
 
         $templates = scandir($directory2);
-        $directory = str_replace('/', '-', $directory2.'/');
+        $directory = str_replace('/', '-', $directory2 . '/');
 
         return view('themes.default1.admin.helpdesk.emails.template.listtemplates', compact('templates', 'directory'));
     }
@@ -144,18 +145,19 @@ class TemplateController extends Controller
     public function readtemplate($template, $path)
     {
         $directory = str_replace('-', '/', $path);
-        $handle = fopen($directory.$template, 'r');
-        $contents = fread($handle, filesize($directory.$template));
+        $handle = fopen($directory . $template, 'r');
+        $contents = fread($handle, filesize($directory . $template));
         fclose($handle);
 
-        return view('themes.default1.admin.helpdesk.emails.template.readtemplates', compact('contents', 'template', 'path'));
+        return view('themes.default1.admin.helpdesk.emails.template.readtemplates',
+            compact('contents', 'template', 'path'));
     }
 
     public function createtemplate()
     {
         $directory = '../resources/views/emails/';
         $fname = Input::get('folder_name');
-        $filename = $directory.$fname;
+        $filename = $directory . $fname;
 
         // images folder creation using php
         //   $mydir = dirname( __FILE__ )."/html/images";
@@ -167,7 +169,7 @@ class TemplateController extends Controller
         if (!file_exists($filename)) {
             mkdir($filename, 0777);
         }
-        $files = array_filter(scandir($directory.'default'));
+        $files = array_filter(scandir($directory . 'default'));
 
         foreach ($files as $file) {
             if ($file === '.' or $file === '..') {
@@ -175,9 +177,9 @@ class TemplateController extends Controller
             }
             if (!is_dir($file)) {
                 //   $file_to_go = str_replace("code/resources/views/emails/",'code/resources/views/emails/'.$fname,$file);
-                $destination = $directory.$fname.'/';
+                $destination = $directory . $fname . '/';
 
-                copy($directory.'default/'.$file, $destination.$file);
+                copy($directory . 'default/' . $file, $destination . $file);
             }
         }
 
@@ -189,7 +191,7 @@ class TemplateController extends Controller
         $directory = str_replace('-', '/', $path);
         $b = Input::get('templatedata');
 
-        file_put_contents($directory.$template, print_r($b, true));
+        file_put_contents($directory . $template, print_r($b, true));
 
         return \Redirect::back()->with('success', 'Successfully updated');
     }
@@ -197,7 +199,7 @@ class TemplateController extends Controller
     public function deletetemplate($template, $path)
     {
         $directory = str_replace('-', '/', $path);
-        $dir = $directory.$template;
+        $dir = $directory . $template;
         $status = \DB::table('settings_email')->first();
         if ($template == 'default' or $template == $status->template) {
             return \Redirect::back()->with('fails', 'You cannot delete a default or active directory!');
@@ -206,7 +208,7 @@ class TemplateController extends Controller
             $objects = scandir($dir);
             foreach ($objects as $object) {
                 if ($object != '.' && $object != '..') {
-                    unlink($dir.'/'.$object);
+                    unlink($dir . '/' . $object);
                 }
             }
             rmdir($dir);
@@ -328,13 +330,13 @@ class TemplateController extends Controller
             }
             $to_address = [
 
-                'name'  => '',
+                'name' => '',
                 'email' => $to,
             ];
             $message = [
-                'subject'  => $subject,
+                'subject' => $subject,
                 'scenario' => null,
-                'body'     => $msg,
+                'body' => $msg,
             ];
 
             $this->PhpMailController->sendmail($from, $to_address, $message, [], []);

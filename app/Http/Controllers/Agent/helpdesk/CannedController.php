@@ -4,15 +4,15 @@ namespace App\Http\Controllers\Agent\helpdesk;
 
 // controllers
 use App\Http\Controllers\Controller;
-// requests
 use App\Http\Requests\helpdesk\CannedRequest;
 use App\Http\Requests\helpdesk\CannedUpdateRequest;
-// model
 use App\Model\helpdesk\Agent_panel\Canned;
-use App\User;
-// classes
 use Exception;
 use Lang;
+
+// requests
+// model
+// classes
 
 /**
  * CannedController.
@@ -95,7 +95,7 @@ class CannedController extends Controller
     /**
      * Show the form for editing the Canned Response.
      *
-     * @param type        $id
+     * @param type $id
      * @param type Canned $canned
      *
      * @return type View
@@ -115,7 +115,7 @@ class CannedController extends Controller
     /**
      * Update the Canned Response in database.
      *
-     * @param type                     $id
+     * @param type $id
      * @param type CannedUpdateRequest $request
      * @param type Canned              $canned
      *
@@ -142,7 +142,7 @@ class CannedController extends Controller
     /**
      * Delete the Canned Response from storage.
      *
-     * @param type        $id
+     * @param type $id
      * @param type Canned $canned
      *
      * @return type Redirect

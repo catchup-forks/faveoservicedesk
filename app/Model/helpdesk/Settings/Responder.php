@@ -12,6 +12,11 @@ class Responder extends BaseModel
     /* Set fillable fields in table */
     protected $fillable = [
 
-        'id', 'new_ticket', 'agent_new_ticket', 'submitter', 'participants', 'overlimit',
+        'id',
+        'new_ticket',
+        'agent_new_ticket',
+        'submitter',
+        'participants',
+        'overlimit',
     ];
 }

@@ -3,18 +3,19 @@
     @if((sizeof($file_info) > 0) || (sizeof($directories) > 0))
         <table class="table table-condensed table-striped">
             <thead>
-                <th style='width:50%;'>{{ Lang::get('laravel-filemanager::lfm.title-item') }}</th>
-                <th>{{ Lang::get('laravel-filemanager::lfm.title-size') }}</th>
-                <th>{{ Lang::get('laravel-filemanager::lfm.title-type') }}</th>
-                <th>{{ Lang::get('laravel-filemanager::lfm.title-modified') }}</th>
-                <th>{{ Lang::get('laravel-filemanager::lfm.title-action') }}</th>
+            <th style='width:50%;'>{{ Lang::get('laravel-filemanager::lfm.title-item') }}</th>
+            <th>{{ Lang::get('laravel-filemanager::lfm.title-size') }}</th>
+            <th>{{ Lang::get('laravel-filemanager::lfm.title-type') }}</th>
+            <th>{{ Lang::get('laravel-filemanager::lfm.title-modified') }}</th>
+            <th>{{ Lang::get('laravel-filemanager::lfm.title-action') }}</th>
             </thead>
             <tbody>
             @foreach($directories as $key => $dir_name)
                 <tr>
                     <td>
                         <i class="fa fa-folder-o"></i>
-                        <a id="large_folder_{{ $key }}" data-id="{{ $dir_name }}" href="javascript:clickFolder('large_folder_{{ $key }}',1)">
+                        <a id="large_folder_{{ $key }}" data-id="{{ $dir_name }}"
+                           href="javascript:clickFolder('large_folder_{{ $key }}',1)">
                             {{ $dir_name }}
                         </a>
                     </td>
@@ -58,11 +59,11 @@
         </table>
 
     @else
-    <div class="row">
-        <div class="col-md-12">
-            <p>{{ Lang::get('laravel-filemanager::lfm.message-empty') }}</p>
+        <div class="row">
+            <div class="col-md-12">
+                <p>{{ Lang::get('laravel-filemanager::lfm.message-empty') }}</p>
+            </div>
         </div>
-    </div>
     @endif
 
 </div>

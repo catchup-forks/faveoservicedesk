@@ -23,9 +23,9 @@ class AnnouncementController extends BaseServiceDeskController
     public function send(Request $request)
     {
         $this->validate($request, [
-            'option'       => 'required',
+            'option' => 'required',
             'organization' => 'required_if:option,organization',
-            'department'   => 'required_if:option,department',
+            'department' => 'required_if:option,department',
             'announcement' => 'required',
         ]);
 
@@ -59,13 +59,6 @@ class AnnouncementController extends BaseServiceDeskController
         }
     }
 
-    public function sendDepartment($department, $message)
-    {
-        $user = new \App\User();
-        $users = $user->where('primary_dpt', $department);
-        $this->sendAnnouncmentToUsers($users, $message);
-    }
-
     public function sendAnnouncmentToUsers($users, $message)
     {
         if ($users) {
@@ -73,17 +66,24 @@ class AnnouncementController extends BaseServiceDeskController
             $controller = new \App\Http\Controllers\Common\PhpMailController();
             $from = $controller->mailfrom('1', '0');
             $message = [
-                'subject'  => 'Announcment',
+                'subject' => 'Announcment',
                 'scenario' => null,
-                'body'     => $message,
+                'body' => $message,
             ];
             foreach ($users_emails as $user) {
                 $to = [
-                    'name'  => $user->email,
+                    'name' => $user->email,
                     'email' => $user->email,
                 ];
                 $controller->sendmail($from, $to, $message, $template_variables = '');
             }
         }
+    }
+
+    public function sendDepartment($department, $message)
+    {
+        $user = new \App\User();
+        $users = $user->where('primary_dpt', $department);
+        $this->sendAnnouncmentToUsers($users, $message);
     }
 }

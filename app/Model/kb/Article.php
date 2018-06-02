@@ -3,7 +3,6 @@
 namespace App\Model\kb;
 
 use App\BaseModel;
-use Illuminate\Database\Eloquent\Model;
 use Nicolaslopezj\Searchable\SearchableTrait;
 
 class Article extends BaseModel
@@ -17,8 +16,8 @@ class Article extends BaseModel
      */
     protected $searchable = [
         'columns' => [
-            'name'        => 10,
-            'slug'        => 10,
+            'name' => 10,
+            'slug' => 10,
             'description' => 10,
         ],
     ];

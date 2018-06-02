@@ -30,7 +30,7 @@ class FormBuilderController extends BaseServiceDeskController
     {
         $this->validate($request, [
             'title' => 'required|unique:sd_forms',
-            'form'  => 'required',
+            'form' => 'required',
         ]);
 
         try {
@@ -68,17 +68,17 @@ class FormBuilderController extends BaseServiceDeskController
         }
         foreach ($data['form-template']['fields']['field'] as $index => $item) {
             $field = $fields->create([
-                'name'        => $this->checkField('name', $item),
-                'label'       => $this->checkField('label', $item),
-                'form_id'     => $formid,
-                'type'        => $this->checkField('type', $item),
-                'sub_type'    => $this->checkField('subtype', $item),
-                'class'       => $this->checkField('class', $item),
+                'name' => $this->checkField('name', $item),
+                'label' => $this->checkField('label', $item),
+                'form_id' => $formid,
+                'type' => $this->checkField('type', $item),
+                'sub_type' => $this->checkField('subtype', $item),
+                'class' => $this->checkField('class', $item),
                 'is_required' => $this->checkField('required', $item),
                 'placeholder' => $this->checkField('placeholder', $item),
                 'description' => $this->checkField('description', $item),
-                'multiple'    => $this->checkField('multiple', $item),
-                'role'        => $this->checkField('role', $item),
+                'multiple' => $this->checkField('multiple', $item),
+                'role' => $this->checkField('role', $item),
             ]);
             if (is_string($item)) {
                 if ($index == 'option') {
@@ -90,18 +90,6 @@ class FormBuilderController extends BaseServiceDeskController
         }
         if ($field) {
             return 'success';
-        }
-    }
-
-    public function saveFieldValue($fieldid, $options = [])
-    {
-        $values = new FormValue();
-        foreach ($options as $option) {
-            $values->create([
-                'field_id' => $fieldid,
-                'option'   => $option['option-name'],
-                'value'    => $option['value'],
-            ]);
         }
     }
 
@@ -117,6 +105,18 @@ class FormBuilderController extends BaseServiceDeskController
         return $res;
     }
 
+    public function saveFieldValue($fieldid, $options = [])
+    {
+        $values = new FormValue();
+        foreach ($options as $option) {
+            $values->create([
+                'field_id' => $fieldid,
+                'option' => $option['option-name'],
+                'value' => $option['value'],
+            ]);
+        }
+    }
+
     public function renderHtmlByFormId($id, $view = true, $assetid = '')
     {
         $html = '';
@@ -124,7 +124,7 @@ class FormBuilderController extends BaseServiceDeskController
         $form = $forms->where('asset_type_id', $id)->first();
         if ($form) {
             $title = $form->title;
-            $html = "<h1>$title</h1>".$this->getFields($form->id, $assetid);
+            $html = "<h1>$title</h1>" . $this->getFields($form->id, $assetid);
         }
         if ($view == true) {
             return view('service::form-builder.show', compact('html'));
@@ -154,12 +154,14 @@ class FormBuilderController extends BaseServiceDeskController
                 $role = $this->checkField('role', $html->toArray());
 
                 if ($json == true) {
-                    $item['form-template']['fields'][$key] = $this->getJson($key, $html->id, $name, $label, $type, $sub_type, $class, $is_required, $placeholder, $description, $multiple, $role);
+                    $item['form-template']['fields'][$key] = $this->getJson($key, $html->id, $name, $label, $type,
+                        $sub_type, $class, $is_required, $placeholder, $description, $multiple, $role);
                 } else {
                     //dd([$html->id, $name, $label, $type, $sub_type, $class, $is_required, $placeholder, $description, $multiple]);
                     //$item .="<form id='form'>";
                     $item .= "<div class='form-group col-md-6'>";
-                    $item .= $this->fields($html->id, $name, $label, $type, $sub_type, $class, $is_required, $placeholder, $description, $multiple, $assetid);
+                    $item .= $this->fields($html->id, $name, $label, $type, $sub_type, $class, $is_required,
+                        $placeholder, $description, $multiple, $assetid);
                     $item .= '</div>';
                 }
                 //$item .= "</form>";
@@ -170,58 +172,64 @@ class FormBuilderController extends BaseServiceDeskController
         return $item;
     }
 
-    public function fields($fieldid, $name, $label, $type, $sub_type, $class, $is_required, $placeholder, $description, $multiple, $assetid = '')
-    {
-        $required = '';
-        $html = '';
-        if ($is_required == 'true') {
-            $required = 'required';
-        }
-        switch ($type) {
-            case 'button':
-                return "<$sub_type class='$class' name='$name'>$label</$sub_type>";
-            case 'checkbox':
-                return "<label>$label</label>"
-                        ."<input type='$type' class='$class' placeholder='$placeholder' name='$name' $required>";
-            case 'paragraph':
-                return "<$sub_type class='$class'></$sub_type>";
-            case 'header':
-                return "<$sub_type class='$class'></$sub_type>";
-            case 'textarea':
-                return "<label>$label</label><$type class='$class' placeholder='$placeholder' $required></$type>";
-            case 'text':
-                return "<label>$label</label>"
-                        //.\Form::text($name,null,['class'=>$class,'placeholder'=>$placeholder,'required'=>$is_required]);
-                        ."<input type='$type' class='$class' placeholder='$placeholder' name='$name' value=".$this->value($fieldid, $assetid)." $required>";
-            case 'date':
-                return "<label>$label</label>"
-                        ."<input type='$type' class='$class' placeholder='$placeholder' name='$name' $required>";
-            case 'file':
-                return "<label>$label</label>"
-                        ."<input type='$type' class='$class' placeholder='$placeholder' name='$name' $required>";
-            case 'checkbox-group':
-                return $this->groupValue($fieldid, $name, $label, $type, $sub_type, $class, $required, $placeholder, $description, $multiple);
-            case 'radio-group':
-                return $this->groupValue($fieldid, $name, $label, $type, $sub_type, $class, $required, $placeholder, $description, $multiple);
-            case 'select':
-                return $this->groupValue($fieldid, $name, $label, $type, $sub_type, $class, $required, $placeholder, $description, $multiple);
-        }
+    public function getJson(
+        $key,
+        $fieldid,
+        $name,
+        $label,
+        $type,
+        $sub_type,
+        $class,
+        $is_required,
+        $placeholder,
+        $description,
+        $multiple,
+        $role,
+        $options = []
+    ) {
+        $options = $this->groupValue($fieldid, $name, $label, $type, $sub_type, $class, $is_required, $placeholder,
+            $description, $multiple, true);
+        $array = $this->getArray($key, $name, $label, $type, $sub_type, $class, $is_required, $placeholder,
+            $description, $multiple, $role, $options);
 
-        return $html;
+        return $array;
     }
 
-    public function groupValue($fieldid, $name, $label, $type, $sub_type, $class, $required, $placeholder, $description, $multiple, $json = false)
-    {
+    public function groupValue(
+        $fieldid,
+        $name,
+        $label,
+        $type,
+        $sub_type,
+        $class,
+        $required,
+        $placeholder,
+        $description,
+        $multiple,
+        $json = false
+    ) {
         $values = new FormValue();
         $html = '';
         $value = $values->where('field_id', $fieldid)->get();
-        $html = $this->getForeach($value, $name, $label, $type, $sub_type, $class, $required, $placeholder, $description, $multiple, $json);
+        $html = $this->getForeach($value, $name, $label, $type, $sub_type, $class, $required, $placeholder,
+            $description, $multiple, $json);
 
         return $html;
     }
 
-    public function getForeach($values, $name, $label, $type, $sub_type, $class, $required, $placeholder, $description, $multiple, $json)
-    {
+    public function getForeach(
+        $values,
+        $name,
+        $label,
+        $type,
+        $sub_type,
+        $class,
+        $required,
+        $placeholder,
+        $description,
+        $multiple,
+        $json
+    ) {
         $html = '';
         $array = [];
         if (count($values) > 0) {
@@ -229,7 +237,7 @@ class FormBuilderController extends BaseServiceDeskController
                 $html .= "<label>$label</label></br>";
                 foreach ($values as $index => $value) {
                     //if ($json == false) {
-                    $html .= "<input type='checkbox' name='$name' class='$class' value='$value->value'>".$value->option.'</br>';
+                    $html .= "<input type='checkbox' name='$name' class='$class' value='$value->value'>" . $value->option . '</br>';
                     //                    } else {
 //                        $array[$index] = $values->lists('option','value')->toArray();
 //                    }
@@ -239,7 +247,7 @@ class FormBuilderController extends BaseServiceDeskController
                 $html .= "<label>$label</label></br>";
                 foreach ($values as $index => $value) {
                     //if ($json == false) {
-                    $html .= "<input type='radio' name='$name' class='$class' value='$value->value'>".$value->option.'</br>';
+                    $html .= "<input type='radio' name='$name' class='$class' value='$value->value'>" . $value->option . '</br>';
                     //                    } else {
 //                        $array[$index] = $value->lists('option','value')->toArray();
 //                    }
@@ -249,7 +257,7 @@ class FormBuilderController extends BaseServiceDeskController
                 $html .= "<label>$label</label><select class='$class' name='$name' placeholder='$placeholder' $required>";
                 foreach ($values as $index => $value) {
                     //if ($json == false) {
-                    $html .= "<option value='$value->value'>".$value->option.'</option>';
+                    $html .= "<option value='$value->value'>" . $value->option . '</option>';
                     //} else {
                     //$array[$index] = $value->lists('option','value')->toArray();
                     //}
@@ -262,6 +270,89 @@ class FormBuilderController extends BaseServiceDeskController
         }
 
         return $values->lists('option', 'value')->toArray();
+    }
+
+    public function getArray(
+        $key,
+        $name,
+        $label,
+        $type,
+        $sub_type,
+        $class,
+        $is_required,
+        $placeholder,
+        $description,
+        $multiple,
+        $role,
+        $options = []
+    ) {
+        $item['name'] = $name;
+        $item['label'] = $label;
+        $item['type'] = $type;
+        $item['subtype'] = $sub_type;
+        $item['class'] = $class;
+        $item['placeholder'] = $placeholder;
+        $item['description'] = $description;
+        $item['multiple'] = $multiple;
+        $item['role'] = $role;
+        $item['options'] = $options;
+
+        return $item;
+    }
+
+    public function fields(
+        $fieldid,
+        $name,
+        $label,
+        $type,
+        $sub_type,
+        $class,
+        $is_required,
+        $placeholder,
+        $description,
+        $multiple,
+        $assetid = ''
+    ) {
+        $required = '';
+        $html = '';
+        if ($is_required == 'true') {
+            $required = 'required';
+        }
+        switch ($type) {
+            case 'button':
+                return "<$sub_type class='$class' name='$name'>$label</$sub_type>";
+            case 'checkbox':
+                return "<label>$label</label>"
+                    . "<input type='$type' class='$class' placeholder='$placeholder' name='$name' $required>";
+            case 'paragraph':
+                return "<$sub_type class='$class'></$sub_type>";
+            case 'header':
+                return "<$sub_type class='$class'></$sub_type>";
+            case 'textarea':
+                return "<label>$label</label><$type class='$class' placeholder='$placeholder' $required></$type>";
+            case 'text':
+                return "<label>$label</label>"
+                    //.\Form::text($name,null,['class'=>$class,'placeholder'=>$placeholder,'required'=>$is_required]);
+                    . "<input type='$type' class='$class' placeholder='$placeholder' name='$name' value=" . $this->value($fieldid,
+                        $assetid) . " $required>";
+            case 'date':
+                return "<label>$label</label>"
+                    . "<input type='$type' class='$class' placeholder='$placeholder' name='$name' $required>";
+            case 'file':
+                return "<label>$label</label>"
+                    . "<input type='$type' class='$class' placeholder='$placeholder' name='$name' $required>";
+            case 'checkbox-group':
+                return $this->groupValue($fieldid, $name, $label, $type, $sub_type, $class, $required, $placeholder,
+                    $description, $multiple);
+            case 'radio-group':
+                return $this->groupValue($fieldid, $name, $label, $type, $sub_type, $class, $required, $placeholder,
+                    $description, $multiple);
+            case 'select':
+                return $this->groupValue($fieldid, $name, $label, $type, $sub_type, $class, $required, $placeholder,
+                    $description, $multiple);
+        }
+
+        return $html;
     }
 
     public function value($formid, $assetid = '')
@@ -298,19 +389,71 @@ class FormBuilderController extends BaseServiceDeskController
         $form = $forms->select('id', 'title')->get();
 
         return \Datatable::Collection($form)
-                        ->showColumns('title')
-                        ->addColumn('action', function ($model) {
-                            $preview = $this->show($model->id, 'popup');
-                            $url = url('service-desk/form-builder/'.$model->id.'/delete');
-                            $title = "Delete $model->title";
-                            $delete = \App\Plugins\ServiceDesk\Controllers\Library\UtilityController::deletePopUp($model->id, $url, $title);
+            ->showColumns('title')
+            ->addColumn('action', function ($model) {
+                $preview = $this->show($model->id, 'popup');
+                $url = url('service-desk/form-builder/' . $model->id . '/delete');
+                $title = "Delete $model->title";
+                $delete = \App\Plugins\ServiceDesk\Controllers\Library\UtilityController::deletePopUp($model->id, $url,
+                    $title);
 
-                            return '<a href='.url('service-desk/form-builder/'.$model->id.'/edit')." class='btn btn-sm btn-primary'>Edit</a> "
-                                    .$preview.$delete;
-                        })
-                        ->searchColumns('title')
-                        ->orderColumns('title')
-                        ->make();
+                return '<a href=' . url('service-desk/form-builder/' . $model->id . '/edit') . " class='btn btn-sm btn-primary'>Edit</a> "
+                    . $preview . $delete;
+            })
+            ->searchColumns('title')
+            ->orderColumns('title')
+            ->make();
+    }
+
+    public function show($id, $render = 'view')
+    {
+        try {
+            $html = '';
+            $title = '';
+            $forms = new Form();
+            $form = $forms->find($id);
+            if ($form) {
+                $title = $form->title;
+                $html = $this->getFields($form->id);
+            }
+            switch ($render) {
+                case 'view':
+                    $html = "<h1>$title</h1>" . $html;
+
+                    return view('service::form-builder.show', compact('html'));
+                case 'popup':
+                    return $this->popUp($id, $title, $html);
+                default:
+                    return $html;
+            }
+        } catch (Exception $ex) {
+            return redirect()->back()->with('fails', $ex->getMessage());
+        }
+    }
+
+    public function popUp($id, $title, $html)
+    {
+        return '<a href="#form" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#form' . $id . '">Preview</a>
+                <div class="modal fade" id="form' . $id . '">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">' . $title . '</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                <div class="col-md-12">
+                                ' . $html . '
+                                </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" id="close" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>';
     }
 
     public function edit($id)
@@ -336,30 +479,6 @@ class FormBuilderController extends BaseServiceDeskController
         }
     }
 
-    public function getArray($key, $name, $label, $type, $sub_type, $class, $is_required, $placeholder, $description, $multiple, $role, $options = [])
-    {
-        $item['name'] = $name;
-        $item['label'] = $label;
-        $item['type'] = $type;
-        $item['subtype'] = $sub_type;
-        $item['class'] = $class;
-        $item['placeholder'] = $placeholder;
-        $item['description'] = $description;
-        $item['multiple'] = $multiple;
-        $item['role'] = $role;
-        $item['options'] = $options;
-
-        return $item;
-    }
-
-    public function getJson($key, $fieldid, $name, $label, $type, $sub_type, $class, $is_required, $placeholder, $description, $multiple, $role, $options = [])
-    {
-        $options = $this->groupValue($fieldid, $name, $label, $type, $sub_type, $class, $is_required, $placeholder, $description, $multiple, true);
-        $array = $this->getArray($key, $name, $label, $type, $sub_type, $class, $is_required, $placeholder, $description, $multiple, $role, $options);
-
-        return $array;
-    }
-
     public function convertForm($formid)
     {
         $array = $this->getFields($formid, '', true);
@@ -372,7 +491,7 @@ class FormBuilderController extends BaseServiceDeskController
     {
         $this->validate($request, [
             'title' => 'required|unique:sd_forms',
-            'form'  => 'required',
+            'form' => 'required',
         ]);
 
         try {
@@ -401,57 +520,6 @@ class FormBuilderController extends BaseServiceDeskController
 
             return response()->json(compact('result'));
         }
-    }
-
-    public function show($id, $render = 'view')
-    {
-        try {
-            $html = '';
-            $title = '';
-            $forms = new Form();
-            $form = $forms->find($id);
-            if ($form) {
-                $title = $form->title;
-                $html = $this->getFields($form->id);
-            }
-            switch ($render) {
-                case 'view':
-                    $html = "<h1>$title</h1>".$html;
-
-                    return view('service::form-builder.show', compact('html'));
-                case 'popup':
-                    return $this->popUp($id, $title, $html);
-                default:
-                    return $html;
-            }
-        } catch (Exception $ex) {
-            return redirect()->back()->with('fails', $ex->getMessage());
-        }
-    }
-
-    public function popUp($id, $title, $html)
-    {
-        return '<a href="#form" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#form'.$id.'">Preview</a>
-                <div class="modal fade" id="form'.$id.'">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title">'.$title.'</h4>
-                            </div>
-                            <div class="modal-body">
-                                <div class="row">
-                                <div class="col-md-12">
-                                '.$html.'
-                                </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" id="close" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>';
     }
 
     public function delete($id)

@@ -4,15 +4,15 @@ namespace App\Http\Controllers\Admin\helpdesk;
 
 // controller
 use App\Http\Controllers\Controller;
-// request
 use App\Http\Requests\helpdesk\BanlistRequest;
 use App\Http\Requests\helpdesk\BanRequest;
-// model
-use App\Model\helpdesk\Email\Banlist;
 use App\User;
-//classes
 use Exception;
 use Lang;
+
+// request
+// model
+//classes
 
 /**
  * BanlistController
@@ -73,7 +73,7 @@ class BanlistController extends Controller
      * Store a new banned user credentials.
      *
      * @param BanRequest $request
-     * @param User       $user
+     * @param User $user
      *
      * @return type Response
      */
@@ -126,8 +126,8 @@ class BanlistController extends Controller
     /**
      * Update the banned users.
      *
-     * @param type           $id
-     * @param User           $ban
+     * @param type $id
+     * @param User $ban
      * @param BanlistRequest $request
      *
      * @return type Response
@@ -151,7 +151,7 @@ class BanlistController extends Controller
     /**
      * delete the banned users.
      *
-     * @param type      $id
+     * @param type $id
      * @param \App\User $ban
      *
      * @return type view

@@ -22,16 +22,17 @@ class LocationCategoryController extends BaseServiceDeskController
     {
         try {
             $locationcategorys = new SdLocationcategories();
-            $locationcategory = $locationcategorys->select('id', 'name', 'parent_id', 'created_at', 'updated_at')->get();
+            $locationcategory = $locationcategorys->select('id', 'name', 'parent_id', 'created_at',
+                'updated_at')->get();
 
             return \Datatable::Collection($locationcategory)
-                            ->showColumns('name', 'created_at', 'updated_at')
-                            ->addColumn('action', function ($model) {
-                                return '<a href='.url('service-desk/location-category-types/'.$model->id.'/edit')." class='btn btn-info btn-xs'>Edit</a>";
-                            })
-                            ->searchColumns('name')
-                            ->orderColumns('name', 'created_at', 'updated_at')
-                            ->make();
+                ->showColumns('name', 'created_at', 'updated_at')
+                ->addColumn('action', function ($model) {
+                    return '<a href=' . url('service-desk/location-category-types/' . $model->id . '/edit') . " class='btn btn-info btn-xs'>Edit</a>";
+                })
+                ->searchColumns('name')
+                ->orderColumns('name', 'created_at', 'updated_at')
+                ->make();
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
@@ -52,7 +53,8 @@ class LocationCategoryController extends BaseServiceDeskController
             $sd_location_catagory = new SdLocationcategories();
             $sd_location_catagory->fill($request->input())->save();
 
-            return \Redirect::route('service-desk.location-category.index')->with('message', 'Location Category  successfully create !!!');
+            return \Redirect::route('service-desk.location-category.index')->with('message',
+                'Location Category  successfully create !!!');
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
@@ -79,7 +81,8 @@ class LocationCategoryController extends BaseServiceDeskController
             if ($sd_location_catagory) {
                 $sd_location_catagory->fill($request->input())->save();
 
-                return \Redirect::route('service-desk.location-category.index')->with('message', 'Location Category successfully Edit !!!');
+                return \Redirect::route('service-desk.location-category.index')->with('message',
+                    'Location Category successfully Edit !!!');
             }
 
             throw new Exception('We can not find your request');
@@ -95,7 +98,8 @@ class LocationCategoryController extends BaseServiceDeskController
             if ($sd_location_catagory) {
                 $sd_location_catagory->delete();
 
-                return \Redirect::route('service-desk.location-category.index')->with('message', 'Location Category successfully delete !!!');
+                return \Redirect::route('service-desk.location-category.index')->with('message',
+                    'Location Category successfully delete !!!');
             }
 
             throw new Exception('We can not find your request');

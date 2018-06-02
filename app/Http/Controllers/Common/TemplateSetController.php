@@ -62,7 +62,14 @@ class TemplateSetController extends Controller
             $sets->save();
             $templates = Template::where('set_id', '=', '1')->get();
             foreach ($templates as $template) {
-                \DB::table('templates')->insert(['set_id' => $sets->id, 'name' => $template->name, 'variable' => $template->variable, 'type' => $template->type, 'subject' => $template->subject, 'message' => $template->message]);
+                \DB::table('templates')->insert([
+                    'set_id' => $sets->id,
+                    'name' => $template->name,
+                    'variable' => $template->variable,
+                    'type' => $template->type,
+                    'subject' => $template->subject,
+                    'message' => $template->message
+                ]);
             }
 
             return redirect('template-sets')->with('success', Lang::get('lang.you_have_created_a_new_template_set'));
@@ -114,7 +121,7 @@ class TemplateSetController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param int                      $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */

@@ -4,16 +4,13 @@ namespace App\Http\Controllers\Installer\helpdesk;
 
 // controllers
 use App\Http\Controllers\Controller;
-// requests
 use App\Http\Requests\helpdesk\DatabaseRequest;
 use App\Http\Requests\helpdesk\InstallerRequest;
 use App\Model\helpdesk\Settings\System;
-// models
 use App\Model\helpdesk\Utility\Date_time_format;
 use App\Model\helpdesk\Utility\Timezones;
 use App\User;
 use Artisan;
-// classes
 use Cache;
 use Config;
 use DB;
@@ -27,6 +24,10 @@ use Session;
 use UnAuth;
 use View;
 
+// requests
+// models
+// classes
+
 /**
  * |=======================================================================
  * |Class: InstallController
@@ -35,7 +36,7 @@ use View;
  *  Class to perform the first install operation without this the database
  *  settings could not be started
  *
- *  @author     Ladybird <info@ladybirdweb.com>
+ * @author     Ladybird <info@ladybirdweb.com>
  */
 class InstallController extends Controller
 {
@@ -48,7 +49,7 @@ class InstallController extends Controller
     {
         // checking if the installation is running for the first time or not
         $directory = base_path();
-        if (file_exists($directory.DIRECTORY_SEPARATOR.'.env')) {
+        if (file_exists($directory . DIRECTORY_SEPARATOR . '.env')) {
             return redirect('/auth/login');
         } else {
             Cache::flush();
@@ -219,10 +220,10 @@ class InstallController extends Controller
             $config .= "{$key}={$val}\n";
         }
         // Write environment file
-        $fp = fopen(base_path().DIRECTORY_SEPARATOR.'example.env', 'w');
+        $fp = fopen(base_path() . DIRECTORY_SEPARATOR . 'example.env', 'w');
         fwrite($fp, $config);
         fclose($fp);
-        rename(base_path().DIRECTORY_SEPARATOR.'example.env', base_path().DIRECTORY_SEPARATOR.'.env');
+        rename(base_path() . DIRECTORY_SEPARATOR . 'example.env', base_path() . DIRECTORY_SEPARATOR . '.env');
 
         return 1;
     }
@@ -275,7 +276,7 @@ class InstallController extends Controller
         try {
             $check_for_pre_installation = System::all();
             if ($check_for_pre_installation) {
-                rename(base_path().DIRECTORY_SEPARATOR.'.env', base_path().DIRECTORY_SEPARATOR.'example.env');
+                rename(base_path() . DIRECTORY_SEPARATOR . '.env', base_path() . DIRECTORY_SEPARATOR . 'example.env');
                 Cache::put('fails', 'The data in database already exist. Please provide fresh database', 2);
 
                 return redirect()->route('configuration');
@@ -283,7 +284,7 @@ class InstallController extends Controller
         } catch (Exception $e) {
         }
         if ($request->input('dummy-data') == 'on') {
-            $path = base_path().'/DB/dummy-data.sql';
+            $path = base_path() . '/DB/dummy-data.sql';
             DB::unprepared(file_get_contents($path));
         } else {
             // migrate database
@@ -331,15 +332,15 @@ class InstallController extends Controller
 
         // creating an user
         $user = User::create([
-                    'first_name'   => $firstname,
-                    'last_name'    => $lastname,
-                    'email'        => $email,
-                    'user_name'    => $username,
-                    'password'     => Hash::make($password),
-                    'assign_group' => 1,
-                    'primary_dpt'  => 1,
-                    'active'       => 1,
-                    'role'         => 'admin',
+            'first_name' => $firstname,
+            'last_name' => $lastname,
+            'email' => $email,
+            'user_name' => $username,
+            'password' => Hash::make($password),
+            'assign_group' => 1,
+            'primary_dpt' => 1,
+            'active' => 1,
+            'role' => 'admin',
         ]);
         // checking if the user have been created
         if ($user) {
@@ -360,17 +361,17 @@ class InstallController extends Controller
         // checking if the installation have been completed or not
         if (Cache::get('step6') == 'step6') {
             $value = '1';
-            $install = base_path().DIRECTORY_SEPARATOR.'.env';
+            $install = base_path() . DIRECTORY_SEPARATOR . '.env';
             $datacontent = File::get($install);
             $datacontent = str_replace('%0%', $value, $datacontent);
             File::put($install, $datacontent);
             // setting email settings in route
             $smtpfilepath = "\App\Http\Controllers\Common\SettingsController::smtp()";
 
-            $link = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+            $link = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
             $pos = strpos($link, 'final');
             $link = substr($link, 0, $pos);
-            $app_url = base_path().DIRECTORY_SEPARATOR.'.env';
+            $app_url = base_path() . DIRECTORY_SEPARATOR . '.env';
             $datacontent2 = File::get($app_url);
             $datacontent2 = str_replace('http://localhost', $link, $datacontent2);
             File::put($app_url, $datacontent2);
@@ -408,16 +409,18 @@ class InstallController extends Controller
 
     public function changeFilePermission()
     {
-        $path1 = base_path().DIRECTORY_SEPARATOR.'.env';
+        $path1 = base_path() . DIRECTORY_SEPARATOR . '.env';
         if (chmod($path1, 0644)) {
             $f1 = substr(sprintf('%o', fileperms($path1)), -3);
             if ($f1 >= '644') {
                 return Redirect::back();
             } else {
-                return Redirect::back()->with('fail_to_change', 'We are unable to change file permission on your server please try to change permission manually.');
+                return Redirect::back()->with('fail_to_change',
+                    'We are unable to change file permission on your server please try to change permission manually.');
             }
         } else {
-            return Redirect::back()->with('fail_to_change', 'We are unable to change file permission on your server please try to change permission manually.');
+            return Redirect::back()->with('fail_to_change',
+                'We are unable to change file permission on your server please try to change permission manually.');
         }
     }
 

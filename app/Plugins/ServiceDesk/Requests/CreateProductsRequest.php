@@ -27,12 +27,12 @@ class CreateProductsRequest extends Request
             //
             'name' => 'required',
             //'asset_type' => 'required',
-            'manufacturer'        => 'required',
-            'Product_status'      => 'required',
-            'mode_procurement'    => 'required',
-               'department_access'=> 'required',
-           'description'          => 'required',
-               'status'           => 'required',
+            'manufacturer' => 'required',
+            'Product_status' => 'required',
+            'mode_procurement' => 'required',
+            'department_access' => 'required',
+            'description' => 'required',
+            'status' => 'required',
 
         ];
     }

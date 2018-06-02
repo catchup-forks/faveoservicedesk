@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Common;
 
 use App\Http\Controllers\Controller;
 use App\Model\Common\TemplateType;
-use App\Model\helpdesk\Agent\Department;
 use App\Model\helpdesk\Email\Emails;
 use App\Model\helpdesk\Settings\Company;
 use App\Model\helpdesk\Settings\Email;
@@ -16,30 +15,6 @@ use Mail;
 
 class PhpMailController extends Controller
 {
-    public function fetch_smtp_details($id)
-    {
-        $emails = Emails::where('id', '=', $id)->first();
-
-        return $emails;
-    }
-
-    /**
-     * Fetching comapny name to send mail.
-     *
-     * @return type
-     */
-    public function company()
-    {
-        $company = Company::Where('id', '=', '1')->first();
-        if ($company->company_name == null) {
-            $company = 'Support Center';
-        } else {
-            $company = $company->company_name;
-        }
-
-        return $company;
-    }
-
     /**
      * Function to choose from address.
      *
@@ -68,6 +43,33 @@ class PhpMailController extends Controller
         $this->setQueue();
         $job = new \App\Jobs\SendEmail($from, $to, $message, $template_variables);
         $this->dispatch($job);
+    }
+
+    public function setQueue()
+    {
+        $short = 'database';
+        $field = [
+            'driver' => 'database',
+            'table' => 'jobs',
+            'queue' => 'default',
+            'expire' => 60,
+        ];
+        $queue = new \App\Model\MailJob\QueueService();
+        $active_queue = $queue->where('status', 1)->first();
+        if ($active_queue) {
+            $short = $active_queue->short_name;
+            $fields = new \App\Model\MailJob\FaveoQueue();
+            $field = $fields->where('service_id', $active_queue->id)->lists('value', 'key')->toArray();
+        }
+        $this->setQueueConfig($short, $field);
+    }
+
+    public function setQueueConfig($short, $field)
+    {
+        \Config::set('queue.default', $short);
+        foreach ($field as $key => $value) {
+            \Config::set("queue.connections.$short.$key", $value);
+        }
     }
 
     public function sendEmail($from, $to, $message, $template_variables)
@@ -126,13 +128,14 @@ class PhpMailController extends Controller
         $set = \App\Model\Common\TemplateSet::where('name', '=', $status->template)->first();
         if ($template) {
             if (isset($set['id'])) {
-                $template_data = \App\Model\Common\Template::where('set_id', '=', $set->id)->where('type', '=', $template->id)->first();
+                $template_data = \App\Model\Common\Template::where('set_id', '=', $set->id)->where('type', '=',
+                    $template->id)->first();
                 $contents = $template_data->message;
                 if ($template_data->variable == 1) {
                     if ($template_data->subject) {
                         $subject = $template_data->subject;
                         if ($ticket_number != null) {
-                            $subject = $subject.' [#'.$ticket_number.']';
+                            $subject = $subject . ' [#' . $ticket_number . ']';
                         }
                     } else {
                         $subject = $message['subject'];
@@ -145,9 +148,53 @@ class PhpMailController extends Controller
                 $subject = null;
             }
 
-            $variables = ['{!!$user!!}', '{!!$agent!!}', '{!!$ticket_number!!}', '{!!$content!!}', '{!!$from!!}', '{!!$ticket_agent_name!!}', '{!!$ticket_client_name!!}', '{!!$ticket_client_email!!}', '{!!$ticket_body!!}', '{!!$ticket_assigner!!}', '{!!$ticket_link_with_number!!}', '{!!$system_error!!}', '{!!$agent_sign!!}', '{!!$department_sign!!}', '{!!$password_reset_link!!}', '{!!$email_address!!}', '{!!$user_password!!}', '{!!$system_from!!}', '{!!$system_link!!}', '{!!$ticket_link!!}', '{!!$merged_ticket_numbers!!}'];
+            $variables = [
+                '{!!$user!!}',
+                '{!!$agent!!}',
+                '{!!$ticket_number!!}',
+                '{!!$content!!}',
+                '{!!$from!!}',
+                '{!!$ticket_agent_name!!}',
+                '{!!$ticket_client_name!!}',
+                '{!!$ticket_client_email!!}',
+                '{!!$ticket_body!!}',
+                '{!!$ticket_assigner!!}',
+                '{!!$ticket_link_with_number!!}',
+                '{!!$system_error!!}',
+                '{!!$agent_sign!!}',
+                '{!!$department_sign!!}',
+                '{!!$password_reset_link!!}',
+                '{!!$email_address!!}',
+                '{!!$user_password!!}',
+                '{!!$system_from!!}',
+                '{!!$system_link!!}',
+                '{!!$ticket_link!!}',
+                '{!!$merged_ticket_numbers!!}'
+            ];
 
-            $data = [$user, $agent, $ticket_number, $content, $from, $ticket_agent_name, $ticket_client_name, $ticket_client_email, $ticket_body, $ticket_assigner, $ticket_link_with_number, $system_error, $agent_sign, $department_sign, $password_reset_link, $email_address, $user_password, $system_from, $system_link, $ticket_link, $merged_ticket_numbers];
+            $data = [
+                $user,
+                $agent,
+                $ticket_number,
+                $content,
+                $from,
+                $ticket_agent_name,
+                $ticket_client_name,
+                $ticket_client_email,
+                $ticket_body,
+                $ticket_assigner,
+                $ticket_link_with_number,
+                $system_error,
+                $agent_sign,
+                $department_sign,
+                $password_reset_link,
+                $email_address,
+                $user_password,
+                $system_from,
+                $system_link,
+                $ticket_link,
+                $merged_ticket_numbers
+            ];
 
             foreach ($variables as $key => $variable) {
                 $messagebody = str_replace($variables[$key], $data[$key], $contents);
@@ -156,7 +203,7 @@ class PhpMailController extends Controller
 
             if ($template_type == 'ticket-reply-agent') {
                 $line = '---Reply above this line--- <br/><br/>';
-                $content = $line.$messagebody;
+                $content = $line . $messagebody;
             } else {
                 $content = $messagebody;
             }
@@ -164,6 +211,13 @@ class PhpMailController extends Controller
         $send = $this->laravelMail($recipants, $recipantname, $subject, $content, $cc, $attachment);
 
         return $send;
+    }
+
+    public function fetch_smtp_details($id)
+    {
+        $emails = Emails::where('id', '=', $id)->first();
+
+        return $emails;
     }
 
     public function setMailConfig($from_address)
@@ -184,21 +238,21 @@ class PhpMailController extends Controller
             $port = '';
         }
         $configs = [
-            'username'   => $username,
-            'from'       => ['address' => $username, 'name' => $fromname],
-            'password'   => $password,
+            'username' => $username,
+            'from' => ['address' => $username, 'name' => $fromname],
+            'password' => $password,
             'encryption' => $smtpsecure,
-            'host'       => $host,
-            'port'       => $port,
-            'driver'     => $protocol,
+            'host' => $host,
+            'port' => $port,
+            'driver' => $protocol,
         ];
         foreach ($configs as $key => $config) {
             if (is_array($config)) {
                 foreach ($config as $from) {
-                    \Config::set('mail.'.$key, $config);
+                    \Config::set('mail.' . $key, $config);
                 }
             } else {
-                \Config::set('mail.'.$key, $config);
+                \Config::set('mail.' . $key, $config);
             }
         }
     }
@@ -221,6 +275,23 @@ class PhpMailController extends Controller
         }
 
         return $value;
+    }
+
+    /**
+     * Fetching comapny name to send mail.
+     *
+     * @return type
+     */
+    public function company()
+    {
+        $company = Company::Where('id', '=', '1')->first();
+        if ($company->company_name == null) {
+            $company = 'Support Center';
+        } else {
+            $company = $company->company_name;
+        }
+
+        return $company;
     }
 
     public function laravelMail($to, $toname, $subject, $data, $cc, $attach)
@@ -263,33 +334,6 @@ class PhpMailController extends Controller
         }
 
         return $mail;
-    }
-
-    public function setQueue()
-    {
-        $short = 'database';
-        $field = [
-            'driver' => 'database',
-            'table'  => 'jobs',
-            'queue'  => 'default',
-            'expire' => 60,
-        ];
-        $queue = new \App\Model\MailJob\QueueService();
-        $active_queue = $queue->where('status', 1)->first();
-        if ($active_queue) {
-            $short = $active_queue->short_name;
-            $fields = new \App\Model\MailJob\FaveoQueue();
-            $field = $fields->where('service_id', $active_queue->id)->lists('value', 'key')->toArray();
-        }
-        $this->setQueueConfig($short, $field);
-    }
-
-    public function setQueueConfig($short, $field)
-    {
-        \Config::set('queue.default', $short);
-        foreach ($field as $key => $value) {
-            \Config::set("queue.connections.$short.$key", $value);
-        }
     }
 
     public function attachmentMode($message, $file, $name, $mime, $mode)

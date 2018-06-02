@@ -4,18 +4,15 @@ namespace App\Http\Controllers\Admin\helpdesk;
 
 // controllers
 use App\Http\Controllers\Controller;
-// requests
 use App\Http\Requests\helpdesk\CompanyRequest;
 use App\Http\Requests\helpdesk\EmailRequest;
 use App\Http\Requests\helpdesk\SystemRequest;
-// models
 use App\Model\helpdesk\Agent\Department;
 use App\Model\helpdesk\Email\Emails;
 use App\Model\helpdesk\Email\Template;
 use App\Model\helpdesk\Manage\Help_topic;
 use App\Model\helpdesk\Manage\Sla_plan;
 use App\Model\helpdesk\Notification\UserNotification;
-use App\Model\helpdesk\Settings\Access;
 use App\Model\helpdesk\Settings\Alert;
 use App\Model\helpdesk\Settings\Company;
 use App\Model\helpdesk\Settings\Email;
@@ -28,12 +25,15 @@ use App\Model\helpdesk\Utility\Date_time_format;
 use App\Model\helpdesk\Utility\Time_format;
 use App\Model\helpdesk\Utility\Timezones;
 use DateTime;
-// classes
 use DB;
 use Exception;
 use Illuminate\Http\Request;
 use Input;
 use Lang;
+
+// requests
+// models
+// classes
 
 /**
  * SettingsController.
@@ -84,7 +84,7 @@ class SettingsController2 extends Controller
     {
         $days = Input::get('no_of_days');
         $date = new DateTime();
-        $date->modify($days.' day');
+        $date->modify($days . ' day');
         $formatted_date = $date->format('Y-m-d H:i:s');
         $markasread = DB::table('user_notification')->where('created_at', '<=', $formatted_date)->get();
         foreach ($markasread as $mark) {
@@ -92,7 +92,8 @@ class SettingsController2 extends Controller
             \App\Model\helpdesk\Notification\Notification::whereId($mark->notification_id)->delete();
         }
 
-        return redirect()->back()->with('success', 'You have deleted all the notification records since '.$days.' days.');
+        return redirect()->back()->with('success',
+            'You have deleted all the notification records since ' . $days . ' days.');
     }
 
     /**
@@ -222,7 +223,7 @@ class SettingsController2 extends Controller
         if (Input::file('logo')) {
             $name = Input::file('logo')->getClientOriginalName();
             $destinationPath = 'uploads/company/';
-            $fileName = rand(0000, 9999).'.'.$name;
+            $fileName = rand(0000, 9999) . '.' . $name;
             Input::file('logo')->move($destinationPath, $fileName);
             $companys->logo = $fileName;
         }
@@ -236,14 +237,15 @@ class SettingsController2 extends Controller
             return redirect('getcompany')->with('success', 'Company Updated Successfully');
         } catch (Exception $e) {
             /* redirect to Index page with Fails Message */
-            return redirect('getcompany')->with('fails', 'Company can not Updated'.'<li>'.$e->getMessage().'</li>');
+            return redirect('getcompany')->with('fails',
+                'Company can not Updated' . '<li>' . $e->getMessage() . '</li>');
         }
     }
 
     /**
      * function to delete system logo.
      *
-     *  @return type string
+     * @return type string
      */
     public function deleteLogo()
     {
@@ -273,8 +275,14 @@ class SettingsController2 extends Controller
      *
      * @return type Response
      */
-    public function getsystem(System $system, Department $department, Timezones $timezone, Date_format $date, Date_time_format $date_time, Time_format $time)
-    {
+    public function getsystem(
+        System $system,
+        Department $department,
+        Timezones $timezone,
+        Date_format $date,
+        Date_time_format $date_time,
+        Time_format $time
+    ) {
         try {
             /* fetch the values of system from system table */
             $systems = $system->whereId('1')->first();
@@ -283,7 +291,8 @@ class SettingsController2 extends Controller
             /* Fetch the values from Timezones table */
             $timezones = $timezone->get();
             /* Direct to System Settings Page */
-            return view('themes.default1.admin.helpdesk.settings.system', compact('systems', 'departments', 'timezones', 'time', 'date', 'date_time'));
+            return view('themes.default1.admin.helpdesk.settings.system',
+                compact('systems', 'departments', 'timezones', 'time', 'date', 'date_time'));
         } catch (Exception $e) {
             return redirect()->back()->with('fails', $e->getMessage());
         }
@@ -311,7 +320,7 @@ class SettingsController2 extends Controller
             return redirect('getsystem')->with('success', 'System Updated Successfully');
         } catch (Exception $e) {
             /* redirect to Index page with Fails Message */
-            return redirect('getsystem')->with('fails', 'System can not Updated'.'<li>'.$e->getMessage().'</li>');
+            return redirect('getsystem')->with('fails', 'System can not Updated' . '<li>' . $e->getMessage() . '</li>');
         }
     }
 
@@ -335,7 +344,8 @@ class SettingsController2 extends Controller
             /* Fetch the values from Help_topic table */
             $topics = $topic->get();
             /* Direct to Ticket Settings Page */
-            return view('themes.default1.admin.helpdesk.settings.ticket', compact('tickets', 'slas', 'topics', 'priority'));
+            return view('themes.default1.admin.helpdesk.settings.ticket',
+                compact('tickets', 'slas', 'topics', 'priority'));
         } catch (Exception $e) {
             return redirect()->back()->with('fails', $e->getMessage());
         }
@@ -356,7 +366,8 @@ class SettingsController2 extends Controller
             /* fetch the values of ticket request  */
             $tickets = $ticket->whereId('1')->first();
             /* fill the values to coompany table */
-            $tickets->fill($request->except('captcha', 'claim_response', 'assigned_ticket', 'answered_ticket', 'agent_mask', 'html', 'client_update'))->save();
+            $tickets->fill($request->except('captcha', 'claim_response', 'assigned_ticket', 'answered_ticket',
+                'agent_mask', 'html', 'client_update'))->save();
             /* insert checkbox to Database  */
             $tickets->captcha = $request->input('captcha');
             $tickets->claim_response = $request->input('claim_response');
@@ -372,7 +383,7 @@ class SettingsController2 extends Controller
             return redirect('getticket')->with('success', 'Ticket Updated Successfully');
         } catch (Exception $e) {
             /* redirect to Index page with Fails Message */
-            return redirect('getticket')->with('fails', 'Ticket can not Updated'.'<li>'.$e->getMessage().'</li>');
+            return redirect('getticket')->with('fails', 'Ticket can not Updated' . '<li>' . $e->getMessage() . '</li>');
         }
     }
 
@@ -416,7 +427,8 @@ class SettingsController2 extends Controller
             /* fetch the values of email request  */
             $emails = $email->whereId('1')->first();
             /* fill the values to email table */
-            $emails->fill($request->except('email_fetching', 'all_emails', 'email_collaborator', 'strip', 'attachment'))->save();
+            $emails->fill($request->except('email_fetching', 'all_emails', 'email_collaborator', 'strip',
+                'attachment'))->save();
             /* insert checkboxes  to database */
             // $emails->email_fetching = $request->input('email_fetching');
             // $emails->notification_cron = $request->input('notification_cron');
@@ -430,7 +442,7 @@ class SettingsController2 extends Controller
             return redirect('getemail')->with('success', 'Email Updated Successfully');
         } catch (Exception $e) {
             /* redirect to Index page with Fails Message */
-            return redirect('getemail')->with('fails', 'Email can not Updated'.'<li>'.$e->getMessage().'</li>');
+            return redirect('getemail')->with('fails', 'Email can not Updated' . '<li>' . $e->getMessage() . '</li>');
         }
     }
 
@@ -488,7 +500,8 @@ class SettingsController2 extends Controller
             return redirect('job-scheduler')->with('success', Lang::get('lang.job-scheduler-success'));
         } catch (Exception $e) {
             /* redirect to Index page with Fails Message */
-            return redirect('job-scheduler')->with('fails', Lang::get('lang.job-scheduler-error').'<li>'.$e->getMessage().'</li>');
+            return redirect('job-scheduler')->with('fails',
+                Lang::get('lang.job-scheduler-error') . '<li>' . $e->getMessage() . '</li>');
         }
     }
 
@@ -588,7 +601,8 @@ class SettingsController2 extends Controller
             return redirect('getresponder')->with('success', 'Responder Updated Successfully');
         } catch (Exception $e) {
             /* redirect to Index page with Fails Message */
-            return redirect('getresponder')->with('fails', 'Responder can not Updated'.'<li>'.$e->getMessage().'</li>');
+            return redirect('getresponder')->with('fails',
+                'Responder can not Updated' . '<li>' . $e->getMessage() . '</li>');
         }
     }
 
@@ -614,7 +628,7 @@ class SettingsController2 extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param type         $id
+     * @param type $id
      * @param type Alert   $alert
      * @param type Request $request
      *
@@ -676,14 +690,14 @@ class SettingsController2 extends Controller
             return redirect('getalert')->with('success', 'Alert Updated Successfully');
         } catch (Exception $e) {
             /* redirect to Index page with Fails Message */
-            return redirect('getalert')->with('fails', 'Alert can not Updated'.'<li>'.$e->getMessage().'</li>');
+            return redirect('getalert')->with('fails', 'Alert can not Updated' . '<li>' . $e->getMessage() . '</li>');
         }
     }
 
     /**
-     * 	To display the list of ratings in the system.
+     *    To display the list of ratings in the system.
      *
-     *  @return type View
+     * @return type View
      */
     public function RatingSettings()
     {
@@ -693,16 +707,20 @@ class SettingsController2 extends Controller
     }
 
     /**
-     * 	To store rating data.
+     *    To store rating data.
      *
-     *  @return type Redirect
+     * @return type Redirect
      */
     public function PostRatingSettings($slug)
     {
         $name = Input::get('rating_name');
         $publish = Input::get('publish');
         $modify = Input::get('modify');
-        DB::table('settings_ratings')->whereSlug($slug)->update(['rating_name' => $name, 'publish' => $publish, 'modify' => $modify]);
+        DB::table('settings_ratings')->whereSlug($slug)->update([
+            'rating_name' => $name,
+            'publish' => $publish,
+            'modify' => $modify
+        ]);
 
         return redirect()->back()->with('success', 'Successfully updated');
     }
@@ -720,7 +738,7 @@ class SettingsController2 extends Controller
     /**
      *  To delete a type of rating.
      *
-     * 	@return type Redirect
+     * @return type Redirect
      */
     public function RatingDelete($slug)
     {
@@ -732,7 +750,7 @@ class SettingsController2 extends Controller
     /**
      *  Generate Api key.
      *
-     *  @return type json
+     * @return type json
      */
     public function generateApiKey()
     {

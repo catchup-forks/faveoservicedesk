@@ -18,7 +18,7 @@ class SdChanges extends Model
         'impact_id',
         'location_id',
         'approval_id',
-        ];
+    ];
 
     /**
      * get the description of this model.
@@ -62,11 +62,6 @@ class SdChanges extends Model
         return $value;
     }
 
-    public function cab()
-    {
-        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Cab\Cab', 'approval_id');
-    }
-
     public function approvers()
     {
         $value = '--';
@@ -77,11 +72,25 @@ class SdChanges extends Model
         if ($attr) {
             $attrs = $this->cab()->first();
             if ($attrs) {
-                $value = "<a href='".url('service-desk/cabs/'.$attr.'/'.$owner.'/show')."'>$attrs->name</a>";
+                $value = "<a href='" . url('service-desk/cabs/' . $attr . '/' . $owner . '/show') . "'>$attrs->name</a>";
             }
         }
         //dd($value);
         return ucfirst($value);
+    }
+
+    public function cab()
+    {
+        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Cab\Cab', 'approval_id');
+    }
+
+    public function delete()
+    {
+        $id = $this->id;
+        $this->deleteAttachment($id);
+        $this->detachRelation($id);
+        $this->releaseRelaion()->first()->delete();
+        parent::delete();
     }
 
     public function deleteAttachment($id)
@@ -101,13 +110,12 @@ class SdChanges extends Model
         }
     }
 
-    public function delete()
+    public function releaseRelaion()
     {
-        $id = $this->id;
-        $this->deleteAttachment($id);
-        $this->detachRelation($id);
-        $this->releaseRelaion()->first()->delete();
-        parent::delete();
+        $through = "App\Plugins\ServiceDesk\Model\Changes\ChangeReleaseRelation";
+        $firstKey = 'change_id';
+
+        return $this->hasMany($through, $firstKey);
     }
 
     public function attachments()
@@ -119,11 +127,6 @@ class SdChanges extends Model
         $attachment = $attachments->where('owner', $owner)->get();
 
         return $attachment;
-    }
-
-    public function locationRelation()
-    {
-        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Releases\SdLocations', 'location_id');
     }
 
     /**
@@ -138,16 +141,16 @@ class SdChanges extends Model
         if ($attr) {
             $attrs = $this->locationRelation()->first();
             if ($attrs) {
-                $value = '<a href='.url('service-desk/location-types/'.$attr.'/show').">$attrs->title</a>";
+                $value = '<a href=' . url('service-desk/location-types/' . $attr . '/show') . ">$attrs->title</a>";
             }
         }
 
         return ucfirst($value);
     }
 
-    public function status()
+    public function locationRelation()
     {
-        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Changes\SdChangestatus', 'status_id');
+        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Releases\SdLocations', 'location_id');
     }
 
     /**
@@ -169,9 +172,9 @@ class SdChanges extends Model
         return ucfirst($value);
     }
 
-    public function priority()
+    public function status()
     {
-        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Changes\SdChangepriorities', 'priority_id');
+        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Changes\SdChangestatus', 'status_id');
     }
 
     /**
@@ -191,6 +194,11 @@ class SdChanges extends Model
         }
 
         return ucfirst($value);
+    }
+
+    public function priority()
+    {
+        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Changes\SdChangepriorities', 'priority_id');
     }
 
     /**
@@ -213,6 +221,24 @@ class SdChanges extends Model
         return ucfirst($value);
     }
 
+    public function getAssets()
+    {
+        $ids = $this->assets();
+        $asset = new \App\Plugins\ServiceDesk\Model\Assets\SdAssets();
+        $assets = '';
+        if (count($ids) > 0) {
+            foreach ($ids as $id) {
+                $ass = $asset->find($id);
+                if ($ass) {
+                    $value = '<a href=' . url('service-desk/assets/' . $id . '/show') . '>' . ucfirst($ass->name) . '</a>';
+                    $assets .= $value . '</br>';
+                }
+            }
+        }
+
+        return $assets;
+    }
+
     public function assets()
     {
         $table = $this->table;
@@ -226,29 +252,6 @@ class SdChanges extends Model
         }
 
         return $ids;
-    }
-
-    public function getAssets()
-    {
-        $ids = $this->assets();
-        $asset = new \App\Plugins\ServiceDesk\Model\Assets\SdAssets();
-        $assets = '';
-        if (count($ids) > 0) {
-            foreach ($ids as $id) {
-                $ass = $asset->find($id);
-                if ($ass) {
-                    $value = '<a href='.url('service-desk/assets/'.$id.'/show').'>'.ucfirst($ass->name).'</a>';
-                    $assets .= $value.'</br>';
-                }
-            }
-        }
-
-        return $assets;
-    }
-
-    public function changeType()
-    {
-        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Changes\SdChangetypes', 'change_type_id');
     }
 
     public function changeTypes()
@@ -265,12 +268,9 @@ class SdChanges extends Model
         return ucfirst($value);
     }
 
-    public function releaseRelaion()
+    public function changeType()
     {
-        $through = "App\Plugins\ServiceDesk\Model\Changes\ChangeReleaseRelation";
-        $firstKey = 'change_id';
-
-        return $this->hasMany($through, $firstKey);
+        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Changes\SdChangetypes', 'change_type_id');
     }
 
     public function release()
@@ -322,7 +322,7 @@ class SdChanges extends Model
     {
         $id = $this->attributes['id'];
         $title = $this->attributes['subject'];
-        $subject = '<a href='.url('service-desk/changes/'.$id.'/show').'>'.$title.'</a>';
+        $subject = '<a href=' . url('service-desk/changes/' . $id . '/show') . '>' . $title . '</a>';
 
         return $subject;
     }

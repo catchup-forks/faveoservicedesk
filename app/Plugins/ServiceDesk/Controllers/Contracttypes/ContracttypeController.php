@@ -25,13 +25,13 @@ class ContracttypeController extends BaseServiceDeskController
             $contract_type = $contract_types->select('id', 'name', 'created_at', 'updated_at')->get();
 
             return \Datatable::Collection($contract_type)
-                            ->showColumns('name', 'created_at', 'updated_at')
-                            ->addColumn('action', function ($model) {
-                                return '<a href='.url('service-desk/contract-types/'.$model->id.'/edit')." class='btn btn-info btn-xs'>Edit</a>";
-                            })
-                            ->searchColumns('name', 'created_at', 'updated_at')
-                            ->orderColumns('name', 'created_at', 'updated_at')
-                            ->make();
+                ->showColumns('name', 'created_at', 'updated_at')
+                ->addColumn('action', function ($model) {
+                    return '<a href=' . url('service-desk/contract-types/' . $model->id . '/edit') . " class='btn btn-info btn-xs'>Edit</a>";
+                })
+                ->searchColumns('name', 'created_at', 'updated_at')
+                ->orderColumns('name', 'created_at', 'updated_at')
+                ->make();
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
@@ -52,7 +52,8 @@ class ContracttypeController extends BaseServiceDeskController
             $sd_contractstypes = new ContractType();
             $sd_contractstypes->fill($request->input())->save();
 
-            return \Redirect::route('service-desk.contractstypes.index')->with('message', 'Contract Types successfully create');
+            return \Redirect::route('service-desk.contractstypes.index')->with('message',
+                'Contract Types successfully create');
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
@@ -79,7 +80,8 @@ class ContracttypeController extends BaseServiceDeskController
             if ($sd_contractstypes) {
                 $sd_contractstypes->fill($request->input())->save();
 
-                return \Redirect::route('service-desk.contractstypes.index')->with('message', 'Contract Types successfully Edit');
+                return \Redirect::route('service-desk.contractstypes.index')->with('message',
+                    'Contract Types successfully Edit');
             }
 
             throw new Exception('We can not find your request');
@@ -95,7 +97,8 @@ class ContracttypeController extends BaseServiceDeskController
             if ($sd_contractstypes) {
                 $sd_contractstypes->delete();
 
-                return \Redirect::route('service-desk.contractstypes.index')->with('message', 'Contract Types successfully delete');
+                return \Redirect::route('service-desk.contractstypes.index')->with('message',
+                    'Contract Types successfully delete');
             }
 
             throw new Exception('We can not find your request');

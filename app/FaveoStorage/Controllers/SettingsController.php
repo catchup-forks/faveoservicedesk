@@ -18,13 +18,13 @@ class SettingsController extends Controller
         return ' <div class="col-md-2 col-sm-6">
                     <div class="settingiconblue">
                         <div class="settingdivblue">
-                            <a href="'.url('storage').'">
+                            <a href="' . url('storage') . '">
                                 <span class="fa-stack fa-2x">
                                     <i class="fa fa-save fa-stack-1x"></i>
                                 </span>
                             </a>
                         </div>
-                        <p class="box-title" >'.Lang::get('storage::lang.storage').'</p>
+                        <p class="box-title" >' . Lang::get('storage::lang.storage') . '</p>
                     </div>
                 </div>';
     }
@@ -49,6 +49,28 @@ class SettingsController extends Controller
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
+    }
+
+    public function directories($root = '')
+    {
+        if ($root == '') {
+            $root = base_path();
+        }
+
+        $iter = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($root, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::SELF_FIRST,
+            RecursiveIteratorIterator::CATCH_GET_CHILD // Ignore "Permission denied"
+        );
+
+        $paths = [$root];
+        foreach ($iter as $path => $dir) {
+            if ($dir->isDir()) {
+                $paths[$path] = $path;
+            }
+        }
+
+        return $paths;
     }
 
     public function postSettings(Request $request)
@@ -83,30 +105,10 @@ class SettingsController extends Controller
     public function save($key, $value)
     {
         CommonSettings::create([
-            'option_name'    => 'storage',
+            'option_name' => 'storage',
             'optional_field' => $key,
-            'option_value'   => $value,
+            'option_value' => $value,
         ]);
-    }
-
-    public function directories($root = '')
-    {
-        if ($root == '') {
-            $root = base_path();
-        }
-
-        $iter = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator($root, RecursiveDirectoryIterator::SKIP_DOTS), RecursiveIteratorIterator::SELF_FIRST, RecursiveIteratorIterator::CATCH_GET_CHILD // Ignore "Permission denied"
-        );
-
-        $paths = [$root];
-        foreach ($iter as $path => $dir) {
-            if ($dir->isDir()) {
-                $paths[$path] = $path;
-            }
-        }
-
-        return $paths;
     }
 
     public function attachment()
@@ -118,9 +120,9 @@ class SettingsController extends Controller
     public function activate()
     {
         if (!\Schema::hasColumn('ticket_attachment', 'driver')) {
-            $path = 'app'.DIRECTORY_SEPARATOR.'FaveoStorage'.DIRECTORY_SEPARATOR.'database'.DIRECTORY_SEPARATOR.'migrations';
+            $path = 'app' . DIRECTORY_SEPARATOR . 'FaveoStorage' . DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migrations';
             Artisan::call('migrate', [
-                '--path'  => $path,
+                '--path' => $path,
                 '--force' => true,
             ]);
         }

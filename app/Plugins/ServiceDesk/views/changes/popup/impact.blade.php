@@ -1,5 +1,5 @@
-<?php 
-$impact ="";
+<?php
+$impact = "";
 if ($change->getGeneralByIdentifier('impact')) {
     $impact = $change->getGeneralByIdentifier('impact')->value;
 }
@@ -9,24 +9,25 @@ if ($change->getGeneralByIdentifier('impact')) {
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title">Impact</h4>
                 {!! Form::open(['url'=>'service-desk/general/'.$change->id.'/sd_changes','files'=>true]) !!}
             </div>
             <div class="modal-body">
                 <!-- Form  -->
                 <div class="row">
-                    
+
                     <div class="col-md-12">
-                       {!! Form::label('impact','Impact') !!}
-                       {!! Form::textarea('impact',$impact,['class'=>'form-control','id'=>'impact']) !!}
-                       {!! Form::hidden('identifier','impact') !!}
+                        {!! Form::label('impact','Impact') !!}
+                        {!! Form::textarea('impact',$impact,['class'=>'form-control','id'=>'impact']) !!}
+                        {!! Form::hidden('identifier','impact') !!}
                     </div>
-                     <div class="col-md-12">
-                       {!! Form::label('attachment','Attachment') !!}
-                       {!! Form::file('attachment[]') !!}
+                    <div class="col-md-12">
+                        {!! Form::label('attachment','Attachment') !!}
+                        {!! Form::file('attachment[]') !!}
                     </div>
-                    
+
                 </div>
 
             </div>

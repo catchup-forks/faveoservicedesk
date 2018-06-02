@@ -1,15 +1,15 @@
 @extends('themes.default1.admin.layout.admin')
 
 @section('Emails')
-active
+    active
 @stop
 
 @section('emails-bar')
-active
+    active
 @stop
 
 @section('emails')
-class="active"
+    class="active"
 @stop
 
 @section('HeadInclude')
@@ -21,85 +21,86 @@ class="active"
 <!-- /header -->
 <!-- breadcrumbs -->
 @section('breadcrumbs')
-<ol class="breadcrumb">
+    <ol class="breadcrumb">
 
-</ol>
+    </ol>
 @stop
 <!-- /breadcrumbs -->
 <!-- content -->
 @section('content')
-	<div class="row">
-<div class="col-md-12">
-<div class="box box-primary">
-<div class="box-header">
-	<h2 class="box-title">{{Lang::get('lang.templates')}}</h2>
-</div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h2 class="box-title">{{Lang::get('lang.templates')}}</h2>
+                </div>
 
-<div class="box-body table-responsive">
+                <div class="box-body table-responsive">
 
-<!-- check whether success or not -->
+                    <!-- check whether success or not -->
 
-@if(Session::has('success'))
-    <div class="alert alert-success alert-dismissable">
-        <i class="fa  fa-check-circle"></i>
-        <b>Success!</b>
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        {{Session::get('success')}}
-    </div>
-    @endif
-    <!-- failure message -->
-    @if(Session::has('fails'))
-    <div class="alert alert-danger alert-dismissable">
-        <i class="fa fa-ban"></i>
-        <b>Fail!</b>
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        {{Session::get('fails')}}
-    </div>
-    @endif
+                    @if(Session::has('success'))
+                        <div class="alert alert-success alert-dismissable">
+                            <i class="fa  fa-check-circle"></i>
+                            <b>Success!</b>
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            {{Session::get('success')}}
+                        </div>
+                    @endif
+                <!-- failure message -->
+                    @if(Session::has('fails'))
+                        <div class="alert alert-danger alert-dismissable">
+                            <i class="fa fa-ban"></i>
+                            <b>Fail!</b>
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            {{Session::get('fails')}}
+                        </div>
+                    @endif
 
-				<table id="example1" class="table table-bordered table-striped">
-	<tr>
-        <th>{{Lang::get('lang.name')}}</th>
-        <th>{{Lang::get('lang.description')}}</th>
-	</tr>
-	<!-- Foreach @var templates as @var template -->
-        
-		@foreach($templates as $template)
-                <?php if ($template === '.' or $template === '..') continue; ?>
-	<tr>
-		<!-- Template Name with Link to Edit page along Id -->
-		<td><a href="{{route('template.read',[$template,$directory])}}"><?php $parts = explode('.',$template); $names  = $parts[0]; $name = str_replace('-', ' ', $names); $cname = ucfirst($name); echo $cname?></a></td>
-        <td>{{ Lang::get('lang.'.$cname) }}</td>
-		<!-- template Status : if status==1 active -->
-		<!-- Deleting Fields -->
-	</tr>
-@endforeach
+                    <table id="example1" class="table table-bordered table-striped">
+                        <tr>
+                            <th>{{Lang::get('lang.name')}}</th>
+                            <th>{{Lang::get('lang.description')}}</th>
+                        </tr>
+                        <!-- Foreach @var templates as @var template -->
 
-	<!-- Set a link to Create Page -->
+                        @foreach($templates as $template)
+                            <?php if ($template === '.' or $template === '..') continue; ?>
+                            <tr>
+                                <!-- Template Name with Link to Edit page along Id -->
+                                <td>
+                                    <a href="{{route('template.read',[$template,$directory])}}"><?php $parts = explode('.',
+                                            $template); $names = $parts[0]; $name = str_replace('-', ' ',
+                                            $names); $cname = ucfirst($name); echo $cname?></a></td>
+                                <td>{{ Lang::get('lang.'.$cname) }}</td>
+                                <!-- template Status : if status==1 active -->
+                                <!-- Deleting Fields -->
+                            </tr>
+                    @endforeach
+
+                    <!-- Set a link to Create Page -->
 
 
+                    </table>
+                    @stop
+                </div><!-- /.box -->
+            @section('FooterInclude')
+                <!-- page script -->
+                    <script type="text/javascript">
+                        $(function () {
+                            $("#example1").dataTable();
+                            $('#example2').dataTable({
+                                "bPaginate": true,
+                                "bLengthChange": false,
+                                "bFilter": false,
+                                "bSort": true,
+                                "bInfo": true,
+                                "bAutoWidth": false
+                            });
+                        });
 
+                    </script>
 
-</table>
-@stop
-</div><!-- /.box -->
-@section('FooterInclude')
-<!-- page script -->
-<script type="text/javascript">
-$(function() {
-    $("#example1").dataTable();
-    $('#example2').dataTable({
-        "bPaginate": true,
-        "bLengthChange": false,
-        "bFilter": false,
-        "bSort": true,
-        "bInfo": true,
-        "bAutoWidth": false
-    });
-});
-
-</script>
-
-@stop
-@stop
-<!-- /content -->
+            @stop
+            @stop
+            <!-- /content -->

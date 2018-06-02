@@ -3,17 +3,17 @@
 @stop
 <!-- header -->
 @section('PageHeader')
-<h3>
-   Dashboard
-   <!-- <small>Add</small> -->
-</h3>
+    <h3>
+        Dashboard
+        <!-- <small>Add</small> -->
+    </h3>
 @stop
 <!-- /header -->
 <!-- breadcrumbs -->
 @section('breadcrumbs')
-<ol class="breadcrumb">
+    <ol class="breadcrumb">
 
-</ol>
+    </ol>
 @stop
 <!-- /breadcrumbs -->
 <!-- content -->

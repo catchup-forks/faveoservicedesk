@@ -7,14 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Location extends Model
 {
     protected $table = 'sd_locations';
-    protected $fillable = ['id', 'name', 'created_at', 'updated_at',
+    protected $fillable = [
+        'id',
+        'name',
+        'created_at',
+        'updated_at',
 
     ];
-
-    public function departmentRelation()
-    {
-        return $this->belongsTo('App\Model\helpdesk\Agent\Department', 'departments');
-    }
 
     /**
      * get the department name.
@@ -35,9 +34,9 @@ class Location extends Model
         return ucfirst($value);
     }
 
-    public function category()
+    public function departmentRelation()
     {
-        return $this->belongsTo('App\Itil\Models\Changes\SdLocationcategories', 'location_category_id');
+        return $this->belongsTo('App\Model\helpdesk\Agent\Department', 'departments');
     }
 
     public function locationCategory()
@@ -54,11 +53,24 @@ class Location extends Model
         return ucfirst($value);
     }
 
-    public function getOrganizationRelation()
+    public function category()
     {
-        $related = "App\Model\helpdesk\Agent_panel\Organization";
+        return $this->belongsTo('App\Itil\Models\Changes\SdLocationcategories', 'location_category_id');
+    }
 
-        return $this->belongsTo($related, 'organization');
+    public function getOrgWithLink()
+    {
+        $name = '--';
+        $org = $this->getOrganization();
+        if ($org !== '') {
+            $orgs = $this->getOrganizationRelation()->first();
+            if ($orgs) {
+                $id = $orgs->id;
+                $name = '<a href=' . url('organizations/' . $id) . '>' . ucfirst($org) . '</a>';
+            }
+        }
+
+        return $name;
     }
 
     public function getOrganization()
@@ -74,18 +86,10 @@ class Location extends Model
         return $name;
     }
 
-    public function getOrgWithLink()
+    public function getOrganizationRelation()
     {
-        $name = '--';
-        $org = $this->getOrganization();
-        if ($org !== '') {
-            $orgs = $this->getOrganizationRelation()->first();
-            if ($orgs) {
-                $id = $orgs->id;
-                $name = '<a href='.url('organizations/'.$id).'>'.ucfirst($org).'</a>';
-            }
-        }
+        $related = "App\Model\helpdesk\Agent_panel\Organization";
 
-        return $name;
+        return $this->belongsTo($related, 'organization');
     }
 }

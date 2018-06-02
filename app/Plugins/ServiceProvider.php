@@ -12,9 +12,16 @@ abstract class ServiceProvider extends \Illuminate\Support\ServiceProvider
             //                'app/' . $module => app_path() . '/Plugins/' . $module . '/config',
             //            ]);
             $this->publishes([
-                'app/plugins/'.$module.'/Config/config.php' => config_path($module.'/config.php'),
+                'app/plugins/' . $module . '/Config/config.php' => config_path($module . '/config.php'),
             ]);
         }
+    }
+
+    public function getModule($args)
+    {
+        $module = (isset($args[0]) and is_string($args[0])) ? $args[0] : null;
+
+        return $module;
     }
 
     public function register()
@@ -26,21 +33,14 @@ abstract class ServiceProvider extends \Illuminate\Support\ServiceProvider
             //            ]);
 
             $this->publishes([
-                'app/plugins/'.$module.'/Config/config.php' => config_path($module.'/config.php'),
+                'app/plugins/' . $module . '/Config/config.php' => config_path($module . '/config.php'),
             ]);
 
             // Add routes
-            $routes = app_path().'/Plugins/'.$module.'/routes.php';
+            $routes = app_path() . '/Plugins/' . $module . '/routes.php';
             if (file_exists($routes)) {
                 require $routes;
             }
         }
-    }
-
-    public function getModule($args)
-    {
-        $module = (isset($args[0]) and is_string($args[0])) ? $args[0] : null;
-
-        return $module;
     }
 }

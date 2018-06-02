@@ -11,6 +11,10 @@ class Approval extends BaseModel
     protected $table = 'approval';
     /* Set fillable fields in table */
     protected $fillable = [
-        'id', 'name', 'status', 'created_at', 'updated_at',
+        'id',
+        'name',
+        'status',
+        'created_at',
+        'updated_at',
     ];
 }

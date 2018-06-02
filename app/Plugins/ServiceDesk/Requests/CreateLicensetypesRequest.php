@@ -26,7 +26,7 @@ class CreateLicensetypesRequest extends Request
         $id = $this->segment(3);
 
         return [
-                    'name' => 'required|unique:sd_license_types,name,'.$id,
+            'name' => 'required|unique:sd_license_types,name,' . $id,
         ];
     }
 }

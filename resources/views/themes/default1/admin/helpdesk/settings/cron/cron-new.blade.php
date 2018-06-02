@@ -4,53 +4,54 @@
         <h3 class="box-title">{{Lang::get('lang.cron_settings')}}</h3>
     </div>
 
-    <div class="box-body table-responsive"style="overflow:hidden;">
+    <div class="box-body table-responsive" style="overflow:hidden;">
         @if (count($errors) > 0)
-        <div class="alert alert-danger">
-            <strong>Whoops!</strong> There were some problems with your input.<br><br>
-            <ul>
-                @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
+            <div class="alert alert-danger">
+                <strong>Whoops!</strong> There were some problems with your input.<br><br>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
         @endif
         @if($warn!=="")
-        <div class="alert alert-warning alert-dismissable">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            {!!$warn!!}
-        </div>
+            <div class="alert alert-warning alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                {!!$warn!!}
+            </div>
         @endif
-        <!-- check whether success or not -->
+    <!-- check whether success or not -->
         @if(Session::has('success'))
-        <div class="alert alert-success alert-dismissable">
-            <i class="fa  fa-check-circle"></i>
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            {!!Session::get('success')!!}
-        </div>
+            <div class="alert alert-success alert-dismissable">
+                <i class="fa  fa-check-circle"></i>
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                {!!Session::get('success')!!}
+            </div>
         @endif
-        <!-- failure message -->
+    <!-- failure message -->
         @if(Session::has('fails'))
-        <div class="alert alert-danger alert-dismissable">
-            <i class="fa fa-ban"></i>
-            <b>{!! Lang::get('lang.alert') !!}!</b>
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            {!!Session::get('fails')!!}
-        </div>
-        @endif
-<!--        <div class="alert  alert-dismissable" style="background: #F3F3F3">
+            <div class="alert alert-danger alert-dismissable">
+                <i class="fa fa-ban"></i>
+                <b>{!! Lang::get('lang.alert') !!}!</b>
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                {!!Session::get('fails')!!}
+            </div>
+    @endif
+    <!--        <div class="alert  alert-dismissable" style="background: #F3F3F3">
             <i class="fa  fa-info-circle"></i>&nbsp;Please set this command in your cron
             {!! $command !!}
-        </div>-->
-        
-         <div class="alert  alert-dismissable" style="background: #F3F3F3">
+            </div>-->
+
+        <div class="alert  alert-dismissable" style="background: #F3F3F3">
             <i class="fa  fa-info-circle"></i>&nbsp;Please set this command in your cron
             {!! $shared !!}
         </div>
-        
+
         <div class="alert  alert-dismissable" style="background: #F3F3F3">
             <i class="fa  fa-info-circle"></i>&nbsp;{!!Lang::get('lang.crone-url-message')!!}
-            <a href="http://ladybirdweb.com/support/show/cron-job-scheduling" style="color:black" target="blank">{!!Lang::get('lang.click')!!}</a> {!!Lang::get('lang.check-cron-set')!!}
+            <a href="http://ladybirdweb.com/support/show/cron-job-scheduling" style="color:black"
+               target="blank">{!!Lang::get('lang.click')!!}</a> {!!Lang::get('lang.check-cron-set')!!}
         </div>
         <div class="col-md-6">
             <div class="info-box">
@@ -61,7 +62,8 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             {!! Form::label('email_fetching',Lang::get('lang.email_fetch')) !!}<br>
-                            {!! Form::checkbox('email_fetching',1,$condition->checkActiveJob()['fetching'],['id'=>'email_fetching']) !!}&nbsp;{{Lang::get('lang.fetch_auto-corn')}}
+                            {!! Form::checkbox('email_fetching',1,$condition->checkActiveJob()['fetching'],['id'=>'email_fetching']) !!}
+                            &nbsp;{{Lang::get('lang.fetch_auto-corn')}}
                         </div>
 
                     </div>
@@ -84,7 +86,8 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             {!! Form::label('notification_cron',Lang::get('lang.notification-email')) !!}<br>
-                            {!! Form::checkbox('notification_cron',1,$condition->checkActiveJob()['notification'],['id'=>'notification_cron']) !!}&nbsp;{{Lang::get('lang.cron_notification')}}
+                            {!! Form::checkbox('notification_cron',1,$condition->checkActiveJob()['notification'],['id'=>'notification_cron']) !!}
+                            &nbsp;{{Lang::get('lang.cron_notification')}}
                         </div>
                     </div>
                     <div class="col-md-6" id="notification">
@@ -105,7 +108,7 @@
                         <div class="form-group">
                             {!! Form::label('condition',Lang::get('lang.auto_close_workflow')) !!}<br>
                             {!! Form::checkbox('condition',1,$condition->checkActiveJob()['work'],['id'=>'auto_close']) !!}
-                                   {{Lang::get('lang.enable_workflow')}}
+                            {{Lang::get('lang.enable_workflow')}}
                         </div>
                     </div>
                     <div class="col-md-6" id="workflow">
@@ -137,6 +140,7 @@
             command = $("#fetching-command").val();
             showDailyAt(command);
         });
+
         function check(checked, id) {
             if (checked) {
                 $("#fetching").show();
@@ -144,6 +148,7 @@
                 $("#fetching").hide();
             }
         }
+
         function showDailyAt(command) {
             if (command === 'dailyAt') {
                 $("#fetching-daily-at").show();
@@ -165,6 +170,7 @@
             command = $("#notification-command").val();
             showDailyAt(command);
         });
+
         function check(checked, id) {
             if (checked) {
                 $("#notification").show();
@@ -172,6 +178,7 @@
                 $("#notification").hide();
             }
         }
+
         function showDailyAt(command) {
             if (command === 'dailyAt') {
                 $("#notification-daily-at").show();
@@ -193,6 +200,7 @@
             command = $("#workflow-command").val();
             showDailyAt(command);
         });
+
         function check(checked, id) {
             if (checked) {
                 $("#workflow").show();
@@ -200,6 +208,7 @@
                 $("#workflow").hide();
             }
         }
+
         function showDailyAt(command) {
             if (command == 'dailyAt') {
                 $("#workflow-daily-at").show();
@@ -208,8 +217,8 @@
             }
         }
     });
-//follow up
-     $(document).ready(function () {
+    //follow up
+    $(document).ready(function () {
         var checked = $("#notification_cron1").is(':checked');
         check(checked, 'notification_cron1');
         $("#notification_cron1").on('click', function () {
@@ -222,6 +231,7 @@
             command = $("#notification-command1").val();
             showDailyAt(command);
         });
+
         function check(checked, id) {
             if (checked) {
                 $("#notification1").show();
@@ -229,6 +239,7 @@
                 $("#notification1").hide();
             }
         }
+
         function showDailyAt(command) {
             if (command === 'dailyAt') {
                 $("#notification-daily-at1").show();

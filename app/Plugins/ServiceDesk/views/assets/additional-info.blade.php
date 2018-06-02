@@ -10,26 +10,26 @@
 
                     <?php $i = 1; ?>
                     @forelse($asset->additionalData() as $index=>$data)
-                    <?php
-                    if ($i/2 == 0) {
-                        echo "<tr>";
-                    }
-                    ?>
-                    <td>{{$index}}</td>
-                    <td>
-                        {!!$data!!}
-                    </td>
-                    <?php
-                    if ($i % 2 == 0) {
-                        echo "</tr>";
-                    }
-                    $i++;
-                    ?>
-                    @empty 
-                    <td>No Additional Informations</td>
-                    @endforelse
+                        <?php
+                        if ($i / 2 == 0) {
+                            echo "<tr>";
+                        }
+                        ?>
+                        <td>{{$index}}</td>
+                        <td>
+                            {!!$data!!}
+                        </td>
+                        <?php
+                        if ($i % 2 == 0) {
+                            echo "</tr>";
+                        }
+                        $i++;
+                        ?>
+                    @empty
+                        <td>No Additional Informations</td>
+                        @endforelse
 
-                    </tr>
+                        </tr>
 
                 </table>
             </div>

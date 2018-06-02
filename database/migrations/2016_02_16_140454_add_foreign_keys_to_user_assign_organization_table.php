@@ -13,8 +13,10 @@ class AddForeignKeysToUserAssignOrganizationTable extends Migration
     public function up()
     {
         Schema::table('user_assign_organization', function (Blueprint $table) {
-            $table->foreign('org_id', 'user_assign_organization_ibfk_1')->references('id')->on('organization')->onUpdate('NO ACTION')->onDelete('RESTRICT');
-            $table->foreign('user_id', 'user_assign_organization_ibfk_2')->references('id')->on('users')->onUpdate('NO ACTION')->onDelete('RESTRICT');
+            $table->foreign('org_id',
+                'user_assign_organization_ibfk_1')->references('id')->on('organization')->onUpdate('NO ACTION')->onDelete('RESTRICT');
+            $table->foreign('user_id',
+                'user_assign_organization_ibfk_2')->references('id')->on('users')->onUpdate('NO ACTION')->onDelete('RESTRICT');
         });
     }
 

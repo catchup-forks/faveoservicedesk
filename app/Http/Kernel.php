@@ -28,7 +28,7 @@ class Kernel extends HttpKernel
     protected $middlewareGroups = [
         'web' => [
             \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
-            \App\Http\Middleware\EncryptCookies::class,
+            //\App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
@@ -46,19 +46,19 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-        'auth'        => \App\Http\Middleware\Authenticate::class,
-        'auth.basic'  => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'can'         => \Illuminate\Foundation\Http\Middleware\Authorize::class,
-        'guest'       => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'throttle'    => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'roles'       => \App\Http\Middleware\CheckRole::class,
-        'role.agent'  => \App\Http\Middleware\CheckRoleAgent::class,
-        'role.user'   => \App\Http\Middleware\CheckRoleUser::class,
-        'api'         => \App\Http\Middleware\ApiKey::class,
-        'jwt.auth'    => \Tymon\JWTAuth\Middleware\GetUserFromToken::class,
+        'auth' => \App\Http\Middleware\Authenticate::class,
+        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'can' => \Illuminate\Foundation\Http\Middleware\Authorize::class,
+        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'roles' => \App\Http\Middleware\CheckRole::class,
+        'role.agent' => \App\Http\Middleware\CheckRoleAgent::class,
+        'role.user' => \App\Http\Middleware\CheckRoleUser::class,
+        'api' => \App\Http\Middleware\ApiKey::class,
+        'jwt.auth' => \Tymon\JWTAuth\Middleware\GetUserFromToken::class,
         'jwt.refresh' => \Tymon\JWTAuth\Middleware\RefreshToken::class,
-        'update'      => \App\Http\Middleware\CheckUpdate::class,
-        'board'       => \App\Http\Middleware\CheckBoard::class,
-        'install'     => \App\Http\Middleware\Install::class,
+        'update' => \App\Http\Middleware\CheckUpdate::class,
+        'board' => \App\Http\Middleware\CheckBoard::class,
+        'install' => \App\Http\Middleware\Install::class,
     ];
 }

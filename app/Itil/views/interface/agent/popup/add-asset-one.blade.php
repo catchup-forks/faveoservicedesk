@@ -1,6 +1,6 @@
 <style>
     .table .table-bordered {
-        width: 100%     !important;
+        width: 100% !important;
     }
 </style>
 <a href="#asset" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#asset{{$id}}">Attach Asset</a>
@@ -8,7 +8,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title">Assets</h4>
             </div>
             <div class="modal-body">
@@ -33,33 +34,33 @@
                 <input type="submit" class="btn btn-primary" value="{{Lang::get('lang.save')}}">
             </div>
 
-            {!! Form::close() !!}
-            <!-- /Form -->
+        {!! Form::close() !!}
+        <!-- /Form -->
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->  
+</div><!-- /.modal -->
 @section('FooterInclude')
-<script>
-    $(document).ready(function () {
-        var type = $("#type").val();
-        asset_type(type);
-        $("#type").on('change', function () {
-            type = $("#type").val();
+    <script>
+        $(document).ready(function () {
+            var type = $("#type").val();
             asset_type(type);
+            $("#type").on('change', function () {
+                type = $("#type").val();
+                asset_type(type);
+            });
+
+            function asset_type(type) {
+                $.ajax({
+                    url: "{{url('service-desk/assets/assettype')}}",
+                    data: {'asset_type': type},
+                    type: "post",
+                    success: function (data) {
+                        $("#response").html(data);
+                    }
+                });
+            }
         });
 
-        function asset_type(type) {
-            $.ajax({
-                url: "{{url('service-desk/assets/assettype')}}",
-                data: {'asset_type': type},
-                type: "post",
-                success: function (data) {
-                    $("#response").html(data);
-                }
-            });
-        }
-    });
 
-
-</script>
+    </script>
 @stop

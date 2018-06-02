@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Admin\helpdesk;
 
 // controllers
 use App\Http\Controllers\Controller;
-// models
 use App\Model\helpdesk\Priority;
 use App\Model\helpdesk\Ticket_Thread;
-// classes
 use Exception;
+
+// models
+// classes
 
 /**
  * ThreadController.

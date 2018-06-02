@@ -13,10 +13,10 @@ class ItilServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $view_path = app_path().DIRECTORY_SEPARATOR.'Itil'.DIRECTORY_SEPARATOR.'views';
+        $view_path = app_path() . DIRECTORY_SEPARATOR . 'Itil' . DIRECTORY_SEPARATOR . 'views';
         $this->loadViewsFrom($view_path, 'itil');
 
-        $lang_path = app_path().DIRECTORY_SEPARATOR.'Itil'.DIRECTORY_SEPARATOR.'lang';
+        $lang_path = app_path() . DIRECTORY_SEPARATOR . 'Itil' . DIRECTORY_SEPARATOR . 'lang';
         $this->loadTranslationsFrom($lang_path, 'itil');
 
         if (isInstall()) {
@@ -25,7 +25,7 @@ class ItilServiceProvider extends ServiceProvider
         }
 
         if (class_exists('Breadcrumbs')) {
-            require __DIR__.'/breadcrumbs.php';
+            require __DIR__ . '/breadcrumbs.php';
         }
     }
 

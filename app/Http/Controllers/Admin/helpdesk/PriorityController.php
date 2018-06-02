@@ -6,21 +6,18 @@ namespace App\Http\Controllers\Admin\helpdesk;
 use App\Http\Controllers\Common\NotificationController;
 use App\Http\Controllers\Common\PhpMailController;
 use App\Http\Controllers\Controller;
-// requests
 use App\Http\Requests\helpdesk\PriorityRequest;
-// models
-use App\Model\helpdesk\Email\Emails;
-use App\Model\helpdesk\Manage\Help_topic;
 use App\Model\helpdesk\Settings\CommonSettings;
-use App\Model\helpdesk\Settings\Email;
 use App\Model\helpdesk\Ticket\Ticket_Priority;
 use Auth;
 use DB;
 use Exception;
-// classes
 use Illuminate\Http\Request;
-use Illuminate\support\Collection;
 use Lang;
+
+// requests
+// models
+// classes
 
 /**
  * TicketController.
@@ -74,33 +71,34 @@ class PriorityController extends Controller
     {
         try {
             $ticket = new Ticket_Priority();
-            $tickets = $ticket->select('priority_id', 'priority', 'priority_desc', 'priority_color', 'status', 'is_default', 'ispublic')->get();
+            $tickets = $ticket->select('priority_id', 'priority', 'priority_desc', 'priority_color', 'status',
+                'is_default', 'ispublic')->get();
 
             return \Datatable::Collection($tickets)
-                            ->showColumns('priority', 'priority_desc')
-                            ->addColumn('priority_color', function ($model) {
-                                return "<button class='btn' style = 'background-color:$model->priority_color'></button>";
-                            })
-                            ->addColumn('status', function ($model) {
-                                if ($model->status == 1) {
-                                    return "<a style='color:green'>active</a>";
-                                } elseif ($model->status == 0) {
-                                    Ticket_Priority::where('priority_id', '=', '$priority_id')
-                                    ->update(['priority_id' => '']);
+                ->showColumns('priority', 'priority_desc')
+                ->addColumn('priority_color', function ($model) {
+                    return "<button class='btn' style = 'background-color:$model->priority_color'></button>";
+                })
+                ->addColumn('status', function ($model) {
+                    if ($model->status == 1) {
+                        return "<a style='color:green'>active</a>";
+                    } elseif ($model->status == 0) {
+                        Ticket_Priority::where('priority_id', '=', '$priority_id')
+                            ->update(['priority_id' => '']);
 
-                                    return "<a style='color:red'>inactive</a>";
-                                }
-                            })
-                            ->addColumn('action', function ($model) {
-                                if ($model->is_default > 0) {
-                                    return '<a href='.url('ticket/priority/'.$model->priority_id.'/edit')." class='btn btn-info btn-xs' disabled='disabled'>Edit</a>&nbsp;<a href=".url('ticket/priority/'.$model->priority_id.'/destroy')." class='btn btn-warning btn-info btn-xs' disabled='disabled' > delete </a>";
-                                } else {
-                                    return '<a href='.url('ticket/priority/'.$model->priority_id.'/edit')." class='btn btn-info btn-xs'>Edit</a>&nbsp;<a class='btn btn-danger btn-xs' onclick='confirmDelete(".$model->priority_id.")'>Delete </a>";
-                                }
-                            })
-                            ->searchColumns('priority')
-                            ->orderColumns('priority', 'priority_color')
-                            ->make();
+                        return "<a style='color:red'>inactive</a>";
+                    }
+                })
+                ->addColumn('action', function ($model) {
+                    if ($model->is_default > 0) {
+                        return '<a href=' . url('ticket/priority/' . $model->priority_id . '/edit') . " class='btn btn-info btn-xs' disabled='disabled'>Edit</a>&nbsp;<a href=" . url('ticket/priority/' . $model->priority_id . '/destroy') . " class='btn btn-warning btn-info btn-xs' disabled='disabled' > delete </a>";
+                    } else {
+                        return '<a href=' . url('ticket/priority/' . $model->priority_id . '/edit') . " class='btn btn-info btn-xs'>Edit</a>&nbsp;<a class='btn btn-danger btn-xs' onclick='confirmDelete(" . $model->priority_id . ")'>Delete </a>";
+                    }
+                })
+                ->searchColumns('priority')
+                ->orderColumns('priority', 'priority_color')
+                ->make();
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
@@ -156,9 +154,9 @@ class PriorityController extends Controller
         $tk_priority->save();
         if ($request->input('default_priority') == 'on') {
             Ticket_Priority::where('is_default', '>', 0)
-                    ->update(['is_default' => 0]);
+                ->update(['is_default' => 0]);
             Ticket_Priority::where('priority_id', '=', $priority_id)
-                    ->update(['is_default' => 1]);
+                ->update(['is_default' => 1]);
         }
 
         return \Redirect::route('priority.index')->with('success', (Lang::get('lang.priority_successfully_updated')));
@@ -173,7 +171,8 @@ class PriorityController extends Controller
     {
         $default_priority = Ticket_Priority::where('is_default', '>', '0')->first();
         // dd($default_priority->is_default);
-        $topic = DB::table('help_topic')->where('priority', '=', $priority_id)->update(['priority' => $default_priority->is_default]);
+        $topic = DB::table('help_topic')->where('priority', '=',
+            $priority_id)->update(['priority' => $default_priority->is_default]);
         // if ($topic > 0) {
         //     if ($topic > 1) {
         //         $text_topic = 'Emails';

@@ -25,21 +25,24 @@ class RelesesController extends BaseServiceDeskController
     {
         try {
             $releses = new SdReleases();
-            $relese = $releses->select('id', 'description', 'subject', 'planned_start_date', 'planned_end_date', 'status_id', 'priority_id', 'release_type_id', 'location_id')->get();
+            $relese = $releses->select('id', 'description', 'subject', 'planned_start_date', 'planned_end_date',
+                'status_id', 'priority_id', 'release_type_id', 'location_id')->get();
 
             return \Datatable::Collection($relese)
-                            ->showColumns('subject', 'planned_start_date', 'planned_end_date')
-                            ->addColumn('Action', function ($model) {
-                                $url = url('service-desk/releases/'.$model->id.'/delete');
-                                $delete = \App\Itil\Controllers\UtilityController::deletePopUp($model->id, $url, "Delete $model->subject");
+                ->showColumns('subject', 'planned_start_date', 'planned_end_date')
+                ->addColumn('Action', function ($model) {
+                    $url = url('service-desk/releases/' . $model->id . '/delete');
+                    $delete = \App\Itil\Controllers\UtilityController::deletePopUp($model->id, $url,
+                        "Delete $model->subject");
 
-                                return '<a href='.url('service-desk/releases/'.$model->id.'/edit')." class='btn btn-info btn-sm'>Edit</a> "
-                                        .$delete
-                                        .' <a href='.url('service-desk/releases/'.$model->id.'/show')." class='btn btn-primary btn-sm'>View</a>";
-                            })
-                            ->searchColumns('subject', 'description')
-                            ->orderColumns('subject', 'reason', 'impact', 'rollout_plan', 'backout_plan', 'status_id', 'priority_id', 'change_type_id', 'impact_id', 'location_id', 'approval_id')
-                            ->make();
+                    return '<a href=' . url('service-desk/releases/' . $model->id . '/edit') . " class='btn btn-info btn-sm'>Edit</a> "
+                        . $delete
+                        . ' <a href=' . url('service-desk/releases/' . $model->id . '/show') . " class='btn btn-primary btn-sm'>View</a>";
+                })
+                ->searchColumns('subject', 'description')
+                ->orderColumns('subject', 'reason', 'impact', 'rollout_plan', 'backout_plan', 'status_id',
+                    'priority_id', 'change_type_id', 'impact_id', 'location_id', 'approval_id')
+                ->make();
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
@@ -70,7 +73,8 @@ class RelesesController extends BaseServiceDeskController
             $sd_locations = SdLocations::lists('title', 'id')->toArray();
             //            $assets = SdAssets::lists('name', 'id')->toArray();
 
-            return view('itil::releases.create', compact('sd_release_status', 'sd_release_priorities', 'sd_release_types', 'sd_locations'));
+            return view('itil::releases.create',
+                compact('sd_release_status', 'sd_release_priorities', 'sd_release_types', 'sd_locations'));
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
@@ -92,12 +96,15 @@ class RelesesController extends BaseServiceDeskController
             $sd_releases->location_id = $request->location;
 
             $sd_releases->save();
-            \App\Itil\Controllers\UtilityController::attachment($sd_releases->id, 'sd_releases', $request->file('attachments'));
+            \App\Itil\Controllers\UtilityController::attachment($sd_releases->id, 'sd_releases',
+                $request->file('attachments'));
             if (isAsset() == true) {
-                \App\Itil\Controllers\UtilityController::storeAssetRelation('sd_releases', $sd_releases->id, $request->input('asset'));
+                \App\Itil\Controllers\UtilityController::storeAssetRelation('sd_releases', $sd_releases->id,
+                    $request->input('asset'));
             }
             if ($return === false) {
-                return \Redirect::route('service-desk.releases.index')->with('message', 'Release successfully create !!!');
+                return \Redirect::route('service-desk.releases.index')->with('message',
+                    'Release successfully create !!!');
             }
 
             return $sd_releases;
@@ -116,7 +123,9 @@ class RelesesController extends BaseServiceDeskController
             $sd_locations = SdLocations::lists('title', 'id')->toArray();
             //            $assets = SdAssets::lists('name', 'id')->toArray();
 
-            return view('itil::releases.edit', compact('sd_release_status', 'sd_release_priorities', 'sd_release_types', 'sd_locations', 'locations_address', 'release'));
+            return view('itil::releases.edit',
+                compact('sd_release_status', 'sd_release_priorities', 'sd_release_types', 'sd_locations',
+                    'locations_address', 'release'));
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
@@ -127,9 +136,11 @@ class RelesesController extends BaseServiceDeskController
         try {
             $sd_releases = SdReleases::findOrFail($id);
             $sd_releases->fill($request->input())->save();
-            \App\Itil\Controllers\UtilityController::attachment($sd_releases->id, 'sd_releases', $request->file('attachments'));
+            \App\Itil\Controllers\UtilityController::attachment($sd_releases->id, 'sd_releases',
+                $request->file('attachments'));
             if (isAsset() == true) {
-                \App\Itil\Controllers\UtilityController::storeAssetRelation('sd_releases', $sd_releases->id, $request->input('asset'));
+                \App\Itil\Controllers\UtilityController::storeAssetRelation('sd_releases', $sd_releases->id,
+                    $request->input('asset'));
             }
 
             return \Redirect::route('service-desk.releases.index')->with('message', 'Release successfully Edit !!!');

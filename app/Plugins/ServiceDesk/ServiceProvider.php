@@ -14,21 +14,21 @@ class ServiceProvider extends \App\Plugins\ServiceProvider
         /**
          * Migrations.
          */
-        $path = __DIR__.'/database/migrations';
+        $path = __DIR__ . '/database/migrations';
         $this->publishes([
             $path => database_path('/migrations/test'),
-                ], 'migrations');
+        ], 'migrations');
 
         /**
          * Views.
          */
-        $view_path = app_path().DIRECTORY_SEPARATOR.'Plugins'.DIRECTORY_SEPARATOR.'ServiceDesk'.DIRECTORY_SEPARATOR.'views';
+        $view_path = app_path() . DIRECTORY_SEPARATOR . 'Plugins' . DIRECTORY_SEPARATOR . 'ServiceDesk' . DIRECTORY_SEPARATOR . 'views';
         $this->loadViewsFrom($view_path, 'service');
 
         /**
          * Translation.
          */
-        $trans = app_path().DIRECTORY_SEPARATOR.'Plugins'.DIRECTORY_SEPARATOR.'ServiceDesk'.DIRECTORY_SEPARATOR.'lang';
+        $trans = app_path() . DIRECTORY_SEPARATOR . 'Plugins' . DIRECTORY_SEPARATOR . 'ServiceDesk' . DIRECTORY_SEPARATOR . 'lang';
         $this->loadTranslationsFrom($trans, 'service');
         $controller = new \App\Plugins\ServiceDesk\Controllers\ActivateController();
         $a = $controller->activate();
@@ -37,7 +37,7 @@ class ServiceProvider extends \App\Plugins\ServiceProvider
         $controller->activate();
 
         if (class_exists('Breadcrumbs')) {
-            require __DIR__.'/breadcrumbs.php';
+            require __DIR__ . '/breadcrumbs.php';
         }
 
         parent::boot('ServiceDesk');

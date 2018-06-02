@@ -26,7 +26,7 @@ class CreateLocationcatagoryRequest extends Request
         $id = $this->segment(3);
 
         return [
-            'name' => 'required|unique:sd_location_categories,name,'.$id,
+            'name' => 'required|unique:sd_location_categories,name,' . $id,
         ];
     }
 }

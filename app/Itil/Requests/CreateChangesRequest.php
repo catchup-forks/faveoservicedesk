@@ -24,10 +24,10 @@ class CreateChangesRequest extends Request
     public function rules()
     {
         return [
-            'subject'        => 'required',
-            'description'    => 'required',
-            'status_id'      => 'required',
-            'priority_id'    => 'required',
+            'subject' => 'required',
+            'description' => 'required',
+            'status_id' => 'required',
+            'priority_id' => 'required',
             'change_type_id' => 'required',
             //'impact_id' => 'required',
         ];
@@ -36,10 +36,10 @@ class CreateChangesRequest extends Request
     public function messages()
     {
         return [
-            'status_id.required'      => 'Staus Required',
-            'priority_id.required'    => 'Priority Required',
+            'status_id.required' => 'Staus Required',
+            'priority_id.required' => 'Priority Required',
             'change_type_id.required' => 'Change Type Required',
-            'impact_id.required'      => 'Impact Required',
+            'impact_id.required' => 'Impact Required',
         ];
     }
 }

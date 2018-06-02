@@ -25,7 +25,7 @@ class ApiExceptAuthController extends Controller
         //dd($this->request);
         try {
             $v = \Validator::make($this->request->all(), [
-                        'url' => 'required|url',
+                'url' => 'required|url',
             ]);
             if ($v->fails()) {
                 $error = $v->errors();
@@ -38,7 +38,7 @@ class ApiExceptAuthController extends Controller
                 $url = str_finish($url, '/');
             }
 
-            $url = $url.'api/v1/helpdesk/check-url';
+            $url = $url . 'api/v1/helpdesk/check-url';
             //return $url;
             $result = $this->CallGetApi($url);
             //            dd($result);
@@ -47,22 +47,6 @@ class ApiExceptAuthController extends Controller
             $error = $ex->getMessage();
 
             return $error;
-        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $ex) {
-            return ['status' => 'fails', 'code' => $ex->getStatusCode()];
-        }
-    }
-
-    /**
-     * Success for currect url.
-     *
-     * @return string
-     */
-    public function urlResult()
-    {
-        try {
-            $result = ['status' => 'success'];
-
-            return $result;
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $ex) {
             return ['status' => 'fails', 'code' => $ex->getStatusCode()];
         }
@@ -93,6 +77,22 @@ class ApiExceptAuthController extends Controller
     }
 
     /**
+     * Success for currect url.
+     *
+     * @return string
+     */
+    public function urlResult()
+    {
+        try {
+            $result = ['status' => 'success'];
+
+            return $result;
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $ex) {
+            return ['status' => 'fails', 'code' => $ex->getStatusCode()];
+        }
+    }
+
+    /**
      * Call curl function for POST Method.
      *
      * @param type $url
@@ -111,7 +111,7 @@ class ApiExceptAuthController extends Controller
         $response = curl_exec($curl);
 
         if (curl_errno($curl)) {
-            echo 'error:'.curl_error($curl);
+            echo 'error:' . curl_error($curl);
         }
 
         return $response;

@@ -9,8 +9,10 @@ class Notification extends BaseModel
     protected $table = 'notifications';
     protected $fillable = [
 
-            'model_id', 'userid_created', 'type_id',
-                            ];
+        'model_id',
+        'userid_created',
+        'type_id',
+    ];
 
     public function type()
     {
@@ -36,16 +38,6 @@ class Notification extends BaseModel
         return $this->hasMany($related, $foreignKey);
     }
 
-    public function deleteUserNotification()
-    {
-        $user_notifications = $this->userNotification;
-        if (count($user_notifications) > 0) {
-            foreach ($user_notifications as $noti) {
-                $noti->delete();
-            }
-        }
-    }
-
     public function dummyDelete()
     {
         $user_notifications = UserNotification::get();
@@ -61,5 +53,15 @@ class Notification extends BaseModel
         $this->deleteUserNotification();
         // $this->dummyDelete();
         parent::delete();
+    }
+
+    public function deleteUserNotification()
+    {
+        $user_notifications = $this->userNotification;
+        if (count($user_notifications) > 0) {
+            foreach ($user_notifications as $noti) {
+                $noti->delete();
+            }
+        }
     }
 }

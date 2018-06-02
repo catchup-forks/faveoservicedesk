@@ -1,37 +1,34 @@
-<ul class="nav navbar-nav navbar-left"> 
+<ul class="nav navbar-nav navbar-left">
     <li class="">
         <a href="{{url('service-desk/problems')}}">
-            <i class="fa fa-bug"></i> 
-            <span style="">Problems</span> 
+            <i class="fa fa-bug"></i>
+            <span style="">Problems</span>
         </a>
-    </li> 
+    </li>
     <li>
         <a href="{{url('service-desk/changes')}}">
-            <i class="fa fa-refresh"></i> 
-            <span style="">Changes</span> 
+            <i class="fa fa-refresh"></i>
+            <span style="">Changes</span>
         </a>
 
 
-
-    </li> 
+    </li>
 
     <li>
         <a href="{{url('service-desk/releases')}}">
-            <i class="fa fa-newspaper-o"></i> 
-            <span style="">Releases</span> 
+            <i class="fa fa-newspaper-o"></i>
+            <span style="">Releases</span>
         </a>
 
 
-
-
-    </li> 
+    </li>
 
 
     <li>
 
         <a href="{{url('service-desk/assets')}}">
-            <i class="fa fa-server"></i> 
-            <span style=""> Assets</span> 
+            <i class="fa fa-server"></i>
+            <span style=""> Assets</span>
         </a>
 
     </li>
@@ -62,7 +59,7 @@
             <li>
                 <a href="{{url('service-desk/assets/create')}}">Assets</a>
             </li>
-<!--            <li>
+        <!--            <li>
                 <a href="{{url('service-desk/contracts/create')}}">Contracts</a>
             </li>-->
 

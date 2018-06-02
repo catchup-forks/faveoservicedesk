@@ -19,19 +19,22 @@ class SdProductStatus extends Seeder
         $updated_at = date('Y-d-m H:m:i');
 
         DB::table('sd_product_status')
-                ->insert(['name' => 'In Pipeline',
-                    'created_at' => $created_at,
-                    'updated_at' => $updated_at,
-        ]);
+            ->insert([
+                'name' => 'In Pipeline',
+                'created_at' => $created_at,
+                'updated_at' => $updated_at,
+            ]);
         DB::table('sd_product_status')
-                ->insert(['name' => 'In Production',
-                    'created_at' => $created_at,
-                    'updated_at' => $updated_at,
-        ]);
+            ->insert([
+                'name' => 'In Production',
+                'created_at' => $created_at,
+                'updated_at' => $updated_at,
+            ]);
         DB::table('sd_product_status')
-                ->insert(['name' => 'Retired',
-                    'created_at' => $created_at,
-                    'updated_at' => $updated_at,
-        ]);
+            ->insert([
+                'name' => 'Retired',
+                'created_at' => $created_at,
+                'updated_at' => $updated_at,
+            ]);
     }
 }

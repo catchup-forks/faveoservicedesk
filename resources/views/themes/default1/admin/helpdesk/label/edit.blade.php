@@ -1,47 +1,47 @@
 @extends('themes.default1.admin.layout.admin')
 
 @section('Tickets')
-active
+    active
 @stop
 
 @section('manage-bar')
-active
+    active
 @stop
 
 @section('labels')
-class="active"
+    class="active"
 @stop
 
 @section('HeadInclude')
 @stop
 <!-- header -->
 @section('PageHeader')
-<h1>Labels</h1>
+    <h1>Labels</h1>
 @stop
 <!-- /header -->
 <!-- breadcrumbs -->
 @section('breadcrumbs')
-<ol class="breadcrumb">
-</ol>
+    <ol class="breadcrumb">
+    </ol>
 @stop
 <!-- /breadcrumbs -->
 <!-- content -->
 @section('content')
 
-@if(Session::has('success'))
-<div class="alert alert-success alert-dismissable">
-    <i class="fa fa-check-circle"></i>
-    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-    {{Session::get('success')}}
-</div>
-@endif
-@if(Session::has('fails'))
-<div class="alert alert-danger alert-dismissable">
-    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-    {{Session::get('fails')}}
-</div>
-@endif
-@if(Session::has('errors'))
+    @if(Session::has('success'))
+        <div class="alert alert-success alert-dismissable">
+            <i class="fa fa-check-circle"></i>
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{Session::get('success')}}
+        </div>
+    @endif
+    @if(Session::has('fails'))
+        <div class="alert alert-danger alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{Session::get('fails')}}
+        </div>
+    @endif
+    @if(Session::has('errors'))
         <br><br>
         <div class="alert alert-danger alert-dismissable">
             <i class="fa fa-ban"></i>
@@ -49,94 +49,94 @@ class="active"
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
             <br/>
             @if($errors->first('title'))
-            <li class="error-message-padding">{!! $errors->first('title', ':message') !!}</li>
+                <li class="error-message-padding">{!! $errors->first('title', ':message') !!}</li>
             @endif
             @if($errors->first('color'))
-            <li class="error-message-padding">{!! $errors->first('color', ':message') !!}</li>
+                <li class="error-message-padding">{!! $errors->first('color', ':message') !!}</li>
             @endif
             @if($errors->first('order'))
-            <li class="error-message-padding">{!! $errors->first('order', ':message') !!}</li>
+                <li class="error-message-padding">{!! $errors->first('order', ':message') !!}</li>
             @endif
         </div>
-        @endif
-@if(Session::has('warn'))
-<div class="alert alert-warning alert-dismissable">
-    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-    {{Session::get('warn')}}
-</div>
-@endif
-<div class="box">
-    <link rel="stylesheet" href="{{asset('lb-faveo/plugins/colorpicker/bootstrap-colorpicker.min.css')}}">
-    <div class="box-header">
-        <div class="box-title">
-            {!! $label->titleWithColor() !!}
+    @endif
+    @if(Session::has('warn'))
+        <div class="alert alert-warning alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{Session::get('warn')}}
         </div>
-        {!! Form::model($label,['url'=>'labels/'.$label->id,'method'=>'patch', 'id' => 'label-form']) !!}
-    </div>
-    <div class="box-body">
-        <table class="table table-borderless">
-            
-           <tr>
-                <div class="form-group {{ $errors->has('title') ? 'has-error' : '' }}">
-                <td>{!! Form::label('title','Title') !!}<span class="text-red"> *</span></td>
-                <td>
+    @endif
+    <div class="box">
+        <link rel="stylesheet" href="{{asset('lb-faveo/plugins/colorpicker/bootstrap-colorpicker.min.css')}}">
+        <div class="box-header">
+            <div class="box-title">
+                {!! $label->titleWithColor() !!}
+            </div>
+            {!! Form::model($label,['url'=>'labels/'.$label->id,'method'=>'patch', 'id' => 'label-form']) !!}
+        </div>
+        <div class="box-body">
+            <table class="table table-borderless">
+
+                <tr>
                     <div class="form-group {{ $errors->has('title') ? 'has-error' : '' }}">
-                        {!! Form::text('title',null,['class'=>'form-control']) !!}
+                        <td>{!! Form::label('title','Title') !!}<span class="text-red"> *</span></td>
+                        <td>
+                            <div class="form-group {{ $errors->has('title') ? 'has-error' : '' }}">
+                                {!! Form::text('title',null,['class'=>'form-control']) !!}
+                            </div>
+                        </td>
                     </div>
-                </td>
-                </div>
-            </tr>
-             <tr>
-                <td>{!! Form::label('color','Color') !!}<span class="text-red"> *</span></td>
-                <td>
-                    <div class="form-group {{ $errors->has('color') ? 'has-error' : '' }}">
-                    {!! Form::text('color', null,['class'=>'form-control my-colorpicker1 colorpicker-element']) !!}
-                    </div>
-                </td>
-            </tr>
-            
-             <tr>
-                <td>{!! Form::label('order','Order') !!}<span class="text-red"> *</span></td>
-                <td>
-                    <div class="form-group {{ $errors->has('order') ? 'has-error' : '' }}">
-                    {!! Form::input('number', 'order', null, array('class' => 'form-control')) !!}
-                    </div>
-                </td>
-            </tr>
-            
-             <tr>
-                <td>{!! Form::label('status','Status') !!}</td>
-                <td><p>{!! Form::checkbox('status') !!}  {!!Lang::get('lang.enable')!!}</p></td>
-            </tr>
-            
-        </table>
+                </tr>
+                <tr>
+                    <td>{!! Form::label('color','Color') !!}<span class="text-red"> *</span></td>
+                    <td>
+                        <div class="form-group {{ $errors->has('color') ? 'has-error' : '' }}">
+                            {!! Form::text('color', null,['class'=>'form-control my-colorpicker1 colorpicker-element']) !!}
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>{!! Form::label('order','Order') !!}<span class="text-red"> *</span></td>
+                    <td>
+                        <div class="form-group {{ $errors->has('order') ? 'has-error' : '' }}">
+                            {!! Form::input('number', 'order', null, array('class' => 'form-control')) !!}
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>{!! Form::label('status','Status') !!}</td>
+                    <td><p>{!! Form::checkbox('status') !!}  {!!Lang::get('lang.enable')!!}</p></td>
+                </tr>
+
+            </table>
+        </div>
+        <div class="box-footer">
+            {!! Form::submit('Save',['class'=>'btn btn-success']) !!}
+            {!! Form::close() !!}
+        </div>
     </div>
-    <div class="box-footer">
-        {!! Form::submit('Save',['class'=>'btn btn-success']) !!}
-        {!! Form::close() !!}
-    </div>
-</div>
 @stop
 @section('FooterInclude')
-<script src="{{asset('lb-faveo/plugins/colorpicker/bootstrap-colorpicker.min.js')}}"></script>
-<script>
-//Colorpicker
-    $(".my-colorpicker1").colorpicker();
-    //color picker with addon
-    $(".my-colorpicker2").colorpicker();
-</script>
-<script type="text/javascript">
-    $("#label-form").on('submit', function(e){
-        if(document.getElementById('status').checked) {
-            checked = 1;
-        } else {
-            checked = 0;
-        }
-        $('<input />')
-          .attr('type', 'hidden')
-          .attr('name', "status")
-          .attr('value', checked)
-          .appendTo('#label-form');
-    })
-</script>
+    <script src="{{asset('lb-faveo/plugins/colorpicker/bootstrap-colorpicker.min.js')}}"></script>
+    <script>
+        //Colorpicker
+        $(".my-colorpicker1").colorpicker();
+        //color picker with addon
+        $(".my-colorpicker2").colorpicker();
+    </script>
+    <script type="text/javascript">
+        $("#label-form").on('submit', function (e) {
+            if (document.getElementById('status').checked) {
+                checked = 1;
+            } else {
+                checked = 0;
+            }
+            $('<input />')
+                .attr('type', 'hidden')
+                .attr('name', "status")
+                .attr('value', checked)
+                .appendTo('#label-form');
+        })
+    </script>
 @stop

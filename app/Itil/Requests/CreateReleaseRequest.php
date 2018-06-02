@@ -24,11 +24,11 @@ class CreateReleaseRequest extends Request
     public function rules()
     {
         return [
-            'subject'         => 'required',
-            'status_id'       => 'required',
-            'priority_id'     => 'required',
+            'subject' => 'required',
+            'status_id' => 'required',
+            'priority_id' => 'required',
             'release_type_id' => 'required',
-            'description'     => 'required',
+            'description' => 'required',
 
         ];
     }
@@ -36,9 +36,9 @@ class CreateReleaseRequest extends Request
     public function messages()
     {
         return [
-            'status_id.required'      => 'Status Required',
-            'priority_id.required'    => 'Priority Required',
-            'release_type_id.required'=> 'Release Type Required',
+            'status_id.required' => 'Status Required',
+            'priority_id.required' => 'Priority Required',
+            'release_type_id.required' => 'Release Type Required',
         ];
     }
 }

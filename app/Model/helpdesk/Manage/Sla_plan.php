@@ -8,6 +8,11 @@ class Sla_plan extends BaseModel
 {
     protected $table = 'sla_plan';
     protected $fillable = [
-        'name', 'grace_period', 'admin_note', 'status', 'transient', 'ticket_overdue',
+        'name',
+        'grace_period',
+        'admin_note',
+        'status',
+        'transient',
+        'ticket_overdue',
     ];
 }

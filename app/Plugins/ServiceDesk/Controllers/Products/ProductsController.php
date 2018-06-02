@@ -33,30 +33,32 @@ class ProductsController extends BaseServiceDeskController
     {
         try {
             $product = new SdProducts();
-            $products = $product->select('id', 'name', 'description', 'manufacturer', 'product_status_id', 'product_mode_procurement_id', 'all_department', 'status')->get();
+            $products = $product->select('id', 'name', 'description', 'manufacturer', 'product_status_id',
+                'product_mode_procurement_id', 'all_department', 'status')->get();
 
             return \Datatable::Collection($products)
-                            ->showColumns('name', 'manufacturer')
-                            ->addColumn('product_status_id', function ($model) {
-                                $product_status = new SdProductstatus();
-                                $product_status_name = $product_status->where('id', $model->product_status_id)->first()->name;
+                ->showColumns('name', 'manufacturer')
+                ->addColumn('product_status_id', function ($model) {
+                    $product_status = new SdProductstatus();
+                    $product_status_name = $product_status->where('id', $model->product_status_id)->first()->name;
 
-                                return $product_status_name;
-                            })
-                            ->addColumn('status', function ($model) {
-                                $status = 'Disable';
-                                if ($model->status == 1) {
-                                    $status = 'Enable';
-                                }
+                    return $product_status_name;
+                })
+                ->addColumn('status', function ($model) {
+                    $status = 'Disable';
+                    if ($model->status == 1) {
+                        $status = 'Enable';
+                    }
 
-                                return $status;
-                            })
-                            ->addColumn('action', function ($model) {
-                                return '<a href='.url('service-desk/products/'.$model->id.'/edit')." class='btn btn-info btn-sm'>Edit</a> <a href=".url('service-desk/products/'.$model->id.'/show')." class='btn btn-primary btn-sm'>View</a>";
-                            })
-                            ->searchColumns('name', 'manufacturer')
-                            ->orderColumns('name', 'manufacturer', 'asset_type_id', 'product_status_id', 'product_mode_procurement_id', 'all_department', 'status')
-                            ->make();
+                    return $status;
+                })
+                ->addColumn('action', function ($model) {
+                    return '<a href=' . url('service-desk/products/' . $model->id . '/edit') . " class='btn btn-info btn-sm'>Edit</a> <a href=" . url('service-desk/products/' . $model->id . '/show') . " class='btn btn-primary btn-sm'>View</a>";
+                })
+                ->searchColumns('name', 'manufacturer')
+                ->orderColumns('name', 'manufacturer', 'asset_type_id', 'product_status_id',
+                    'product_mode_procurement_id', 'all_department', 'status')
+                ->make();
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
@@ -70,7 +72,8 @@ class ProductsController extends BaseServiceDeskController
             $sd_product_proc_modes = SdProductprocmode::lists('name', 'id')->toArray();
             $departments = Department::lists('name', 'id')->toArray();
 
-            return view('service::products.create', compact('sd_asset_types', 'sd_product_status', 'sd_product_proc_modes', 'departments'));
+            return view('service::products.create',
+                compact('sd_asset_types', 'sd_product_status', 'sd_product_proc_modes', 'departments'));
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
@@ -105,7 +108,9 @@ class ProductsController extends BaseServiceDeskController
             $sd_product_proc_modes = SdProductprocmode::lists('name', 'id')->toArray();
             $departments = Department::lists('name', 'id')->toArray();
 
-            return view('service::products.edit', compact('product', 'asset_types_name', 'product_status_name', 'mode_procurement_name', 'sd_asset_types', 'sd_product_status', 'sd_product_proc_modes', 'departments'));
+            return view('service::products.edit',
+                compact('product', 'asset_types_name', 'product_status_name', 'mode_procurement_name', 'sd_asset_types',
+                    'sd_product_status', 'sd_product_proc_modes', 'departments'));
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
@@ -178,6 +183,16 @@ class ProductsController extends BaseServiceDeskController
         }
     }
 
+    public function createVendorRelation($product_id, $vendor_id)
+    {
+        $vendor_relation = new \App\Plugins\ServiceDesk\Model\Common\ProductVendorRelation();
+
+        return $vendor_relation->create([
+            'product_id' => $product_id,
+            'vendor_id' => $vendor_id,
+        ]);
+    }
+
     public function addExistingVendor(Request $request)
     {
         $this->validate($request, [
@@ -198,24 +213,14 @@ class ProductsController extends BaseServiceDeskController
         }
     }
 
-    public function createVendorRelation($product_id, $vendor_id)
-    {
-        $vendor_relation = new \App\Plugins\ServiceDesk\Model\Common\ProductVendorRelation();
-
-        return $vendor_relation->create([
-                    'product_id' => $product_id,
-                    'vendor_id'  => $vendor_id,
-        ]);
-    }
-
     public function removeVendor($productid, $vendorid)
     {
         try {
             $vendor_relation = new \App\Plugins\ServiceDesk\Model\Common\ProductVendorRelation();
             $relation = $vendor_relation
-                    ->where('product_id', $productid)
-                    ->where('vendor_id', $vendorid)
-                    ->first();
+                ->where('product_id', $productid)
+                ->where('vendor_id', $vendorid)
+                ->first();
             if ($relation) {
                 $relation->delete();
 

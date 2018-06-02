@@ -30,11 +30,6 @@ class SdAssets extends Model
         $this->attributes['external_id'] = str_slug($value);
     }
 
-    public function departmentRelation()
-    {
-        return $this->belongsTo('App\Model\helpdesk\Agent\Department', 'department_id');
-    }
-
     /**
      * get the department name.
      *
@@ -54,9 +49,9 @@ class SdAssets extends Model
         return ucfirst($value);
     }
 
-    public function impactRelation()
+    public function departmentRelation()
     {
-        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Assets\SdImpactypes', 'impact_type_id');
+        return $this->belongsTo('App\Model\helpdesk\Agent\Department', 'department_id');
     }
 
     /**
@@ -79,9 +74,9 @@ class SdAssets extends Model
         return ucfirst($value);
     }
 
-    public function locationRelation()
+    public function impactRelation()
     {
-        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Assets\SdLocations', 'location_id');
+        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Assets\SdImpactypes', 'impact_type_id');
     }
 
     /**
@@ -96,11 +91,16 @@ class SdAssets extends Model
         if ($attr) {
             $attrs = $this->locationRelation()->first();
             if ($attrs) {
-                $value = '<a href='.url('service-desk/location-types/'.$attr.'/show').">$attrs->title</a>";
+                $value = '<a href=' . url('service-desk/location-types/' . $attr . '/show') . ">$attrs->title</a>";
             }
         }
 
         return ucfirst($value);
+    }
+
+    public function locationRelation()
+    {
+        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Assets\SdLocations', 'location_id');
     }
 
     public function assetTypes()
@@ -117,6 +117,11 @@ class SdAssets extends Model
         return ucfirst($value);
     }
 
+    public function assetType()
+    {
+        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Assets\SdAssettypes');
+    }
+
     public function used()
     {
         $value = '--';
@@ -124,7 +129,7 @@ class SdAssets extends Model
         if ($attr) {
             $attrs = $this->usedBy()->first();
             if ($attrs) {
-                $value = ucfirst($attrs->first_name).' '.ucfirst($attrs->last_name);
+                $value = ucfirst($attrs->first_name) . ' ' . ucfirst($attrs->last_name);
                 if ($value == ' ') {
                     $value = $attrs->user_name;
                 }
@@ -132,6 +137,11 @@ class SdAssets extends Model
         }
 
         return $value;
+    }
+
+    public function usedBy()
+    {
+        return $this->belongsTo('App\User', 'used_by');
     }
 
     public function managed()
@@ -141,7 +151,7 @@ class SdAssets extends Model
         if ($attr) {
             $attrs = $this->managedBy()->first();
             if ($attrs) {
-                $value = ucfirst($attrs->first_name).' '.ucfirst($attrs->last_name);
+                $value = ucfirst($attrs->first_name) . ' ' . ucfirst($attrs->last_name);
                 if ($value == ' ') {
                     $value = $attrs->user_name;
                 }
@@ -151,6 +161,11 @@ class SdAssets extends Model
         return $value;
     }
 
+    public function managedBy()
+    {
+        return $this->belongsTo('App\User', 'managed_by');
+    }
+
     public function products()
     {
         $value = '--';
@@ -158,11 +173,16 @@ class SdAssets extends Model
         if ($attr) {
             $attrs = $this->product()->first();
             if ($attrs) {
-                $value = '<a href='.url('service-desk/products/'.$attr.'/show').">$attrs->name</a>";
+                $value = '<a href=' . url('service-desk/products/' . $attr . '/show') . ">$attrs->name</a>";
             }
         }
 
         return $value;
+    }
+
+    public function product()
+    {
+        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Products\SdProducts', 'product_id');
     }
 
     public function assignedOn()
@@ -176,24 +196,9 @@ class SdAssets extends Model
         return $value;
     }
 
-    public function usedBy()
+    public function additionalData()
     {
-        return $this->belongsTo('App\User', 'used_by');
-    }
-
-    public function managedBy()
-    {
-        return $this->belongsTo('App\User', 'managed_by');
-    }
-
-    public function assetType()
-    {
-        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Assets\SdAssettypes');
-    }
-
-    public function relation()
-    {
-        return $this->hasMany('App\Plugins\ServiceDesk\Model\Common\TicketAssetProblem', 'asset_id');
+        return $this->assetForm()->lists('value', 'key')->toArray();
     }
 
     public function assetForm()
@@ -201,14 +206,19 @@ class SdAssets extends Model
         return $this->hasMany('App\Plugins\ServiceDesk\Model\Assets\AssetForm', 'asset_id');
     }
 
-    public function additionalData()
+    public function delete()
     {
-        return $this->assetForm()->lists('value', 'key')->toArray();
+        $id = $this->id;
+        $this->deleteAttachment($id);
+        $this->detachRelation();
+        parent::delete();
     }
 
-    public function product()
+    public function deleteAttachment($id)
     {
-        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Products\SdProducts', 'product_id');
+        \App\Plugins\ServiceDesk\Controllers\Library\UtilityController::deleteAssetRelation($id);
+        $table = $this->table;
+        \App\Plugins\ServiceDesk\Controllers\Library\UtilityController::deleteAttachments($id, $table);
     }
 
     public function detachRelation()
@@ -228,19 +238,9 @@ class SdAssets extends Model
         }
     }
 
-    public function deleteAttachment($id)
+    public function relation()
     {
-        \App\Plugins\ServiceDesk\Controllers\Library\UtilityController::deleteAssetRelation($id);
-        $table = $this->table;
-        \App\Plugins\ServiceDesk\Controllers\Library\UtilityController::deleteAttachments($id, $table);
-    }
-
-    public function delete()
-    {
-        $id = $this->id;
-        $this->deleteAttachment($id);
-        $this->detachRelation();
-        parent::delete();
+        return $this->hasMany('App\Plugins\ServiceDesk\Model\Common\TicketAssetProblem', 'asset_id');
     }
 
     public function requests()
@@ -306,11 +306,19 @@ class SdAssets extends Model
         }
     }
 
-    public function getOrganizationRelation()
+    public function getOrgWithLink()
     {
-        $related = "App\Model\helpdesk\Agent_panel\Organization";
+        $name = '--';
+        $org = $this->getOrganization();
+        if ($org !== '') {
+            $orgs = $this->getOrganizationRelation()->first();
+            if ($orgs) {
+                $id = $orgs->id;
+                $name = '<a href=' . url('organizations/' . $id) . '>' . ucfirst($org) . '</a>';
+            }
+        }
 
-        return $this->belongsTo($related, 'organization');
+        return $name;
     }
 
     public function getOrganization()
@@ -326,18 +334,10 @@ class SdAssets extends Model
         return $name;
     }
 
-    public function getOrgWithLink()
+    public function getOrganizationRelation()
     {
-        $name = '--';
-        $org = $this->getOrganization();
-        if ($org !== '') {
-            $orgs = $this->getOrganizationRelation()->first();
-            if ($orgs) {
-                $id = $orgs->id;
-                $name = '<a href='.url('organizations/'.$id).'>'.ucfirst($org).'</a>';
-            }
-        }
+        $related = "App\Model\helpdesk\Agent_panel\Organization";
 
-        return $name;
+        return $this->belongsTo($related, 'organization');
     }
 }

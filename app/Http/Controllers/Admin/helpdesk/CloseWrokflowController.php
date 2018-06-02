@@ -43,7 +43,7 @@ class CloseWrokflowController extends Controller
     /**
      * updating the workflow settings for closing ticket.
      *
-     * @param type                                             $id
+     * @param type $id
      * @param \App\Http\Requests\helpdesk\WorkflowCloseRequest $request
      *
      * @return type redirect

@@ -39,8 +39,10 @@
                 </tbody>
             </table>
 
-            <button class="btn btn-primary" onclick="doResize()">{{ Lang::get('laravel-filemanager::lfm.btn-resize') }}</button>
-            <button class="btn btn-info" onclick="loadItems()">{{ Lang::get('laravel-filemanager::lfm.btn-cancel') }}</button>
+            <button class="btn btn-primary"
+                    onclick="doResize()">{{ Lang::get('laravel-filemanager::lfm.btn-resize') }}</button>
+            <button class="btn btn-info"
+                    onclick="loadItems()">{{ Lang::get('laravel-filemanager::lfm.btn-cancel') }}</button>
 
             <input type="hidden" name="ratio" value="{{ $ratio }}"><br>
             <input type="hidden" name="scaled" value="{{ $scaled }}"><br>

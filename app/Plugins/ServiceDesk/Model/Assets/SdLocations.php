@@ -7,12 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class SdLocations extends Model
 {
     protected $table = 'sd_locations';
-    protected $fillable = ['id', 'location_category_id', 'title', 'email', 'phone', 'address', 'departments', 'status', 'organization'];
-
-    public function departmentRelation()
-    {
-        return $this->belongsTo('App\Model\helpdesk\Agent\Department', 'departments');
-    }
+    protected $fillable = [
+        'id',
+        'location_category_id',
+        'title',
+        'email',
+        'phone',
+        'address',
+        'departments',
+        'status',
+        'organization'
+    ];
 
     /**
      * get the department name.
@@ -33,9 +38,9 @@ class SdLocations extends Model
         return ucfirst($value);
     }
 
-    public function category()
+    public function departmentRelation()
     {
-        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Changes\SdLocationcategories', 'location_category_id');
+        return $this->belongsTo('App\Model\helpdesk\Agent\Department', 'departments');
     }
 
     public function locationCategory()
@@ -52,11 +57,24 @@ class SdLocations extends Model
         return ucfirst($value);
     }
 
-    public function getOrganizationRelation()
+    public function category()
     {
-        $related = "App\Model\helpdesk\Agent_panel\Organization";
+        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Changes\SdLocationcategories', 'location_category_id');
+    }
 
-        return $this->belongsTo($related, 'organization');
+    public function getOrgWithLink()
+    {
+        $name = '--';
+        $org = $this->getOrganization();
+        if ($org !== '') {
+            $orgs = $this->getOrganizationRelation()->first();
+            if ($orgs) {
+                $id = $orgs->id;
+                $name = '<a href=' . url('organizations/' . $id) . '>' . ucfirst($org) . '</a>';
+            }
+        }
+
+        return $name;
     }
 
     public function getOrganization()
@@ -72,18 +90,10 @@ class SdLocations extends Model
         return $name;
     }
 
-    public function getOrgWithLink()
+    public function getOrganizationRelation()
     {
-        $name = '--';
-        $org = $this->getOrganization();
-        if ($org !== '') {
-            $orgs = $this->getOrganizationRelation()->first();
-            if ($orgs) {
-                $id = $orgs->id;
-                $name = '<a href='.url('organizations/'.$id).'>'.ucfirst($org).'</a>';
-            }
-        }
+        $related = "App\Model\helpdesk\Agent_panel\Organization";
 
-        return $name;
+        return $this->belongsTo($related, 'organization');
     }
 }

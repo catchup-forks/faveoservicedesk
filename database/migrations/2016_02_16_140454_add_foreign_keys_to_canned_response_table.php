@@ -13,7 +13,8 @@ class AddForeignKeysToCannedResponseTable extends Migration
     public function up()
     {
         Schema::table('canned_response', function (Blueprint $table) {
-            $table->foreign('user_id', 'canned_response_ibfk_1')->references('id')->on('users')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+            $table->foreign('user_id',
+                'canned_response_ibfk_1')->references('id')->on('users')->onUpdate('NO ACTION')->onDelete('NO ACTION');
         });
     }
 

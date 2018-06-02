@@ -13,7 +13,7 @@ class CheckUpdate
      * Handle an incoming request.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
+     * @param \Closure $next
      *
      * @return mixed
      */
@@ -35,13 +35,25 @@ class CheckUpdate
         return $next($request);
     }
 
-    public function notificationBar()
+    public function process()
     {
         $notify = new BarNotification();
-        $path = base_path('UPDATES');
-        if (is_dir($path)) {
-            $notify->create(['key' => 'update-ready', 'value' => 'New version has downloaded, click <a href='.url('file-update').'>here</a> to update now']);
+        $not = $notify->get();
+        if ($not->count() > 0) {
+            $n = $notify->where('key', 'new-version')->first();
+
+            if ($n) {
+                $now = \Carbon\Carbon::now();
+                $yesterday = \Carbon\Carbon::yesterday();
+                $notifications = $notify->where('key', 'new-version')->whereBetween('created_at',
+                    [$yesterday, $now])->lists('value', 'key');
+                if ($notifications->count() > 0) {
+                    return false;
+                }
+            }
         }
+
+        return true;
     }
 
     public function checkNewUpdate()
@@ -68,7 +80,10 @@ class CheckUpdate
                 if (!array_key_exists('new-version', $notifications)) {
                     $check_version = $this->checkNewVersion();
                     if ($check_version == true) {
-                        $notify->create(['key' => 'new-version', 'value' => 'new version found please click <a href='.url('file-update').'><b>here to download</b></a>']);
+                        $notify->create([
+                            'key' => 'new-version',
+                            'value' => 'new version found please click <a href=' . url('file-update') . '><b>here to download</b></a>'
+                        ]);
                     }
                 } else {
                     $n = $notify->where('key', 'new-version')->first();
@@ -86,7 +101,11 @@ class CheckUpdate
 
             if ($check_version == true) {
                 //dd('if');
-                $notify->create(['key' => 'new-version', 'value' => 'new version found please click <a href='.url('file-update').'><b>here to download</b></a>', 'created_at' => \Carbon\Carbon::now()]);
+                $notify->create([
+                    'key' => 'new-version',
+                    'value' => 'new version found please click <a href=' . url('file-update') . '><b>here to download</b></a>',
+                    'created_at' => \Carbon\Carbon::now()
+                ]);
             } else {
                 //dd('else');
                 $notify->create(['key' => 'new-version', 'value' => '', 'created_at' => \Carbon\Carbon::now()]);
@@ -104,23 +123,15 @@ class CheckUpdate
         }
     }
 
-    public function process()
+    public function notificationBar()
     {
         $notify = new BarNotification();
-        $not = $notify->get();
-        if ($not->count() > 0) {
-            $n = $notify->where('key', 'new-version')->first();
-
-            if ($n) {
-                $now = \Carbon\Carbon::now();
-                $yesterday = \Carbon\Carbon::yesterday();
-                $notifications = $notify->where('key', 'new-version')->whereBetween('created_at', [$yesterday, $now])->lists('value', 'key');
-                if ($notifications->count() > 0) {
-                    return false;
-                }
-            }
+        $path = base_path('UPDATES');
+        if (is_dir($path)) {
+            $notify->create([
+                'key' => 'update-ready',
+                'value' => 'New version has downloaded, click <a href=' . url('file-update') . '>here</a> to update now'
+            ]);
         }
-
-        return true;
     }
 }

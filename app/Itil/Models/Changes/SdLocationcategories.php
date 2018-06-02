@@ -9,11 +9,10 @@ class SdLocationcategories extends Model
     protected $table = 'sd_location_categories';
     protected $fillable = ['id', 'name', 'parent_id', 'created_at', 'updated_at'];
 
-    public function locations()
+    public function delete()
     {
-        $related = 'App\Itil\Models\Common\Location';
-
-        return $this->hasMany($related, 'location_category_id');
+        $this->categoryDeleteFromLocation();
+        parent::delete();
     }
 
     public function categoryDeleteFromLocation()
@@ -28,9 +27,10 @@ class SdLocationcategories extends Model
         }
     }
 
-    public function delete()
+    public function locations()
     {
-        $this->categoryDeleteFromLocation();
-        parent::delete();
+        $related = 'App\Itil\Models\Common\Location';
+
+        return $this->hasMany($related, 'location_category_id');
     }
 }

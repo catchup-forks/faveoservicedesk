@@ -1,61 +1,64 @@
 @extends('themes.default1.installer.layout.installer')
 
 @section('license')
-done
+    done
 @stop
 
 @section('environment')
-done
+    done
 @stop
 
 @section('database')
-active
+    active
 @stop
 
-@section('content') 
+@section('content')
 
     <h1 style="text-align: center;">Database Setup</h1>
-        This test will check prerequisites required to install Faveo<br/>
-<?php
-/**
- * Faveo HELPDESK Probe
- *
- * Copyright (c) 2014 Ladybird Web Solution.
- *
- */
-// -- Please provide valid database connection parameters ------------------------------
-$default = Session::get('default');
-$host = Session::get('host');
-$username = Session::get('username');
-$password = Session::get('password');
-$databasename = Session::get('databasename');
-$port = Session::get('port');
-define('DB_HOST', $host); // Address of your MySQL server (usually localhost)
-define('DB_USER', $username); // Username that is used to connect to the server
-define('DB_PASS', $password); // User's password
-define('DB_NAME', $databasename); // Name of the database you are connecting to
-define('DB_PORT', $port); // Name of the database you are connecting to
-define('PROBE_VERSION', '4.2');
-define('PROBE_FOR', '<b>Faveo</b> HELPDESK 1.0 and Newer');
-define('STATUS_OK', 'Ok');
-define('STATUS_WARNING', 'Warning');
-define('STATUS_ERROR', 'Error');
-class TestResult {
-    var $message;
-    var $status;
-    function __construct($message, $status = STATUS_OK) {
-        $this->message = $message;
-        $this->status = $status;
-    }
-} // TestResult
-if (DB_HOST && DB_USER && DB_NAME) {
+    This test will check prerequisites required to install Faveo<br/>
+    <?php
+    /**
+     * Faveo HELPDESK Probe
+     *
+     * Copyright (c) 2014 Ladybird Web Solution.
+     *
+     */
+    // -- Please provide valid database connection parameters ------------------------------
+    $default = Session::get('default');
+    $host = Session::get('host');
+    $username = Session::get('username');
+    $password = Session::get('password');
+    $databasename = Session::get('databasename');
+    $port = Session::get('port');
+    define('DB_HOST', $host); // Address of your MySQL server (usually localhost)
+    define('DB_USER', $username); // Username that is used to connect to the server
+    define('DB_PASS', $password); // User's password
+    define('DB_NAME', $databasename); // Name of the database you are connecting to
+    define('DB_PORT', $port); // Name of the database you are connecting to
+    define('PROBE_VERSION', '4.2');
+    define('PROBE_FOR', '<b>Faveo</b> HELPDESK 1.0 and Newer');
+    define('STATUS_OK', 'Ok');
+    define('STATUS_WARNING', 'Warning');
+    define('STATUS_ERROR', 'Error');
+    class TestResult
+    {
+        var $message;
+        var $status;
+
+        function __construct($message, $status = STATUS_OK)
+        {
+            $this->message = $message;
+            $this->status = $status;
+        }
+    } // TestResult
+    if (DB_HOST && DB_USER && DB_NAME) {
     ?>
-<?php
+    <?php
     $mysqli_ok = true;
     $results = array();
     // error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
     error_reporting(0);
-    if($default == 'mysql') {
+    if ($default == 'mysql') {
         if ($connection = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME)) {
             $results[] = new TestResult('Connected to database as ' . DB_USER . '@' . DB_HOST . DB_PORT, STATUS_OK);
             if (mysqli_select_db($connection, DB_NAME)) {
@@ -64,17 +67,19 @@ if (DB_HOST && DB_USER && DB_NAME) {
                 if (version_compare($mysqli_version, '5') >= 0) {
                     $results[] = new TestResult('MySQL version is ' . $mysqli_version, STATUS_OK);
                     // $have_inno = check_have_inno($connection);
-                    $sql = "SHOW TABLES FROM ".DB_NAME;
+                    $sql = "SHOW TABLES FROM " . DB_NAME;
                     $res = mysqli_query($connection, $sql);
                     if (mysqli_fetch_array($res) === null) {
                         $results[] = new TestResult('Database is empty');
                         $mysqli_ok = true;
                     } else {
-                        $results[] = new TestResult('Faveo installation requires an empty database, your database already has tables and data in it.', STATUS_ERROR);
+                        $results[] = new TestResult('Faveo installation requires an empty database, your database already has tables and data in it.',
+                            STATUS_ERROR);
                         $mysqli_ok = false;
                     }
                 } else {
-                    $results[] = new TestResult('Your MySQL version is ' . $mysqli_version . '. We recommend upgrading to at least MySQL5!', STATUS_ERROR);
+                    $results[] = new TestResult('Your MySQL version is ' . $mysqli_version . '. We recommend upgrading to at least MySQL5!',
+                        STATUS_ERROR);
                     $mysqli_ok = false;
                 } // if
             } else {
@@ -85,7 +90,7 @@ if (DB_HOST && DB_USER && DB_NAME) {
             $results[] = new TestResult('Failed to connect to database. ' . mysqli_error(), STATUS_ERROR);
             $mysqli_ok = false;
         } // if
-    } 
+    }
     // elseif($default == 'pgsql') {
     //     if ($connection2 = pg_connect("'host='.DB_HOST.' port='.DB_PORT.' dbname='.DB_NAME.' user='.DB_USER.' password='.DB_PASS.")) {
     //         $results[] = new TestResult('Connected to database as ' . DB_USER . '@' . DB_HOST, STATUS_OK);
@@ -94,47 +99,48 @@ if (DB_HOST && DB_USER && DB_NAME) {
     //         $mysqli_ok = false;
     //     }
     // } elseif($default == 'sqlsrv') {
-        
+
     // }
     // ---------------------------------------------------
     //  Validators
     // ---------------------------------------------------
-// dd($results);
+    // dd($results);
     ?><p class="setup-actions step"><?php
-    foreach ($results as $result) {
-        print '<br><span class="' . strtolower($result->status) . '">' . $result->status . '</span> &mdash; ' . $result->message . '';
-    } // foreach
-    ?> </p>
-<!-- </ul> -->
-<?php } else { ?>
-      <p>Database test is <strong>turned off</strong>. To turn it On, please open probe.php in your favorite text editor and set DB_XXXX connection parameters in database section at the beginning of the file:</p>
-      <ul>
+        foreach ($results as $result) {
+            print '<br><span class="' . strtolower($result->status) . '">' . $result->status . '</span> &mdash; ' . $result->message . '';
+        } // foreach
+        ?> </p>
+    <!-- </ul> -->
+    <?php } else { ?>
+    <p>Database test is <strong>turned off</strong>. To turn it On, please open probe.php in your favorite text editor
+        and set DB_XXXX connection parameters in database section at the beginning of the file:</p>
+    <ul>
         <li>DB_HOST &mdash; Address of your MySQL server (usually localhost)</li>
         <li>DB_USER &mdash; Username that is used to connect to the server</li>
         <li>DB_PASS &mdash; User's password</li>
         <li>DB_NAME &mdash; Name of the database you are connecting to</li>
-      </ul>
-      <p>Once these settings are set, probe.php will check if your database meets the system requirements.</p>
-<?php $mysqli_ok = null;?>
-<?php }  ?>
+    </ul>
+    <p>Once these settings are set, probe.php will check if your database meets the system requirements.</p>
+    <?php $mysqli_ok = null;?>
+    <?php }  ?>
 
-<?php if ($mysqli_ok !== null) {?>
-<?php if ($mysqli_ok) {?>
+    <?php if ($mysqli_ok !== null) {?>
+    <?php if ($mysqli_ok) {?>
 
-<div class="woocommerce-message woocommerce-tracker" >
-    <p id="pass">Database connection successful. This system can run Faveo</p>
-</div>
+    <div class="woocommerce-message woocommerce-tracker">
+        <p id="pass">Database connection successful. This system can run Faveo</p>
+    </div>
 
-<script src="{{asset("lb-faveo/js/ajax-jquery.min.js")}}"></script>
+    <script src="{{asset("lb-faveo/js/ajax-jquery.min.js")}}"></script>
 
-<span id="wait">Please wait this may take a while......</span>
+    <span id="wait">Please wait this may take a while......</span>
 
-{!! Form::open( ['id'=>'form','method' => 'POST'] )!!}
-{{-- <input type="hidden" name="_token" value="{{ csrf_token() }}"> --}}
+    {!! Form::open( ['id'=>'form','method' => 'POST'] )!!}
+    {{-- <input type="hidden" name="_token" value="{{ csrf_token() }}"> --}}
     <!-- <b>default</b><br> -->
     <input type="hidden" name="default" value="{!! $default !!}"/>
     <!-- <b>Host</b><br> -->
-    <input type="hidden"  name="host" value="{!! $host !!}"/>
+    <input type="hidden" name="host" value="{!! $host !!}"/>
     <!-- <b>Database Name</b><br> -->
     <input type="hidden" name="databasename" value="{!! $databasename !!}"/>
     <!-- <b>User Name</b><br> -->
@@ -146,7 +152,7 @@ if (DB_HOST && DB_USER && DB_NAME) {
 
     <input type="submit" style="display:none;">
 
-</form>
+    </form>
 
     <div id="show" style="display:none;">
         <div class="row">
@@ -160,31 +166,33 @@ if (DB_HOST && DB_USER && DB_NAME) {
 
     <div style="border-bottom: 1px solid #eee;">
         <p class="setup-actions step">
-            <a href="{{ URL::route('account') }}" class="pull-right" id="next" style="text-color:black"><input type="submit" id="submitme" class="button-primary button button-large button-next" value="Continue"> </a>
+            <a href="{{ URL::route('account') }}" class="pull-right" id="next" style="text-color:black"><input
+                        type="submit" id="submitme" class="button-primary button button-large button-next"
+                        value="Continue"> </a>
             <a href="{{ URL::route('configuration') }}" class="button button-large button-next" style="float: left">Previous</a>
         </p>
     </div>
 
-<br/>
+    <br/>
 
-<script type="text/javascript">
-// submit a ticket
-$(document).ready(function () {
-    $("#form").submit();
-});
-    // Edit a ticket
-        $('#form').on('submit', function() {
+    <script type="text/javascript">
+        // submit a ticket
+        $(document).ready(function () {
+            $("#form").submit();
+        });
+        // Edit a ticket
+        $('#form').on('submit', function () {
             $.ajax({
                 type: "POST",
                 url: "{!! route('postconnection') !!}",
                 dataType: "html",
                 data: $(this).serialize(),
-                beforeSend: function() {
+                beforeSend: function () {
                     $("#conn").hide();
                     $("#show").show();
                     $("#wait").show();
                 },
-                success: function(response) {
+                success: function (response) {
                     // $("#dismis").trigger("click");
                     if (response == 1) {
                         $("#show").hide();
@@ -198,39 +206,43 @@ $(document).ready(function () {
             })
             return false;
         });
-</script>
+    </script>
 
-<?php } else {?>
-    <div class="woocommerce-message woocommerce-tracker" >
-            <p id="fail">Database connection unsuccessful. This system does not meet Faveo system requirements</p>
-            </div>
-        <p>This either means that the username and password information is incorrect or we can&rsquo;t contact the database server. This could mean your host&rsquo;s database server is down.</p>
-        <ul>
-            <li>Are you sure you have the correct username and password?</li>
-            <li>Are you sure that you have typed the correct hostname?</li>
-            <li>Are you sure that the database server is running?</li>
-        </ul>
-        <p>If you&rsquo;re unsure what these terms mean you should probably contact your host. If you still need help you can always visit the <a href="http://www.ladybirdweb.com/support">Faveo Support </a>.</p>
+    <?php } else {?>
+    <div class="woocommerce-message woocommerce-tracker">
+        <p id="fail">Database connection unsuccessful. This system does not meet Faveo system requirements</p>
+    </div>
+    <p>This either means that the username and password information is incorrect or we can&rsquo;t contact the database
+        server. This could mean your host&rsquo;s database server is down.</p>
+    <ul>
+        <li>Are you sure you have the correct username and password?</li>
+        <li>Are you sure that you have typed the correct hostname?</li>
+        <li>Are you sure that the database server is running?</li>
+    </ul>
+    <p>If you&rsquo;re unsure what these terms mean you should probably contact your host. If you still need help you
+        can always visit the <a href="http://www.ladybirdweb.com/support">Faveo Support </a>.</p>
 
 
-            <div  style="border-bottom: 1px solid #eee;">
-                @if(Cache::has('step4')) <?php Cache::forget('step4')?> @endif
-                <p class="setup-actions step">
-                    <input type="submit" id="submitme" class="button-danger button button-large button-next" style="background-color: #d43f3a;color:#fff;" value="continue" disabled>
-                    <a href="{{URL::route('configuration')}}" class="button button-large button-next" style="float: left;">Previous</a>
-                </p>
-            </div>
-            <br/><br/>
-      <?php } // if ?>
+    <div style="border-bottom: 1px solid #eee;">
+        @if(Cache::has('step4')) <?php Cache::forget('step4')?> @endif
+        <p class="setup-actions step">
+            <input type="submit" id="submitme" class="button-danger button button-large button-next"
+                   style="background-color: #d43f3a;color:#fff;" value="continue" disabled>
+            <a href="{{URL::route('configuration')}}" class="button button-large button-next" style="float: left;">Previous</a>
+        </p>
+    </div>
+    <br/><br/>
+    <?php } // if ?>
     <div id="legend">
         {{-- <ul> --}}
         <p class="setup-actions step">
             <span class="ok">Ok</span> &mdash; All Ok <br/>
-            <span class="warning">Warning</span> &mdash; Not a deal breaker, but it's recommended to have this installed for some features to work<br/>
+            <span class="warning">Warning</span> &mdash; Not a deal breaker, but it's recommended to have this installed
+            for some features to work<br/>
             <span class="error">Error</span> &mdash; Faveo HELPDESK require this feature and can't work without it<br/>
         </p>
         {{-- </ul> --}}
     </div>
-<?php } // if ?>
+    <?php } // if ?>
 
 @stop

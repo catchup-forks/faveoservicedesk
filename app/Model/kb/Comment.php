@@ -3,7 +3,6 @@
 namespace App\Model\kb;
 
 use App\BaseModel;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Define the Model of comment table.

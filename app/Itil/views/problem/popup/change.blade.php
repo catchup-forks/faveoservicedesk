@@ -15,7 +15,8 @@ $requester = App\User::where('role', 'agent')->orWhere('role', 'admin')->lists('
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title">Change</h4>
                 {!! Form::open(['url'=>'service-desk/problem/change/'.$problem->id,'method'=>'post','files'=>true]) !!}
             </div>
@@ -23,13 +24,13 @@ $requester = App\User::where('role', 'agent')->orWhere('role', 'admin')->lists('
                 <div class="row">
                     <div class="form-group col-md-6 {{ $errors->has('subject') ? 'has-error' : '' }}">
                         <label for="inputPassword3" class="control-label">{{Lang::get('itil::lang.subject')}} </label>
-                        {!! Form::text('subject',null,['class'=>'form-control']) !!}
-                        <!--<input type="text" class="form-control" name="subject" id="inputPassword3" placeholder="Subject">-->
+                    {!! Form::text('subject',null,['class'=>'form-control']) !!}
+                    <!--<input type="text" class="form-control" name="subject" id="inputPassword3" placeholder="Subject">-->
                     </div>
                     <div class="form-group col-md-6 {{ $errors->has('requester') ? 'has-error' : '' }}">
                         <label for="inputPassword3" class="control-label">{{Lang::get('itil::lang.requester')}} </label>
-                        {!! Form::select('requester',$requester,null,['class'=>'form-control']) !!}
-                        <!--<input type="text" class="form-control" name="subject" id="inputPassword3" placeholder="Subject">-->
+                    {!! Form::select('requester',$requester,null,['class'=>'form-control']) !!}
+                    <!--<input type="text" class="form-control" name="subject" id="inputPassword3" placeholder="Subject">-->
                     </div>
 
 
@@ -40,9 +41,9 @@ $requester = App\User::where('role', 'agent')->orWhere('role', 'admin')->lists('
                     </div>
 
                     <div class="form-group col-md-12 {{ $errors->has('description') ? 'has-error' : '' }}">
-                        <label for="internal_notes" class="control-label" >Description</label>
-                        {!! Form::textarea('description',null,['class'=>'form-control']) !!}
-                        <!--<textarea class="form-control textarea" name="description" rows="7" id="internal_notes"></textarea>-->
+                        <label for="internal_notes" class="control-label">Description</label>
+                    {!! Form::textarea('description',null,['class'=>'form-control']) !!}
+                    <!--<textarea class="form-control textarea" name="description" rows="7" id="internal_notes"></textarea>-->
                     </div>
                     <div class="form-group col-md-6 {{ $errors->has('status_id') ? 'has-error' : '' }}">
                         <label class=" control-label">{{Lang::get('itil::lang.status')}}</label>
@@ -52,7 +53,7 @@ $requester = App\User::where('role', 'agent')->orWhere('role', 'admin')->lists('
                         <label class="control-label">{{Lang::get('itil::lang.priority')}}</label>
                         {!! Form::select('priority_id',$sd_changes_priorities,null,['class'=>'form-control']) !!}
 
-                    </div> 
+                    </div>
                     <div class="form-group col-md-6 {{ $errors->has('change_type_id') ? 'has-error' : '' }}">
                         <label class=" control-label">{{Lang::get('itil::lang.change_type')}}</label>
                         {!! Form::select('change_type_id',$sd_changes_types,null,['class'=>'form-control']) !!}
@@ -64,19 +65,19 @@ $requester = App\User::where('role', 'agent')->orWhere('role', 'admin')->lists('
 
                     </div>
                     <div class="form-group col-md-6 {{ $errors->has('impact_id') ? 'has-error' : '' }}">
-                        <label class=" control-label" >Impact Type</label>
+                        <label class=" control-label">Impact Type</label>
                         {!! Form::select('impact_id',$sd_impact_types,null,['class'=>'form-control']) !!}
 
                     </div>
                     @if(isAsset()==true)
-                    <div class="form-group col-md-6 {{ $errors->has('asset') ? 'has-error' : '' }}">
-                        <label class=" control-label" >Asset</label>
-                        {!! Form::select('asset[]',$assets,null,['class'=>'form-control','multiple'=>true]) !!}
+                        <div class="form-group col-md-6 {{ $errors->has('asset') ? 'has-error' : '' }}">
+                            <label class=" control-label">Asset</label>
+                            {!! Form::select('asset[]',$assets,null,['class'=>'form-control','multiple'=>true]) !!}
 
-                    </div>
+                        </div>
                     @endif
                     <div class="form-group col-md-6 {{ $errors->has('attachments') ? 'has-error' : '' }}">
-                        <label class=" control-label" >Attachments</label>
+                        <label class=" control-label">Attachments</label>
                         {!! Form::file('attachments[]',null,['multiple'=>true]) !!}
 
                     </div>

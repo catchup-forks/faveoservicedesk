@@ -23,7 +23,8 @@ class CreateWorkflowRuleTable extends Migration
         });
 
         Schema::table('workflow_rules', function (Blueprint $table) {
-            $table->foreign('workflow_id', 'workflow_rules_1')->references('id')->on('workflow_name')->onUpdate('NO ACTION')->onDelete('RESTRICT');
+            $table->foreign('workflow_id',
+                'workflow_rules_1')->references('id')->on('workflow_name')->onUpdate('NO ACTION')->onDelete('RESTRICT');
         });
     }
 

@@ -38,8 +38,8 @@ class ClientRequest extends Request
             return $rules;
         }
         $current_rule = [
-            'Name'    => 'required',
-            'Email'   => 'required|email',
+            'Name' => 'required',
+            'Email' => 'required|email',
             'Subject' => 'required',
             'Details' => 'required',
         ];
@@ -49,13 +49,37 @@ class ClientRequest extends Request
         return $rules;
     }
 
-    public function getHelpTopic()
+    /**
+     * @category Funcion to set rule if send opt is enabled
+     *
+     * @param object $settings (instance of Model common settings)
+     *
+     * @author manish.verma@ladybirdweb.com
+     *
+     * @return array|int
+     */
+    public function check($settings)
     {
-        $help_topics = new \App\Model\helpdesk\Manage\Help_topic();
-        $topic = $this->input('helptopic');
-        $help_topic = $help_topics->where('id', $topic)->first();
-
-        return $help_topic;
+        $settings = $settings->select('status')->where('option_name', '=', 'send_otp')->first();
+        $email_mandatory = $settings->select('status')->where('option_name', '=', 'email_mandatory')->first();
+        if (($email_mandatory->status == 0 || $email_mandatory->status == '0')) {
+            if (!\Auth::check()) {
+                return [
+                    'Name' => 'required',
+                    'Email' => 'email',
+                    'Subject' => 'required',
+                    'Details' => 'required',
+                    'mobile' => 'required',
+                ];
+            } else {
+                return [
+                    'Subject' => 'required',
+                    'Details' => 'required',
+                ];
+            }
+        } else {
+            return 0;
+        }
     }
 
     public function getCustomRule()
@@ -67,6 +91,15 @@ class ClientRequest extends Request
         }
 
         return $this->getForm($custom_form);
+    }
+
+    public function getHelpTopic()
+    {
+        $help_topics = new \App\Model\helpdesk\Manage\Help_topic();
+        $topic = $this->input('helptopic');
+        $help_topic = $help_topics->where('id', $topic)->first();
+
+        return $help_topic;
     }
 
     public function getForm($formid)
@@ -112,39 +145,6 @@ class ClientRequest extends Request
         }
 
         return [];
-    }
-
-    /**
-     *@category Funcion to set rule if send opt is enabled
-     *
-     *@param object $settings (instance of Model common settings)
-     *
-     *@author manish.verma@ladybirdweb.com
-     *
-     *@return array|int
-     */
-    public function check($settings)
-    {
-        $settings = $settings->select('status')->where('option_name', '=', 'send_otp')->first();
-        $email_mandatory = $settings->select('status')->where('option_name', '=', 'email_mandatory')->first();
-        if (($email_mandatory->status == 0 || $email_mandatory->status == '0')) {
-            if (!\Auth::check()) {
-                return [
-                'Name'    => 'required',
-                'Email'   => 'email',
-                'Subject' => 'required',
-                'Details' => 'required',
-                'mobile'  => 'required',
-                ];
-            } else {
-                return [
-                'Subject' => 'required',
-                'Details' => 'required',
-                ];
-            }
-        } else {
-            return 0;
-        }
     }
 
     //    public function purifyArray($array){

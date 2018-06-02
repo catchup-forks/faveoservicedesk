@@ -1,5 +1,5 @@
 <?php
-$build="";
+$build = "";
 if ($release->getGeneralByIdentifier('build-plan')) {
     $build = $release->getGeneralByIdentifier('build-plan')->value;
 }
@@ -8,24 +8,25 @@ if ($release->getGeneralByIdentifier('build-plan')) {
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title">Build Plan</h4>
                 {!! Form::open(['url'=>'service-desk/general/'.$release->id.'/sd_releases','files'=>true]) !!}
             </div>
             <div class="modal-body">
                 <!-- Form  -->
                 <div class="row">
-                    
+
                     <div class="col-md-12">
-                       {!! Form::hidden('identifier','build-plan') !!}
-                       {!! Form::label('build-plan','Build Plan') !!}
-                       {!! Form::textarea('build-plan',$build,['class'=>'form-control','id'=>'build-plan']) !!}
+                        {!! Form::hidden('identifier','build-plan') !!}
+                        {!! Form::label('build-plan','Build Plan') !!}
+                        {!! Form::textarea('build-plan',$build,['class'=>'form-control','id'=>'build-plan']) !!}
                     </div>
-                     <div class="col-md-12">
-                       {!! Form::label('attachment','Attachment') !!}
-                       {!! Form::file('attachment[]') !!}
+                    <div class="col-md-12">
+                        {!! Form::label('attachment','Attachment') !!}
+                        {!! Form::file('attachment[]') !!}
                     </div>
-                    
+
                 </div>
 
             </div>

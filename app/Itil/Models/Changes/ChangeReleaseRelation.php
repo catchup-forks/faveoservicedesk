@@ -10,5 +10,5 @@ class ChangeReleaseRelation extends Model
     protected $fillable = [
         'change_id',
         'release_id',
-        ];
+    ];
 }

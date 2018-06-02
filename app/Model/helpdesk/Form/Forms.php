@@ -15,18 +15,35 @@ class Forms extends BaseModel
      */
     protected $fillable = ['formname'];
 
-    public function fieldRelation()
+    public function deleteFormChild()
     {
-        $related = "App\Model\helpdesk\Form\Fields";
-
-        return $this->hasMany($related);
+        $childs = $this->formValueChild();
+        if ($childs->count() > 0) {
+            foreach ($childs as $child) {
+                $child->child_id = null;
+                $child->save();
+            }
+        }
     }
 
-    public function fields()
+    public function formValueChild()
     {
-        $relation = $this->fieldRelation()->get();
+        $childs = $this->formValueRelation()->get();
 
-        return $relation;
+        return $childs;
+    }
+
+    public function formValueRelation()
+    {
+        $related = "App\Model\helpdesk\Form\FieldValue";
+
+        return $this->hasMany($related, 'child_id');
+    }
+
+    public function delete()
+    {
+        $this->fieldsDelete();
+        parent::delete();
     }
 
     public function fieldsDelete()
@@ -39,34 +56,17 @@ class Forms extends BaseModel
         }
     }
 
-    public function formValueRelation()
+    public function fields()
     {
-        $related = "App\Model\helpdesk\Form\FieldValue";
+        $relation = $this->fieldRelation()->get();
 
-        return $this->hasMany($related, 'child_id');
+        return $relation;
     }
 
-    public function formValueChild()
+    public function fieldRelation()
     {
-        $childs = $this->formValueRelation()->get();
+        $related = "App\Model\helpdesk\Form\Fields";
 
-        return $childs;
-    }
-
-    public function deleteFormChild()
-    {
-        $childs = $this->formValueChild();
-        if ($childs->count() > 0) {
-            foreach ($childs as $child) {
-                $child->child_id = null;
-                $child->save();
-            }
-        }
-    }
-
-    public function delete()
-    {
-        $this->fieldsDelete();
-        parent::delete();
+        return $this->hasMany($related);
     }
 }

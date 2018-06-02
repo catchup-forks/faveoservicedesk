@@ -17,7 +17,7 @@ class SocialMedia extends Model
     {
         $social = '';
         if ($key == 'redirect' && $login == true) {
-            $social = url('social/login/'.$provider);
+            $social = url('social/login/' . $provider);
         }
         if ($key !== '' && $key !== 'redirect') {
             $social = $this->where('provider', $provider)->where('key', $key)->first();

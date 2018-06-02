@@ -25,12 +25,12 @@ class CreateLocationRequest extends Request
     {
         return [
             //
-            'title'             => 'required|max:15',
-            'email'             => 'email|required',
-            'phone'             => 'required|numeric',
-            'address'           => 'required',
+            'title' => 'required|max:15',
+            'email' => 'email|required',
+            'phone' => 'required|numeric',
+            'address' => 'required',
             'location_category' => 'required',
-            'department'        => 'required',
+            'department' => 'required',
 
         ];
     }

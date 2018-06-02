@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Client\helpdesk;
 
 // controllers
 use App\Http\Controllers\Controller;
-// models
 use App\Model\helpdesk\Settings\System;
-// classes
 use Config;
 use Redirect;
+
+// models
+// classes
 
 /**
  * OuthouseController.
@@ -43,7 +44,7 @@ class WelcomepageController extends Controller
     public function index()
     {
         $directory = base_path();
-        if (file_exists($directory.DIRECTORY_SEPARATOR.'.env')) {
+        if (file_exists($directory . DIRECTORY_SEPARATOR . '.env')) {
             return view('themes.default1.client.helpdesk.guest-user.index');
         } else {
             return Redirect::route('licence');

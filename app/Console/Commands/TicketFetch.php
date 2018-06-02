@@ -58,7 +58,8 @@ class TicketFetch extends Command
     {
         $PhpMailController = new \App\Http\Controllers\Common\PhpMailController();
         $NotificationController = new \App\Http\Controllers\Common\NotificationController();
-        $ticket = new \App\Http\Controllers\Agent\helpdesk\TicketController($PhpMailController, $NotificationController);
+        $ticket = new \App\Http\Controllers\Agent\helpdesk\TicketController($PhpMailController,
+            $NotificationController);
         $work = new TicketWorkflowController($ticket);
         $controller = new MailController($work);
 

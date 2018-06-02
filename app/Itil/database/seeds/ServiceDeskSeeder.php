@@ -2,7 +2,6 @@
 
 namespace App\Itil\Database\seeds;
 
-use App\Itil\database\seeds\SdAssetAttachmentTypes;
 use Illuminate\Database\Seeder;
 
 class ServiceDeskSeeder extends Seeder

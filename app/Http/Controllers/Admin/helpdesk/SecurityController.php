@@ -4,14 +4,14 @@ namespace App\Http\Controllers\Admin\helpdesk;
 
 // Controller
 use App\Http\Controllers\Controller;
-// Model
 use App\Http\Requests\helpdesk\SecurityRequest;
 use App\Model\helpdesk\Settings\Security;
-// Request
-use Illuminate\Http\Request;
-// Class
 use Lang;
 use Redirect;
+
+// Model
+// Request
+// Class
 
 /**
  * FormController
@@ -94,9 +94,9 @@ class SecurityController extends Controller
     /**
      * Delete security details.
      *
-     * @param type                                            $id
-     * @param \App\Model\helpdesk\Settings\Security           $securitys
-     * @param type                                            $field
+     * @param type $id
+     * @param \App\Model\helpdesk\Settings\Security $securitys
+     * @param type $field
      * @param \App\Http\Controllers\Admin\helpdesk\Help_topic $help_topic
      *
      * @return type redirect

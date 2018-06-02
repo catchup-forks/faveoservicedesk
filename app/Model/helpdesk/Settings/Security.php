@@ -12,6 +12,11 @@ class Security extends BaseModel
     /* Set fillable fields in table */
     protected $fillable = [
 
-        'id', 'lockout_message', 'backlist_offender', 'backlist_threshold', 'lockout_period', 'days_to_keep_logs',
+        'id',
+        'lockout_message',
+        'backlist_offender',
+        'backlist_threshold',
+        'lockout_period',
+        'days_to_keep_logs',
     ];
 }

@@ -2,7 +2,7 @@
 
 function loging($context, $message, $level = 'error', $array = [])
 {
-    \Log::$level($message.':-:-:-'.$context, $array);
+    \Log::$level($message . ':-:-:-' . $context, $array);
 }
 
 function checkArray($key, $array)
@@ -18,19 +18,19 @@ function checkArray($key, $array)
 function mime($type)
 {
     if ($type == 'jpg' ||
-            $type == 'png' ||
-            $type == 'PNG' ||
-            $type == 'JPG' ||
-            $type == 'jpeg' ||
-            $type == 'JPEG' ||
-            $type == 'gif' ||
-            $type == 'GIF' ||
-            $type == 'image/jpeg' ||
-            $type == 'image/jpg' ||
-            $type == 'image/gif' ||
-           // $type == "application/octet-stream" ||
-            $type == 'image/png' ||
-            starts_with($type, 'image')) {
+        $type == 'png' ||
+        $type == 'PNG' ||
+        $type == 'JPG' ||
+        $type == 'jpeg' ||
+        $type == 'JPEG' ||
+        $type == 'gif' ||
+        $type == 'GIF' ||
+        $type == 'image/jpeg' ||
+        $type == 'image/jpg' ||
+        $type == 'image/gif' ||
+        // $type == "application/octet-stream" ||
+        $type == 'image/png' ||
+        starts_with($type, 'image')) {
         return 'image';
     }
 }
@@ -90,19 +90,25 @@ function isBill()
     return $check;
 }
 
-function deletePopUp($id, $url, $title = 'Delete', $class = 'btn btn-sm btn-danger', $btn_name = 'Delete', $button_check = true)
-{
+function deletePopUp(
+    $id,
+    $url,
+    $title = 'Delete',
+    $class = 'btn btn-sm btn-danger',
+    $btn_name = 'Delete',
+    $button_check = true
+) {
     $button = '';
     if ($button_check == true) {
-        $button = '<a href="#delete" class="'.$class.'" data-toggle="modal" data-target="#delete'.$id.'">'.$btn_name.'</a>';
+        $button = '<a href="#delete" class="' . $class . '" data-toggle="modal" data-target="#delete' . $id . '">' . $btn_name . '</a>';
     }
 
-    return $button.'<div class="modal fade" id="delete'.$id.'">
+    return $button . '<div class="modal fade" id="delete' . $id . '">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title">'.$title.'</h4>
+                                <h4 class="modal-title">' . $title . '</h4>
                             </div>
                             <div class="modal-body">
                                 <div class="row">
@@ -113,7 +119,7 @@ function deletePopUp($id, $url, $title = 'Delete', $class = 'btn btn-sm btn-dang
                             </div>
                             <div class="modal-footer">
                                 <button type="button" id="close" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                                <a href="'.$url.'" class="btn btn-danger">Delete</a>
+                                <a href="' . $url . '" class="btn btn-danger">Delete</a>
                             </div>
                         </div>
                     </div>

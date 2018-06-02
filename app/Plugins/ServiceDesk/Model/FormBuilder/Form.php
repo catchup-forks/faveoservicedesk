@@ -11,14 +11,11 @@ class Form extends Model
         'title',
     ];
 
-    public function field()
+    public function delete()
     {
-        return $this->hasMany('App\Plugins\ServiceDesk\Model\FormBuilder\FormField');
-    }
-
-    public function assetType()
-    {
-        return $this->hasMany('App\Plugins\ServiceDesk\Model\Assets\AssetFormRelation');
+        $this->deleteFields();
+        $this->assetType()->delete();
+        parent::delete();
     }
 
     public function deleteFields()
@@ -31,10 +28,13 @@ class Form extends Model
         }
     }
 
-    public function delete()
+    public function field()
     {
-        $this->deleteFields();
-        $this->assetType()->delete();
-        parent::delete();
+        return $this->hasMany('App\Plugins\ServiceDesk\Model\FormBuilder\FormField');
+    }
+
+    public function assetType()
+    {
+        return $this->hasMany('App\Plugins\ServiceDesk\Model\Assets\AssetFormRelation');
     }
 }

@@ -22,26 +22,13 @@ class ActivateController extends Controller
         }
     }
 
-    public function publish()
-    {
-        try {
-            $publish = 'vendor:publish';
-            $provider = 'App\Plugins\ServiceDesk\ServiceProvider';
-            $tag = 'migrations';
-            $r = Artisan::call($publish, ['--provider' => $provider, '--tag' => [$tag]]);
-            //dd($r);
-        } catch (Exception $ex) {
-            dd($ex);
-        }
-    }
-
     public function migrate()
     {
         try {
-            $path = 'app'.DIRECTORY_SEPARATOR.'Plugins'.DIRECTORY_SEPARATOR.'ServiceDesk'.DIRECTORY_SEPARATOR.'database'.DIRECTORY_SEPARATOR.'migrations';
+            $path = 'app' . DIRECTORY_SEPARATOR . 'Plugins' . DIRECTORY_SEPARATOR . 'ServiceDesk' . DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migrations';
             Artisan::call('migrate', [
-            '--path' => $path,
-            '--force'=> true,
+                '--path' => $path,
+                '--force' => true,
             ]);
         } catch (Exception $ex) {
             dd($ex);
@@ -55,6 +42,19 @@ class ActivateController extends Controller
             $controller->run();
 
             return 1;
+        } catch (Exception $ex) {
+            dd($ex);
+        }
+    }
+
+    public function publish()
+    {
+        try {
+            $publish = 'vendor:publish';
+            $provider = 'App\Plugins\ServiceDesk\ServiceProvider';
+            $tag = 'migrations';
+            $r = Artisan::call($publish, ['--provider' => $provider, '--tag' => [$tag]]);
+            //dd($r);
         } catch (Exception $ex) {
             dd($ex);
         }

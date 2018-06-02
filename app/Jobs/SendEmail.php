@@ -10,7 +10,7 @@ use Illuminate\Queue\SerializesModels;
 
 class SendEmail extends Job implements SelfHandling, ShouldQueue
 {
-    use InteractsWithQueue,SerializesModels;
+    use InteractsWithQueue, SerializesModels;
 
     protected $from;
     protected $to;

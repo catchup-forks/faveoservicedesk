@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Admin\helpdesk;
 
 // controller
 use App\Http\Controllers\Controller;
-// request
-
 use Exception;
 use File;
 use Lang;
+
+// request
 
 /**
  * ErrorAndDebuggingController.
@@ -41,7 +41,10 @@ class ErrorAndDebuggingController extends Controller
         $debug = \Config::get('app.debug');
         $bugsnag = \Config::get('app.bugsnag_reporting');
 
-        return view('themes.default1.admin.helpdesk.settings.error-and-logs.error-debug')->with(['debug' => $debug, 'bugsnag' => $bugsnag]);
+        return view('themes.default1.admin.helpdesk.settings.error-and-logs.error-debug')->with([
+            'debug' => $debug,
+            'bugsnag' => $bugsnag
+        ]);
     }
 
     /**
@@ -60,19 +63,19 @@ class ErrorAndDebuggingController extends Controller
             $bugsnag_debug = ($bugsnag_debug) ? 'true' : 'false';
             if ($debug != \Input::get('debug') || $bugsnag_debug != \Input::get('bugsnag')) {
                 // dd($request->input());
-                $debug_new = base_path().DIRECTORY_SEPARATOR.'.env';
+                $debug_new = base_path() . DIRECTORY_SEPARATOR . '.env';
                 $datacontent = File::get($debug_new);
-                $datacontent = str_replace('APP_DEBUG='.$debug,
-                                           'APP_DEBUG='.\Input::get('debug'),
-                                            $datacontent);
+                $datacontent = str_replace('APP_DEBUG=' . $debug,
+                    'APP_DEBUG=' . \Input::get('debug'),
+                    $datacontent);
                 File::put($debug_new, $datacontent);
 
                 // dd($request->input());
-                $bugsnag_debug_new = base_path().DIRECTORY_SEPARATOR.'.env';
+                $bugsnag_debug_new = base_path() . DIRECTORY_SEPARATOR . '.env';
                 $datacontent2 = File::get($bugsnag_debug_new);
-                $datacontent2 = str_replace('APP_BUGSNAG='.$bugsnag_debug,
-                                           'APP_BUGSNAG='.\Input::get('bugsnag'),
-                                            $datacontent2);
+                $datacontent2 = str_replace('APP_BUGSNAG=' . $bugsnag_debug,
+                    'APP_BUGSNAG=' . \Input::get('bugsnag'),
+                    $datacontent2);
                 File::put($bugsnag_debug_new, $datacontent2);
 
                 return redirect()->back()->with('success',

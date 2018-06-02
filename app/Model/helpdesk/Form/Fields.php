@@ -15,20 +15,6 @@ class Fields extends BaseModel
      */
     protected $fillable = ['forms_id', 'label', 'name', 'type', 'value', 'required'];
 
-    public function valueRelation()
-    {
-        $related = "App\Model\helpdesk\Form\FieldValue";
-
-        return $this->hasMany($related, 'field_id');
-    }
-
-    public function values()
-    {
-        $value = $this->valueRelation();
-
-        return $value;
-    }
-
     public function valuesAsString()
     {
         $string = '';
@@ -38,6 +24,20 @@ class Fields extends BaseModel
         }
 
         return $string;
+    }
+
+    public function values()
+    {
+        $value = $this->valueRelation();
+
+        return $value;
+    }
+
+    public function valueRelation()
+    {
+        $related = "App\Model\helpdesk\Form\FieldValue";
+
+        return $this->hasMany($related, 'field_id');
     }
 
     public function requiredFieldForCheck()
@@ -62,6 +62,12 @@ class Fields extends BaseModel
         return $check;
     }
 
+    public function delete()
+    {
+        $this->deleteValues();
+        parent::delete();
+    }
+
     public function deleteValues()
     {
         $values = $this->values()->get();
@@ -70,11 +76,5 @@ class Fields extends BaseModel
                 $value->delete();
             }
         }
-    }
-
-    public function delete()
-    {
-        $this->deleteValues();
-        parent::delete();
     }
 }

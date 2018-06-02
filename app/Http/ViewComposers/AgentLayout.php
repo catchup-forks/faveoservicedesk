@@ -48,49 +48,17 @@ class AgentLayout
     {
         $notifications = \App\Http\Controllers\Common\NotificationController::getNotifications();
         $view->with([
-            'company'         => $this->company,
-            'notifications'   => $notifications,
-            'myticket'        => $this->myTicket(),
-            'unassigned'      => $this->unassigned(),
+            'company' => $this->company,
+            'notifications' => $notifications,
+            'myticket' => $this->myTicket(),
+            'unassigned' => $this->unassigned(),
             'followup_ticket' => $this->followupTicket(),
-            'deleted'         => $this->deleted(),
-            'tickets'         => $this->inbox(),
-            'department'      => $this->departments(),
-            'overdues'        => $this->overdues(),
-            'due_today'       => $this->getDueToday(),
+            'deleted' => $this->deleted(),
+            'tickets' => $this->inbox(),
+            'department' => $this->departments(),
+            'overdues' => $this->overdues(),
+            'due_today' => $this->getDueToday(),
         ]);
-    }
-
-    public function users()
-    {
-        return $this->users->select('id', 'profile_pic');
-    }
-
-    public function tickets()
-    {
-        return $this->tickets->select('id', 'ticket_number');
-    }
-
-    public function departments()
-    {
-        $array = [];
-        $tickets = $this->tickets;
-        if (\Auth::user()->role == 'agent') {
-            $tickets = $tickets->where('tickets.dept_id', '=', \Auth::user()->primary_dpt);
-        }
-        $tickets = $tickets
-                ->leftJoin('department as dep', 'tickets.dept_id', '=', 'dep.id')
-                ->leftJoin('ticket_status', 'tickets.status', '=', 'ticket_status.id')
-                ->select('dep.name as name', 'ticket_status.name as status', \DB::raw('COUNT(ticket_status.name) as count'))
-                ->groupBy('dep.name', 'ticket_status.name')
-                ->get();
-        $grouped = $tickets->groupBy('name');
-        $status = [];
-        foreach ($grouped as $key => $group) {
-            $status[$key] = $group->keyBy('status');
-        }
-
-        return collect($status);
     }
 
     public function myTicket()
@@ -98,11 +66,16 @@ class AgentLayout
         $ticket = $this->tickets();
         if ($this->auth->role == 'admin') {
             return $ticket->where('assigned_to', $this->auth->id)
-                    ->where('status', '1');
+                ->where('status', '1');
         } elseif ($this->auth->role == 'agent') {
             return $ticket->where('assigned_to', $this->auth->id)
-                    ->where('status', '1');
+                ->where('status', '1');
         }
+    }
+
+    public function tickets()
+    {
+        return $this->tickets->select('id', 'ticket_number');
     }
 
     public function unassigned()
@@ -110,13 +83,13 @@ class AgentLayout
         $ticket = $this->tickets();
         if ($this->auth->role == 'admin') {
             return $ticket->where('assigned_to', '=', null)
-                    ->where('status', '=', '1')
-                    ->select('id');
+                ->where('status', '=', '1')
+                ->select('id');
         } elseif ($this->auth->role == 'agent') {
             return $ticket->where('assigned_to', '=', null)
-                    ->where('status', '=', '1')
-                    ->where('dept_id', '=', $this->auth->primary_dpt)
-                    ->select('id');
+                ->where('status', '=', '1')
+                ->where('dept_id', '=', $this->auth->primary_dpt)
+                ->select('id');
         }
     }
 
@@ -137,7 +110,7 @@ class AgentLayout
             return $ticket->where('status', '5')->select('id');
         } elseif ($this->auth->role == 'agent') {
             return $ticket->where('status', '5')->where('dept_id', '=', $this->auth->primary_dpt)
-                    ->select('id');
+                ->select('id');
         }
     }
 
@@ -151,8 +124,30 @@ class AgentLayout
 
         return $table->Join('ticket_status', function ($join) {
             $join->on('ticket_status.id', '=', 'tickets.status')
-                        ->whereIn('ticket_status.id', [1, 7]);
+                ->whereIn('ticket_status.id', [1, 7]);
         });
+    }
+
+    public function departments()
+    {
+        $array = [];
+        $tickets = $this->tickets;
+        if (\Auth::user()->role == 'agent') {
+            $tickets = $tickets->where('tickets.dept_id', '=', \Auth::user()->primary_dpt);
+        }
+        $tickets = $tickets
+            ->leftJoin('department as dep', 'tickets.dept_id', '=', 'dep.id')
+            ->leftJoin('ticket_status', 'tickets.status', '=', 'ticket_status.id')
+            ->select('dep.name as name', 'ticket_status.name as status', \DB::raw('COUNT(ticket_status.name) as count'))
+            ->groupBy('dep.name', 'ticket_status.name')
+            ->get();
+        $grouped = $tickets->groupBy('name');
+        $status = [];
+        foreach ($grouped as $key => $group) {
+            $status[$key] = $group->keyBy('status');
+        }
+
+        return collect($status);
     }
 
     public function overdues()
@@ -160,19 +155,19 @@ class AgentLayout
         $ticket = $this->tickets();
         if ($this->auth->role == 'admin') {
             return $ticket->where('status', '=', 1)
-                            ->where('isanswered', '=', 0)
-                            ->whereNotNull('tickets.duedate')
-                            ->where('tickets.duedate', '!=', '00-00-00 00:00:00')
-                            ->where('tickets.duedate', '<', \Carbon\Carbon::now())
-                            ->select('tickets.id');
+                ->where('isanswered', '=', 0)
+                ->whereNotNull('tickets.duedate')
+                ->where('tickets.duedate', '!=', '00-00-00 00:00:00')
+                ->where('tickets.duedate', '<', \Carbon\Carbon::now())
+                ->select('tickets.id');
         } elseif ($this->auth->role == 'agent') {
             return $ticket->where('status', '=', 1)
-                            ->where('isanswered', '=', 0)
-                            ->whereNotNull('tickets.duedate')
-                            ->where('dept_id', '=', $this->auth->primary_dpt)
-                            ->where('tickets.duedate', '!=', '00-00-00 00:00:00')
-                            ->where('tickets.duedate', '<', \Carbon\Carbon::now())
-                            ->select('tickets.id');
+                ->where('isanswered', '=', 0)
+                ->whereNotNull('tickets.duedate')
+                ->where('dept_id', '=', $this->auth->primary_dpt)
+                ->where('tickets.duedate', '!=', '00-00-00 00:00:00')
+                ->where('tickets.duedate', '<', \Carbon\Carbon::now())
+                ->select('tickets.id');
         }
     }
 
@@ -181,17 +176,22 @@ class AgentLayout
         $ticket = $this->tickets();
         if ($this->auth->role == 'admin') {
             return $ticket->where('status', '=', 1)
-                            ->where('status', '=', 1)
-                            ->where('isanswered', '=', 0)
-                            ->whereNotNull('duedate')
-                            ->whereRaw('date(duedate) = ?', [date('Y-m-d')]);
+                ->where('status', '=', 1)
+                ->where('isanswered', '=', 0)
+                ->whereNotNull('duedate')
+                ->whereRaw('date(duedate) = ?', [date('Y-m-d')]);
         } elseif ($this->auth->role == 'agent') {
             return $ticket->where('status', '=', 1)
-                            ->where('status', '=', 1)
-                            ->where('isanswered', '=', 0)
-                            ->whereNotNull('duedate')
-                            ->where('dept_id', '=', $this->auth->primary_dpt)
-                            ->whereRaw('date(duedate) = ?', [date('Y-m-d')]);
+                ->where('status', '=', 1)
+                ->where('isanswered', '=', 0)
+                ->whereNotNull('duedate')
+                ->where('dept_id', '=', $this->auth->primary_dpt)
+                ->whereRaw('date(duedate) = ?', [date('Y-m-d')]);
         }
+    }
+
+    public function users()
+    {
+        return $this->users->select('id', 'profile_pic');
     }
 }

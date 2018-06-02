@@ -26,6 +26,52 @@ class UrlSettingController extends Controller
         }
     }
 
+    public function checkWWW($url)
+    {
+        $check = $this->checkWwwInUrl($url);
+        $array['www'] = true;
+        $array['nonwww'] = false;
+        if ($check == false) {
+            $array['www'] = false;
+            $array['nonwww'] = true;
+        }
+
+        return $array;
+    }
+
+    public function checkWwwInUrl($url)
+    {
+        $check = false;
+        if (strpos($url, 'www') !== false) {
+            $check = true;
+        }
+
+        return $check;
+    }
+
+    public function checkHTTP($url)
+    {
+        $check = $this->checkHttpsInUrl($url);
+        $array['https'] = true;
+        $array['http'] = false;
+        if ($check == false) {
+            $array['https'] = false;
+            $array['http'] = true;
+        }
+
+        return $array;
+    }
+
+    public function checkHttpsInUrl($url)
+    {
+        $check = false;
+        if (strpos($url, 'https') !== false) {
+            $check = true;
+        }
+
+        return $check;
+    }
+
     public function postSettings(Request $request)
     {
         try {
@@ -33,7 +79,7 @@ class UrlSettingController extends Controller
             $ssl = $request->input('ssl');
             $string_www = $this->www($www);
             $sting_ssl = $this->ssl($ssl);
-            $string = $string_www.$sting_ssl;
+            $string = $string_www . $sting_ssl;
             $this->writeHtaccess($string);
 
             return redirect()->back()->with('success', 'updated');
@@ -106,7 +152,7 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]\n";
         }
         $this->deleteCustom();
         $content = file_get_contents($file);
-        file_put_contents($file, $content."#custom\n".$string);
+        file_put_contents($file, $content . "#custom\n" . $string);
         $new_content = file_get_contents($file);
     }
 
@@ -122,51 +168,5 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]\n";
             $content = substr_replace($content, '', $custom_pos);
         }
         file_put_contents($file, $content);
-    }
-
-    public function checkWwwInUrl($url)
-    {
-        $check = false;
-        if (strpos($url, 'www') !== false) {
-            $check = true;
-        }
-
-        return $check;
-    }
-
-    public function checkHttpsInUrl($url)
-    {
-        $check = false;
-        if (strpos($url, 'https') !== false) {
-            $check = true;
-        }
-
-        return $check;
-    }
-
-    public function checkWWW($url)
-    {
-        $check = $this->checkWwwInUrl($url);
-        $array['www'] = true;
-        $array['nonwww'] = false;
-        if ($check == false) {
-            $array['www'] = false;
-            $array['nonwww'] = true;
-        }
-
-        return $array;
-    }
-
-    public function checkHTTP($url)
-    {
-        $check = $this->checkHttpsInUrl($url);
-        $array['https'] = true;
-        $array['http'] = false;
-        if ($check == false) {
-            $array['https'] = false;
-            $array['http'] = true;
-        }
-
-        return $array;
     }
 }

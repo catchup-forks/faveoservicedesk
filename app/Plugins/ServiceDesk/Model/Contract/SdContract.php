@@ -70,11 +70,6 @@ class SdContract extends Model
         return ucfirst($value);
     }
 
-    public function contractType()
-    {
-        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Contract\ContractType', 'contract_type_id');
-    }
-
     public function contractTypes()
     {
         $value = '--';
@@ -89,9 +84,9 @@ class SdContract extends Model
         return ucfirst($value);
     }
 
-    public function cab()
+    public function contractType()
     {
-        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Cab\Cab', 'approver_id');
+        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Contract\ContractType', 'contract_type_id');
     }
 
     public function approvers()
@@ -104,16 +99,16 @@ class SdContract extends Model
         if ($attr) {
             $attrs = $this->cab()->first();
             if ($attrs) {
-                $value = "<a href='".url('service-desk/cabs/'.$attr.'/'.$owner.'/show')."'>$attrs->name</a>";
+                $value = "<a href='" . url('service-desk/cabs/' . $attr . '/' . $owner . '/show') . "'>$attrs->name</a>";
             }
         }
         //dd($value);
         return ucfirst($value);
     }
 
-    public function vendor()
+    public function cab()
     {
-        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Vendor\SdVendors', 'vendor_id');
+        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Cab\Cab', 'approver_id');
     }
 
     public function vendors()
@@ -123,16 +118,16 @@ class SdContract extends Model
         if ($attr) {
             $attrs = $this->vendor()->first();
             if ($attrs) {
-                $value = "<a href='".url('service-desk/vendor/'.$attr.'/show')."'>$attrs->name</a>";
+                $value = "<a href='" . url('service-desk/vendor/' . $attr . '/show') . "'>$attrs->name</a>";
             }
         }
         //dd($value);
         return ucfirst($value);
     }
 
-    public function licence()
+    public function vendor()
     {
-        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Contract\License', 'license_type_id');
+        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Vendor\SdVendors', 'vendor_id');
     }
 
     public function licenseTypes()
@@ -149,9 +144,9 @@ class SdContract extends Model
         return ucfirst($value);
     }
 
-    public function product()
+    public function licence()
     {
-        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Products\SdProducts', 'product_id');
+        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Contract\License', 'license_type_id');
     }
 
     public function products()
@@ -161,11 +156,16 @@ class SdContract extends Model
         if ($attr) {
             $attrs = $this->product()->first();
             if ($attrs) {
-                $value = "<a href='".url('service-desk/products/'.$attr.'/show')."'>$attrs->name</a>";
+                $value = "<a href='" . url('service-desk/products/' . $attr . '/show') . "'>$attrs->name</a>";
             }
         }
         //dd($value);
         return ucfirst($value);
+    }
+
+    public function product()
+    {
+        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Products\SdProducts', 'product_id');
     }
 
     public function attachments()

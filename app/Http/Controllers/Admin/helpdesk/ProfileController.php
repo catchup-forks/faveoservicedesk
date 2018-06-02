@@ -4,16 +4,17 @@ namespace App\Http\Controllers\Admin\helpdesk;
 
 // controllers
 use App\Http\Controllers\Controller;
-// requests
 use App\Http\Requests\ProfilePassword;
 use App\Http\Requests\ProfileRequest;
-// models
 use App\User;
-// classes
 use Auth;
 use Exception;
 use Hash;
 use Input;
+
+// requests
+// models
+// classes
 
 /**
  * ProfileController.
@@ -99,7 +100,7 @@ class ProfileController extends Controller
             //$extension = Input::file('profile_pic')->getClientOriginalExtension();
             $name = Input::file('profile_pic')->getClientOriginalName();
             $destinationPath = 'lb-faveo/profilepic';
-            $fileName = rand(0000, 9999).'.'.$name;
+            $fileName = rand(0000, 9999) . '.' . $name;
             //echo $fileName;
             Input::file('profile_pic')->move($destinationPath, $fileName);
             $user->profile_pic = $fileName;

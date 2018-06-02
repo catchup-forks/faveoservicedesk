@@ -4,9 +4,10 @@ namespace App\Http\Middleware;
 
 use Cache;
 use Closure;
-// use Illuminate\Contracts\Routing\Middleware;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
+
+// use Illuminate\Contracts\Routing\Middleware;
 
 class LanguageMiddleware
 {

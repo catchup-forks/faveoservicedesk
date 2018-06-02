@@ -4,19 +4,20 @@ namespace App\Http\Controllers\Admin\helpdesk;
 
 // controllers
 use App\Http\Controllers\Controller;
-// requests
 use App\Http\Requests\helpdesk\TeamRequest;
 use App\Http\Requests\helpdesk\TeamUpdate;
-// models
 use App\Model\helpdesk\Agent\Assign_team_agent;
 use App\Model\helpdesk\Agent\Department;
 use App\Model\helpdesk\Agent\Groups;
 use App\Model\helpdesk\Agent\Teams;
 use App\User;
-// classes
 use DB;
 use Exception;
 use Lang;
+
+// requests
+// models
+// classes
 
 /**
  * TeamController.
@@ -96,7 +97,7 @@ class TeamController extends Controller
                     'team_lead' => $team_lead,
                 ]);
                 Assign_team_agent::create([
-                    'team_id'  => $team_update->id,
+                    'team_id' => $team_update->id,
                     'agent_id' => $team_lead,
                 ]);
             } else {
@@ -107,14 +108,15 @@ class TeamController extends Controller
             return redirect('teams')->with('success', Lang::get('lang.teams_created_successfully'));
         } catch (Exception $e) {
             /* redirect to Index page with Fails Message */
-            return redirect('teams')->with('fails', Lang::get('lang.teams_can_not_create').'<li>'.$e->getMessage().'</li>');
+            return redirect('teams')->with('fails',
+                Lang::get('lang.teams_can_not_create') . '<li>' . $e->getMessage() . '</li>');
         }
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param type                   $id
+     * @param type $id
      * @param type User              $user
      * @param type Assign_team_agent $assign_team_agent
      * @param type Teams             $team
@@ -147,30 +149,29 @@ class TeamController extends Controller
 
         // dd($id);
 
-        $users = DB::table('team_assign_agent')->select('team_assign_agent.id', 'team_assign_agent.team_id', 'users.user_name', 'users.first_name', 'users.last_name', 'users.active', 'users.assign_group', 'users.primary_dpt', 'users.role')
-          ->join('users', 'users.id', '=', 'team_assign_agent.agent_id')
-          ->where('team_assign_agent.team_id', '=', $id);
+        $users = DB::table('team_assign_agent')->select('team_assign_agent.id', 'team_assign_agent.team_id',
+            'users.user_name', 'users.first_name', 'users.last_name', 'users.active', 'users.assign_group',
+            'users.primary_dpt', 'users.role')
+            ->join('users', 'users.id', '=', 'team_assign_agent.agent_id')
+            ->where('team_assign_agent.team_id', '=', $id);
         //           ->get();
         // dd($users);
         return \Datatable::query($users)
             ->showColumns('user_name')
-
             ->addColumn('first_name', function ($model) {
-                $full_name = ucfirst($model->first_name).' '.ucfirst($model->last_name);
+                $full_name = ucfirst($model->first_name) . ' ' . ucfirst($model->last_name);
 
                 return $full_name;
             })
-
             ->addColumn('active', function ($model) {
                 if ($model->active == '1') {
-                    $role = "<a class='btn btn-success btn-xs'>".'Active'.'</a>';
+                    $role = "<a class='btn btn-success btn-xs'>" . 'Active' . '</a>';
                 } elseif ($model->active == 'agent') {
-                    $role = "<a class='btn btn-primary btn-xs'>".'Inactive'.'</a>';
+                    $role = "<a class='btn btn-primary btn-xs'>" . 'Inactive' . '</a>';
                 }
 
                 return $role;
             })
-
             ->addColumn('assign_group', function ($model) {
                 $group = Groups::whereId($model->assign_group)->first();
 
@@ -183,24 +184,23 @@ class TeamController extends Controller
             })
             ->addColumn('role', function ($model) {
                 if ($model->role == 'admin') {
-                    $role = "<a class='btn btn-success btn-xs'>".$model->role.'</a>';
+                    $role = "<a class='btn btn-success btn-xs'>" . $model->role . '</a>';
                 } elseif ($model->role == 'agent') {
-                    $role = "<a class='btn btn-primary btn-xs'>".$model->role.'</a>';
+                    $role = "<a class='btn btn-primary btn-xs'>" . $model->role . '</a>';
                 }
 
                 return $role;
             })
-
             // ->showColumns('role')
             ->searchColumns('first_name', 'last_name')
-                        ->orderColumns('first_name', 'last_name')
-                        ->make();
+            ->orderColumns('first_name', 'last_name')
+            ->make();
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param type                   $id
+     * @param type $id
      * @param type User              $user
      * @param type Assign_team_agent $assign_team_agent
      * @param type Teams             $team
@@ -220,7 +220,8 @@ class TeamController extends Controller
             // dd($a_id);
             $user = $user->whereIn('id', $a_id)->where('active', '=', 1)->orderBy('first_name')->get();
             // dd($user);
-            return view('themes.default1.admin.helpdesk.agent.teams.edit', compact('agent_id', 'user', 'teams', 'allagents'));
+            return view('themes.default1.admin.helpdesk.agent.teams.edit',
+                compact('agent_id', 'user', 'teams', 'allagents'));
         } catch (Exception $e) {
             return redirect()->back()->with('fails', $e->getMessage());
         }
@@ -258,7 +259,8 @@ class TeamController extends Controller
             return redirect('teams')->with('success', Lang::get('lang.teams_updated_successfully'));
         } catch (Exception $e) {
             /* redirect to Index page with Fails Message */
-            return redirect('teams')->with('fails', Lang::get('lang.teams_can_not_update').'<li>'.$e->getMessage().'</li>');
+            return redirect('teams')->with('fails',
+                Lang::get('lang.teams_can_not_update') . '<li>' . $e->getMessage() . '</li>');
         }
     }
 
@@ -283,7 +285,8 @@ class TeamController extends Controller
             return redirect('teams')->with('success', Lang::get('lang.teams_deleted_successfully'));
         } catch (Exception $e) {
             /* redirect to Index page with Fails Message */
-            return redirect('teams')->with('fails', Lang::get('lang.teams_can_not_delete').'<li>'.$e->getMessage().'</li>');
+            return redirect('teams')->with('fails',
+                Lang::get('lang.teams_can_not_delete') . '<li>' . $e->getMessage() . '</li>');
         }
     }
 }

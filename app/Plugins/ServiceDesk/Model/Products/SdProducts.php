@@ -18,11 +18,6 @@ class SdProducts extends Model
         'status',
     ];
 
-    public function departmentRelation()
-    {
-        return $this->belongsTo('App\Model\helpdesk\Agent\Department', 'all_department');
-    }
-
     /**
      * get the department name.
      *
@@ -42,9 +37,9 @@ class SdProducts extends Model
         return ucfirst($value);
     }
 
-    public function status()
+    public function departmentRelation()
     {
-        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Products\SdProductstatus', 'product_status_id');
+        return $this->belongsTo('App\Model\helpdesk\Agent\Department', 'all_department');
     }
 
     /**
@@ -66,9 +61,9 @@ class SdProducts extends Model
         return ucfirst($value);
     }
 
-    public function procurement()
+    public function status()
     {
-        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Products\SdProductprocmode', 'product_mode_procurement_id');
+        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Products\SdProductstatus', 'product_status_id');
     }
 
     /**
@@ -88,6 +83,12 @@ class SdProducts extends Model
         }
 
         return ucfirst($value);
+    }
+
+    public function procurement()
+    {
+        return $this->belongsTo('App\Plugins\ServiceDesk\Model\Products\SdProductprocmode',
+            'product_mode_procurement_id');
     }
 
     /**
@@ -122,11 +123,6 @@ class SdProducts extends Model
         return $value;
     }
 
-    public function vendorRelation()
-    {
-        return  $this->hasMany("App\Plugins\ServiceDesk\Model\Common\ProductVendorRelation", 'product_id');
-    }
-
     public function vendors()
     {
         $vendorids = $this->vendorRelation()->lists('vendor_id')->toArray();
@@ -136,9 +132,9 @@ class SdProducts extends Model
         return $vendors;
     }
 
-    public function assetRelation()
+    public function vendorRelation()
     {
-        return $this->hasMany('App\Plugins\ServiceDesk\Model\Assets\SdAssets', 'product_id');
+        return $this->hasMany("App\Plugins\ServiceDesk\Model\Common\ProductVendorRelation", 'product_id');
     }
 
     public function assets()
@@ -147,6 +143,19 @@ class SdProducts extends Model
         $assets = $relation->get();
 
         return $assets;
+    }
+
+    public function assetRelation()
+    {
+        return $this->hasMany('App\Plugins\ServiceDesk\Model\Assets\SdAssets', 'product_id');
+    }
+
+    public function delete()
+    {
+        $this->deleteProductInAsset();
+        $this->deleteProductInContract();
+        $this->deleteVendorRelation();
+        parent::delete();
     }
 
     public function deleteProductInAsset()
@@ -158,11 +167,6 @@ class SdProducts extends Model
         }
     }
 
-    public function contractRelation()
-    {
-        return $this->hasMany('App\Plugins\ServiceDesk\Model\Contract\SdContract', 'product_id');
-    }
-
     public function deleteProductInContract()
     {
         $contract = $this->contractRelation()->first();
@@ -172,19 +176,16 @@ class SdProducts extends Model
         }
     }
 
+    public function contractRelation()
+    {
+        return $this->hasMany('App\Plugins\ServiceDesk\Model\Contract\SdContract', 'product_id');
+    }
+
     public function deleteVendorRelation()
     {
         $relation = $this->vendorRelation()->first();
         if ($relation) {
             $relation->delete();
         }
-    }
-
-    public function delete()
-    {
-        $this->deleteProductInAsset();
-        $this->deleteProductInContract();
-        $this->deleteVendorRelation();
-        parent::delete();
     }
 }

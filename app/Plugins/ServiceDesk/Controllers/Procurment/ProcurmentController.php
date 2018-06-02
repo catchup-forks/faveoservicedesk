@@ -30,14 +30,14 @@ class ProcurmentController extends BaseServiceDeskController
             $procurments = $procurment->select('id', 'name')->get();
 
             return \Datatable::Collection($procurments)
-                            ->showColumns('name')
-                            ->addColumn('Action', function ($model) {
-                                return '<a href='.url('service-desk/procurement/'.$model->id.'/edit')." class='btn btn-info btn-xs'>Edit</a> ";
-                                //. "<a href=" . url('service-desk/procurement/' . $model->id . '/delete') . " class='btn btn-warning btn-xs btn-flat'>Delete</a>";
-                            })
-                            ->searchColumns('name')
-                            ->orderColumns('name')
-                            ->make();
+                ->showColumns('name')
+                ->addColumn('Action', function ($model) {
+                    return '<a href=' . url('service-desk/procurement/' . $model->id . '/edit') . " class='btn btn-info btn-xs'>Edit</a> ";
+                    //. "<a href=" . url('service-desk/procurement/' . $model->id . '/delete') . " class='btn btn-warning btn-xs btn-flat'>Delete</a>";
+                })
+                ->searchColumns('name')
+                ->orderColumns('name')
+                ->make();
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
@@ -59,7 +59,8 @@ class ProcurmentController extends BaseServiceDeskController
             $sd_procurment = new SdProcurment();
             $sd_procurment->fill($request->input())->save();
 
-            return \Redirect::route('service-desk.procurment.index')->with('message', 'Procurment Successfully Create !!!');
+            return \Redirect::route('service-desk.procurment.index')->with('message',
+                'Procurment Successfully Create !!!');
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }

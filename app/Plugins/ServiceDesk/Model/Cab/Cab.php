@@ -12,7 +12,7 @@ class Cab extends Model
         'head',
         'approvers',
         'aproval_mandatory',
-        ];
+    ];
 
     public function setApproversAttribute($value)
     {

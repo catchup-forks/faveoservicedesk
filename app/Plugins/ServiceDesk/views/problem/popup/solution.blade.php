@@ -1,6 +1,6 @@
-<?php 
+<?php
 //$info = $problem->general();
-$title ="";
+$title = "";
 $solution = "";
 if ($problem->getGeneralByIdentifier('solution-title')) {
     $title = $problem->getGeneralByIdentifier('solution-title')->value;
@@ -13,7 +13,8 @@ if ($problem->getGeneralByIdentifier('solution')) {
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title">Solution</h4>
                 {!! Form::open(['url'=>'service-desk/general/'.$problem->id.'/sd_problem','files'=>true]) !!}
             </div>
@@ -21,15 +22,15 @@ if ($problem->getGeneralByIdentifier('solution')) {
                 <!-- Form  -->
                 <div class="row">
                     <div class="col-md-12">
-                       {!! Form::label('solution-title','Solution Title') !!}
-                       {!! Form::text('solution-title',$title,['class'=>'form-control']) !!}
-                       {!! Form::hidden('identifier','solution') !!}
+                        {!! Form::label('solution-title','Solution Title') !!}
+                        {!! Form::text('solution-title',$title,['class'=>'form-control']) !!}
+                        {!! Form::hidden('identifier','solution') !!}
                     </div>
                     <div class="col-md-12">
-                       {!! Form::label('solution','Solution') !!}
-                       {!! Form::textarea('solution',$solution,['class'=>'form-control','id'=>'solution']) !!}
+                        {!! Form::label('solution','Solution') !!}
+                        {!! Form::textarea('solution',$solution,['class'=>'form-control','id'=>'solution']) !!}
                     </div>
-                    
+
                 </div>
 
             </div>

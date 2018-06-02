@@ -20,9 +20,10 @@ class SdImpactSeeder extends Seeder
         $updated_at = date('Y-d-m H:m:i');
         foreach ($names as $name) {
             DB::table('sd_impact_types')
-                    ->insert(['name'=> $name,
-                'created_at'        => $created_at,
-                'updated_at'        => $updated_at,
+                ->insert([
+                    'name' => $name,
+                    'created_at' => $created_at,
+                    'updated_at' => $updated_at,
                 ]);
         }
     }

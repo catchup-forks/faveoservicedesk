@@ -5,17 +5,18 @@ namespace App\Http\Controllers\Agent\kb;
 // Controllers
 use App\Http\Controllers\Agent\helpdesk\TicketController;
 use App\Http\Controllers\Controller;
-// Requests
 use App\Http\Requests\kb\CategoryRequest;
 use App\Http\Requests\kb\CategoryUpdate;
-// Model
 use App\Model\kb\Category;
 use App\Model\kb\Relationship;
-// Classes
 use Datatable;
 use Exception;
 use Lang;
 use Redirect;
+
+// Requests
+// Model
+// Classes
 
 /**
  * CategoryController
@@ -70,45 +71,45 @@ class CategoryController extends Controller
     {
         /* fetching chumper datatables */
         return Datatable::collection(Category::All())
-                        /* search column name */
-                        ->searchColumns('name')
-                        /* order column name and description */
-                        ->orderColumns('name', 'description')
-                        /* add column name */
-                        ->addColumn('name', function ($model) {
-                            $string = strip_tags($model->name);
+            /* search column name */
+            ->searchColumns('name')
+            /* order column name and description */
+            ->orderColumns('name', 'description')
+            /* add column name */
+            ->addColumn('name', function ($model) {
+                $string = strip_tags($model->name);
 
-                            return str_limit($string, 20);
-                        })
-                        /* add column Created */
-                        ->addColumn('Created', function ($model) {
-                            $t = $model->created_at;
+                return str_limit($string, 20);
+            })
+            /* add column Created */
+            ->addColumn('Created', function ($model) {
+                $t = $model->created_at;
 
-                            return TicketController::usertimezone($t);
-                        })
-                        /* add column Actions */
-                        /* there are action buttons and modal popup to delete a data column */
-                        ->addColumn('Actions', function ($model) {
-                            return '<span  data-toggle="modal" data-target="#deletecategory'.$model->slug.'"><a href="#" ><button class="btn btn-danger btn-xs"></a>'.\Lang::get('lang.delete').'</button></span>&nbsp;<a href=category/'.$model->id.'/edit class="btn btn-warning btn-xs">'.\Lang::get('lang.edit').'</a>&nbsp;<a href=article-list class="btn btn-primary btn-xs">'.\Lang::get('lang.view').'</a>
-				<div class="modal fade" id="deletecategory'.$model->slug.'">
+                return TicketController::usertimezone($t);
+            })
+            /* add column Actions */
+            /* there are action buttons and modal popup to delete a data column */
+            ->addColumn('Actions', function ($model) {
+                return '<span  data-toggle="modal" data-target="#deletecategory' . $model->slug . '"><a href="#" ><button class="btn btn-danger btn-xs"></a>' . \Lang::get('lang.delete') . '</button></span>&nbsp;<a href=category/' . $model->id . '/edit class="btn btn-warning btn-xs">' . \Lang::get('lang.edit') . '</a>&nbsp;<a href=article-list class="btn btn-primary btn-xs">' . \Lang::get('lang.view') . '</a>
+				<div class="modal fade" id="deletecategory' . $model->slug . '">
         			<div class="modal-dialog">
             			<div class="modal-content">
                 			<div class="modal-header">
                     			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    			<h4 class="modal-title">'.Lang::get('lang.are_you_sure_you_want_to_delete').'</h4>
+                    			<h4 class="modal-title">' . Lang::get('lang.are_you_sure_you_want_to_delete') . '</h4>
                 			</div>
                 			<div class="modal-body">
-                				'.$model->name.'
+                				' . $model->name . '
                 			</div>
                 			<div class="modal-footer">
-                    			<button type="button" class="btn btn-default pull-left" data-dismiss="modal" id="dismis2">'.Lang::get('lang.close').'</button>
-                    			<a href="category/delete/'.$model->id.'"><button class="btn btn-danger">'.Lang::get('lang.delete').'</button></a>
+                    			<button type="button" class="btn btn-default pull-left" data-dismiss="modal" id="dismis2">' . Lang::get('lang.close') . '</button>
+                    			<a href="category/delete/' . $model->id . '"><button class="btn btn-danger">' . Lang::get('lang.delete') . '</button></a>
                 			</div>
             			</div>
         			</div>
     			</div>';
-                        })
-                        ->make();
+            })
+            ->make();
     }
 
     /**
@@ -151,14 +152,15 @@ class CategoryController extends Controller
 
             return Redirect::back()->with('success', Lang::get('lang.category_inserted_successfully'));
         } catch (Exception $e) {
-            return Redirect::back()->with('fails', Lang::get('lang.category_not_inserted').'<li>'.$e->getMessage().'</li>');
+            return Redirect::back()->with('fails',
+                Lang::get('lang.category_not_inserted') . '<li>' . $e->getMessage() . '</li>');
         }
     }
 
     /**
      * Show the form for editing the specified category.
      *
-     * @param type          $slug
+     * @param type $slug
      * @param type Category $category
      *
      * @return type view
@@ -175,7 +177,7 @@ class CategoryController extends Controller
     /**
      * Update the specified Category in storage.
      *
-     * @param type                $slug
+     * @param type $slug
      * @param type Category       $category
      * @param type CategoryUpdate $request
      *
@@ -197,14 +199,15 @@ class CategoryController extends Controller
             return redirect('category')->with('success', Lang::get('lang.category_updated_successfully'));
         } catch (Exception $e) {
             //redirect to index with fails message
-            return redirect('category')->with('fails', Lang::get('lang.category_not_updated').'<li>'.$e->getMessage().'</li>');
+            return redirect('category')->with('fails',
+                Lang::get('lang.category_not_updated') . '<li>' . $e->getMessage() . '</li>');
         }
     }
 
     /**
      * Remove the specified category from storage.
      *
-     * @param type              $id
+     * @param type $id
      * @param type Category     $category
      * @param type Relationship $relation
      *
@@ -224,7 +227,8 @@ class CategoryController extends Controller
 
                 return Redirect::back()->with('success', Lang::get('lang.category_deleted_successfully'));
             } catch (Exception $e) {
-                return Redirect::back()->with('fails', Lang::get('lang.category_not_deleted').'<li>'.$e->getMessage().'</li>');
+                return Redirect::back()->with('fails',
+                    Lang::get('lang.category_not_deleted') . '<li>' . $e->getMessage() . '</li>');
             }
         }
     }

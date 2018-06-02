@@ -21,13 +21,13 @@ class LaravelLogViewerServiceProvider extends ServiceProvider
     public function boot()
     {
         if (method_exists($this, 'package')) {
-            $this->package('rap2hpoutre/laravel-log-viewer', 'laravel-log-viewer', __DIR__.'/../../');
+            $this->package('rap2hpoutre/laravel-log-viewer', 'laravel-log-viewer', __DIR__ . '/../../');
         }
 
-        $view_path = app_path().DIRECTORY_SEPARATOR.'FaveoLog'.DIRECTORY_SEPARATOR.'views';
+        $view_path = app_path() . DIRECTORY_SEPARATOR . 'FaveoLog' . DIRECTORY_SEPARATOR . 'views';
         $this->loadViewsFrom($view_path, 'log');
 
-        $lang_path = app_path().DIRECTORY_SEPARATOR.'FaveoLog'.DIRECTORY_SEPARATOR.'lang';
+        $lang_path = app_path() . DIRECTORY_SEPARATOR . 'FaveoLog' . DIRECTORY_SEPARATOR . 'lang';
         $this->loadTranslationsFrom($lang_path, 'log');
     }
 

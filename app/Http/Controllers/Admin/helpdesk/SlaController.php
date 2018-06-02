@@ -4,16 +4,17 @@ namespace App\Http\Controllers\Admin\helpdesk;
 
 // controllers
 use App\Http\Controllers\Controller;
-// requests
 use App\Http\Requests\helpdesk\SlaRequest;
 use App\Http\Requests\helpdesk\SlaUpdate;
-// models
 use App\Model\helpdesk\Manage\Sla_plan;
 use App\Model\helpdesk\Settings\Ticket;
-//classes
 use DB;
 use Exception;
 use Lang;
+
+// requests
+// models
+//classes
 
 /**
  * SlaController.
@@ -85,7 +86,8 @@ class SlaController extends Controller
             return redirect('sla')->with('success', Lang::get('lang.sla_plan_created_successfully'));
         } catch (Exception $e) {
             /* redirect to Index page with Fails Message */
-            return redirect('sla')->with('fails', Lang::get('lang.sla_plan_can_not_create').'<li>'.$e->getMessage().'</li>');
+            return redirect('sla')->with('fails',
+                Lang::get('lang.sla_plan_can_not_create') . '<li>' . $e->getMessage() . '</li>');
         }
     }
 
@@ -135,14 +137,15 @@ class SlaController extends Controller
             /* redirect to Index page with Success Message */
             if ($request->input('sys_sla') == 'on') {
                 \DB::table('settings_ticket')
-                     ->where('id', '=', 1)
-                     ->update(['sla' => $id]);
+                    ->where('id', '=', 1)
+                    ->update(['sla' => $id]);
             }
 
             return redirect('sla')->with('success', Lang::get('lang.sla_plan_updated_successfully'));
         } catch (Exception $e) {
             /* redirect to Index page with Fails Message */
-            return redirect('sla')->with('fails', Lang::get('lang.sla_plan_can_not_update').'<li>'.$e->getMessage().'</li>');
+            return redirect('sla')->with('fails',
+                Lang::get('lang.sla_plan_can_not_update') . '<li>' . $e->getMessage() . '</li>');
         }
     }
 
@@ -167,7 +170,7 @@ class SlaController extends Controller
                 } else {
                     $text_tickets = 'Ticket';
                 }
-                $ticket = '<li>'.$tickets.' '.$text_tickets.Lang::get('lang.have_been_moved_to_default_sla').'</li>';
+                $ticket = '<li>' . $tickets . ' ' . $text_tickets . Lang::get('lang.have_been_moved_to_default_sla') . '</li>';
             } else {
                 $ticket = '';
             }
@@ -178,7 +181,7 @@ class SlaController extends Controller
                 } else {
                     $text_dept = 'Email';
                 }
-                $dept = '<li>'.Lang::get('lang.associated_department_have_been_moved_to_default_sla').'</li>';
+                $dept = '<li>' . Lang::get('lang.associated_department_have_been_moved_to_default_sla') . '</li>';
             } else {
                 $dept = '';
             }
@@ -189,21 +192,22 @@ class SlaController extends Controller
                 } else {
                     $text_topic = 'Email';
                 }
-                $topic = '<li>'.Lang::get('lang.associated_help_topic_have_been_moved_to_default_sla').'</li>';
+                $topic = '<li>' . Lang::get('lang.associated_help_topic_have_been_moved_to_default_sla') . '</li>';
             } else {
                 $topic = '';
             }
-            $message = $ticket.$dept.$topic;
+            $message = $ticket . $dept . $topic;
             /* Delete a perticular field from the database by delete() using Id */
             $slas = Sla_plan::whereId($id)->first();
             /* Check whether function success or not */
             try {
                 $slas->delete();
                 /* redirect to Index page with Success Message */
-                return redirect('sla')->with('success', Lang::get('lang.sla_plan_deleted_successfully').$message);
+                return redirect('sla')->with('success', Lang::get('lang.sla_plan_deleted_successfully') . $message);
             } catch (Exception $e) {
                 /* redirect to Index page with Fails Message */
-                return redirect('sla')->with('fails', Lang::get('lang.sla_plan_can_not_delete').'<li>'.$e->getMessage().'</li>');
+                return redirect('sla')->with('fails',
+                    Lang::get('lang.sla_plan_can_not_delete') . '<li>' . $e->getMessage() . '</li>');
             }
         }
     }

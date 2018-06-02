@@ -7,7 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 class SdProblem extends Model
 {
     protected $table = 'sd_problem';
-    protected $fillable = ['id', 'from', 'name', 'subject', 'description', 'status_type_id', 'priority_id', 'impact_id', 'location_type_id', 'group_id', 'agent_id', 'assigned_id',
+    protected $fillable = [
+        'id',
+        'from',
+        'name',
+        'subject',
+        'description',
+        'status_type_id',
+        'priority_id',
+        'impact_id',
+        'location_type_id',
+        'group_id',
+        'agent_id',
+        'assigned_id',
         'department',
     ];
 
@@ -49,6 +61,24 @@ class SdProblem extends Model
         return $value;
     }
 
+    public function getAssets()
+    {
+        $ids = $this->assets();
+        $asset = new \App\Plugins\ServiceDesk\Model\Assets\SdAssets();
+        $assets = '';
+        if (count($ids) > 0) {
+            foreach ($ids as $id) {
+                $ass = $asset->find($id);
+                if ($ass) {
+                    $value = '<a href=' . url('service-desk/assets/' . $id . '/show') . '>' . ucfirst($ass->name) . '</a>';
+                    $assets .= $value . '</br>';
+                }
+            }
+        }
+
+        return $assets;
+    }
+
     /**
      * get the assets.
      *
@@ -67,24 +97,6 @@ class SdProblem extends Model
         }
 
         return $ids;
-    }
-
-    public function getAssets()
-    {
-        $ids = $this->assets();
-        $asset = new \App\Plugins\ServiceDesk\Model\Assets\SdAssets();
-        $assets = '';
-        if (count($ids) > 0) {
-            foreach ($ids as $id) {
-                $ass = $asset->find($id);
-                if ($ass) {
-                    $value = '<a href='.url('service-desk/assets/'.$id.'/show').'>'.ucfirst($ass->name).'</a>';
-                    $assets .= $value.'</br>';
-                }
-            }
-        }
-
-        return $assets;
     }
 
     /**
@@ -158,7 +170,7 @@ class SdProblem extends Model
             $attrs = $this->belongsTo('App\Plugins\ServiceDesk\Model\Problem\Location', 'location_type_id')->first();
             //dd($attrs);
             if ($attrs) {
-                $value = '<a href='.url('service-desk/location-types/'.$attr.'/show').">$attrs->title</a>";
+                $value = '<a href=' . url('service-desk/location-types/' . $attr . '/show') . ">$attrs->title</a>";
             }
         }
 
@@ -176,7 +188,8 @@ class SdProblem extends Model
         $attr = $this->attributes['priority_id'];
         //dd($attr);
         if ($attr) {
-            $attrs = $this->belongsTo('App\Model\helpdesk\Ticket\Ticket_Priority', 'priority_id', 'priority_id')->first();
+            $attrs = $this->belongsTo('App\Model\helpdesk\Ticket\Ticket_Priority', 'priority_id',
+                'priority_id')->first();
             if ($attrs) {
                 $value = $attrs->priority;
             }
@@ -253,6 +266,46 @@ class SdProblem extends Model
         return $attachment;
     }
 
+    public function change()
+    {
+        $relation = $this->changeRelaion()->first();
+        if ($relation) {
+            $changeid = $relation->change_id;
+            $changes = new \App\Plugins\ServiceDesk\Model\Changes\SdChanges();
+            $change = $changes->find($changeid);
+
+            return $change;
+        }
+    }
+
+    public function changeRelaion()
+    {
+        $through = "App\Plugins\ServiceDesk\Model\Problem\ProblemChangeRelation";
+        $firstKey = 'problem_id';
+
+        return $this->hasMany($through, $firstKey);
+    }
+
+    public function delete()
+    {
+        $id = $this->id;
+        $this->deleteAttachment($id);
+        $this->detachRelation();
+        $this->changeRelaion()->delete();
+        parent::delete();
+    }
+
+    /**
+     * delete the attachment.
+     *
+     * @param int $id
+     */
+    public function deleteAttachment($id)
+    {
+        $table = $this->table;
+        \App\Plugins\ServiceDesk\Controllers\Library\UtilityController::deleteAttachments($id, $table);
+    }
+
     /**
      * detach the problem fro relation table.
      */
@@ -270,46 +323,6 @@ class SdProblem extends Model
                 }
             }
         }
-    }
-
-    public function changeRelaion()
-    {
-        $through = "App\Plugins\ServiceDesk\Model\Problem\ProblemChangeRelation";
-        $firstKey = 'problem_id';
-
-        return $this->hasMany($through, $firstKey);
-    }
-
-    public function change()
-    {
-        $relation = $this->changeRelaion()->first();
-        if ($relation) {
-            $changeid = $relation->change_id;
-            $changes = new \App\Plugins\ServiceDesk\Model\Changes\SdChanges();
-            $change = $changes->find($changeid);
-
-            return $change;
-        }
-    }
-
-    /**
-     * delete the attachment.
-     *
-     * @param int $id
-     */
-    public function deleteAttachment($id)
-    {
-        $table = $this->table;
-        \App\Plugins\ServiceDesk\Controllers\Library\UtilityController::deleteAttachments($id, $table);
-    }
-
-    public function delete()
-    {
-        $id = $this->id;
-        $this->deleteAttachment($id);
-        $this->detachRelation();
-        $this->changeRelaion()->delete();
-        parent::delete();
     }
 
     //    public function general(){
@@ -353,10 +366,10 @@ class SdProblem extends Model
     {
         $ticket = $this->ticketRelation();
         $join = $ticket->join('ticket_thread', 'tickets.id', '=', 'ticket_thread.ticket_id')
-                ->select('tickets.id', 'tickets.ticket_number', 'ticket_thread.title')
-                ->whereNotNull('ticket_thread.title')
-                ->groupBy('tickets.id')
-                ->get();
+            ->select('tickets.id', 'tickets.ticket_number', 'ticket_thread.title')
+            ->whereNotNull('ticket_thread.title')
+            ->groupBy('tickets.id')
+            ->get();
 
         return $join;
     }
@@ -378,7 +391,7 @@ class SdProblem extends Model
     {
         $id = $this->attributes['id'];
         $title = $this->attributes['subject'];
-        $subject = '<a href='.url('service-desk/problem/'.$id.'/show').'>'.$title.'</a>';
+        $subject = '<a href=' . url('service-desk/problem/' . $id . '/show') . '>' . $title . '</a>';
 
         return $subject;
     }

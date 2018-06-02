@@ -16,19 +16,42 @@ use App\Model\kb\Page;
 use App\Model\kb\Relationship;
 use App\Model\kb\Settings;
 use Auth;
-// use Creativeorange\Gravatar\Gravatar;
 use Config;
 use Hash;
-use Illuminate\Http\Request;
 use Lang;
 use Mail;
 use Redirect;
+
+// use Creativeorange\Gravatar\Gravatar;
 
 class UserController extends Controller
 {
     public function __construct()
     {
         $this->middleware('board');
+    }
+
+    /**
+     * Get excerpt from string.
+     *
+     * @param string $str String to get an excerpt from
+     * @param int $startPos Position int string to start excerpt from
+     * @param int $maxLength Maximum length the excerpt may be
+     *
+     * @return string excerpt
+     */
+    public static function getExcerpt($str, $startPos = 0, $maxLength = 50)
+    {
+        if (strlen($str) > $maxLength) {
+            $excerpt = substr($str, $startPos, $maxLength - 3);
+            $lastSpace = strrpos($excerpt, ' ');
+            $excerpt = substr($excerpt, 0, $lastSpace);
+            $excerpt .= '...';
+        } else {
+            $excerpt = $str;
+        }
+
+        return $excerpt;
     }
 
     /**
@@ -54,35 +77,12 @@ class UserController extends Controller
     }
 
     /**
-     * Get excerpt from string.
-     *
-     * @param string $str       String to get an excerpt from
-     * @param int    $startPos  Position int string to start excerpt from
-     * @param int    $maxLength Maximum length the excerpt may be
-     *
-     * @return string excerpt
-     */
-    public static function getExcerpt($str, $startPos = 0, $maxLength = 50)
-    {
-        if (strlen($str) > $maxLength) {
-            $excerpt = substr($str, $startPos, $maxLength - 3);
-            $lastSpace = strrpos($excerpt, ' ');
-            $excerpt = substr($excerpt, 0, $lastSpace);
-            $excerpt .= '...';
-        } else {
-            $excerpt = $str;
-        }
-
-        return $excerpt;
-    }
-
-    /**
      * function to search an article.
      *
      * @param \App\Http\Requests\kb\SearchRequest $request
-     * @param \App\Model\kb\Category              $category
-     * @param \App\Model\kb\Article               $article
-     * @param \App\Model\kb\Settings              $settings
+     * @param \App\Model\kb\Category $category
+     * @param \App\Model\kb\Article $article
+     * @param \App\Model\kb\Settings $settings
      *
      * @return type view
      */
@@ -91,11 +91,11 @@ class UserController extends Controller
         $settings = $settings->first();
         $pagination = $settings->pagination;
         $search = $request->input('s');
-        $result = $article->where('name', 'LIKE', '%'.$search.'%')
-                ->orWhere('slug', 'LIKE', '%'.$search.'%')
-                ->orWhere('description', 'LIKE', '%'.$search.'%')
-                ->paginate($pagination);
-        $result->setPath('search?s='.$search);
+        $result = $article->where('name', 'LIKE', '%' . $search . '%')
+            ->orWhere('slug', 'LIKE', '%' . $search . '%')
+            ->orWhere('description', 'LIKE', '%' . $search . '%')
+            ->paginate($pagination);
+        $result->setPath('search?s=' . $search);
         $categorys = $category->get();
 
         return view('themes.default1.client.kb.article-list.search', compact('categorys', 'result'));
@@ -136,7 +136,8 @@ class UserController extends Controller
         /* get the article_id where category_id == current category */
         $catid = $category->where('slug', $slug)->first();
         if (!$catid) {
-            return redirect()->back()->with('fails', Lang::get('lang.we_are_sorry_but_the_page_you_are_looking_for_can_not_be_found'));
+            return redirect()->back()->with('fails',
+                Lang::get('lang.we_are_sorry_but_the_page_you_are_looking_for_can_not_be_found'));
         }
         $id = $catid->id;
         $all = $relation->where('category_id', $id)->get();
@@ -205,14 +206,47 @@ class UserController extends Controller
         $details = $request->input('message');
         //echo $message;
         //echo $contact->email;
-        $mail = Mail::send('themes.default1.client.kb.article-list.contact-details', ['name' => $name, 'email' => $email, 'subject' => $subject, 'details' => $details], function ($message) use ($contact) {
-            $message->to($contact->email, $contact->name)->subject('Contact');
-        });
+        $mail = Mail::send('themes.default1.client.kb.article-list.contact-details',
+            ['name' => $name, 'email' => $email, 'subject' => $subject, 'details' => $details],
+            function ($message) use ($contact) {
+                $message->to($contact->email, $contact->name)->subject('Contact');
+            });
         if ($mail) {
             return redirect('contact')->with('success', Lang::get('lang.your_details_send_to_system'));
         } else {
             return redirect('contact')->with('fails', Lang::get('lang.your_details_can_not_send_to_system'));
         }
+    }
+
+    public static function port()
+    {
+        $setting = Settings::whereId('1')->first();
+        Config::set('mail.port', $setting->port);
+    }
+
+    public static function host()
+    {
+        $setting = Settings::whereId('1')->first();
+        Config::set('mail.host', $setting->host);
+    }
+
+    public static function encryption()
+    {
+        $setting = Settings::whereId('1')->first();
+        Config::set(['mail.encryption' => $setting->encryption, 'mail.username' => $setting->email]);
+    }
+
+    public static function email()
+    {
+        $setting = Settings::whereId('1')->first();
+        Config::set(['mail.from' => ['address' => $setting->email, 'name' => 'asd']]);
+        //dd(Config::get('mail'));
+    }
+
+    public static function password()
+    {
+        $setting = Settings::whereId('1')->first();
+        Config::set(['mail.password' => $setting->password, 'mail.sendmail' => $setting->email]);
     }
 
     public function contactDetails()
@@ -253,37 +287,6 @@ class UserController extends Controller
         } else {
             return Redirect::back()->with('fails', Lang::get('lang.sorry_not_processed'));
         }
-    }
-
-    public static function port()
-    {
-        $setting = Settings::whereId('1')->first();
-        Config::set('mail.port', $setting->port);
-    }
-
-    public static function host()
-    {
-        $setting = Settings::whereId('1')->first();
-        Config::set('mail.host', $setting->host);
-    }
-
-    public static function encryption()
-    {
-        $setting = Settings::whereId('1')->first();
-        Config::set(['mail.encryption' => $setting->encryption, 'mail.username' => $setting->email]);
-    }
-
-    public static function email()
-    {
-        $setting = Settings::whereId('1')->first();
-        Config::set(['mail.from' => ['address' => $setting->email, 'name' => 'asd']]);
-        //dd(Config::get('mail'));
-    }
-
-    public static function password()
-    {
-        $setting = Settings::whereId('1')->first();
-        Config::set(['mail.password' => $setting->password, 'mail.sendmail' => $setting->email]);
     }
 
     public function getCategoryList(Article $article, Category $category, Relationship $relation)
@@ -336,7 +339,7 @@ class UserController extends Controller
             //$extension = Input::file('profile_pic')->getClientOriginalExtension();
             $name = Input::file('profile_pic')->getClientOriginalName();
             $destinationPath = 'lb-faveo/dist/img';
-            $fileName = rand(0000, 9999).'.'.$name;
+            $fileName = rand(0000, 9999) . '.' . $name;
             //echo $fileName;
             Input::file('profile_pic')->move($destinationPath, $fileName);
             $user->profile_pic = $fileName;

@@ -7,7 +7,7 @@
         <div class="row">
             <div class="col-md-12">
 
-                
+
                 <div class="col-md-2 col-sm-6">
                     <div class="settingiconblue">
                         <div class="settingdivblue">
@@ -17,7 +17,7 @@
                                 </span>
                             </a>
                         </div>
-                        <p class="box-title" >Cab</p>
+                        <p class="box-title">Cab</p>
                     </div>
                 </div>
                 <div class="col-md-2 col-sm-6">
@@ -29,7 +29,7 @@
                                 </span>
                             </a>
                         </div>
-                        <p class="box-title" >Locations</p>
+                        <p class="box-title">Locations</p>
                     </div>
                 </div>
                 <div class="col-md-2 col-sm-6">
@@ -41,10 +41,10 @@
                                 </span>
                             </a>
                         </div>
-                        <p class="box-title" >Location Category</p>
+                        <p class="box-title">Location Category</p>
                     </div>
                 </div>
-                
+
                 <!--/.col-md-2-->
             </div>
         </div>

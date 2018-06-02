@@ -10,13 +10,6 @@ class QueueService extends Model
     protected $table = 'queue_services';
     protected $fillable = ['name', 'short_name', 'status'];
 
-    public function extraFieldRelation()
-    {
-        $related = "App\Model\MailJob\FaveoQueue";
-
-        return $this->hasMany($related, 'service_id');
-    }
-
     public function getExtraField($key)
     {
         $value = '';
@@ -28,11 +21,18 @@ class QueueService extends Model
         return $value;
     }
 
+    public function extraFieldRelation()
+    {
+        $related = "App\Model\MailJob\FaveoQueue";
+
+        return $this->hasMany($related, 'service_id');
+    }
+
     public function getName()
     {
         $name = $this->attributes['name'];
         $id = $this->attributes['id'];
-        $html = '<a href='.url('queue/'.$id).'>'.$name.'</a>';
+        $html = '<a href=' . url('queue/' . $id) . '>' . $name . '</a>';
 
         return $html;
     }
@@ -40,9 +40,9 @@ class QueueService extends Model
     public function getStatus()
     {
         $status = $this->attributes['status'];
-        $html = "<span style='color:red'>".Lang::get('lang.inactive').'</span>';
+        $html = "<span style='color:red'>" . Lang::get('lang.inactive') . '</span>';
         if ($status == 1) {
-            $html = "<span style='color:green'>".Lang::get('lang.active').'</span>';
+            $html = "<span style='color:green'>" . Lang::get('lang.active') . '</span>';
         }
 
         return $html;
@@ -52,9 +52,9 @@ class QueueService extends Model
     {
         $id = $this->attributes['id'];
         $status = $this->attributes['status'];
-        $html = '<a href='.url('queue/'.$id.'/activate')." class='btn btn-primary'>".Lang::get('lang.activate').'</a>';
+        $html = '<a href=' . url('queue/' . $id . '/activate') . " class='btn btn-primary'>" . Lang::get('lang.activate') . '</a>';
         if ($status == 1) {
-            $html = "<a href='#' class='btn btn-primary' disabled>".Lang::get('lang.activate').'</a>';
+            $html = "<a href='#' class='btn btn-primary' disabled>" . Lang::get('lang.activate') . '</a>';
         }
 
         return $html;

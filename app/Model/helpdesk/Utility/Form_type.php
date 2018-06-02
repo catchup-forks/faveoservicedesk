@@ -8,6 +8,7 @@ class Form_type extends BaseModel
 {
     protected $table = 'form_type';
     protected $fillable = [
-        'id', 'type',
+        'id',
+        'type',
     ];
 }

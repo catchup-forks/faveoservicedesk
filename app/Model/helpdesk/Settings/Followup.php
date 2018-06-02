@@ -12,6 +12,11 @@ class Followup extends BaseModel
     /* Set fillable fields in table */
     protected $fillable = [
 
-        'id', 'name', 'status', 'condition', 'created_at', 'updated_at',
+        'id',
+        'name',
+        'status',
+        'condition',
+        'created_at',
+        'updated_at',
     ];
 }

@@ -5,32 +5,20 @@ namespace App\Http\Controllers\Agent\helpdesk;
 // controllers
 use App\Http\Controllers\Common\PhpMailController;
 use App\Http\Controllers\Controller;
-// requests
-/*  Include Sys_user Model  */
 use App\Http\Requests\helpdesk\ChangepasswordRequest;
-/* For validation include Sys_userRequest in create  */
 use App\Http\Requests\helpdesk\OtpVerifyRequest;
-/* For validation include Sys_userUpdate in update  */
 use App\Http\Requests\helpdesk\ProfilePassword;
-/*  include guest_note model */
 use App\Http\Requests\helpdesk\ProfileRequest;
 use App\Http\Requests\helpdesk\Sys_userRequest;
-// change password request
 use App\Http\Requests\helpdesk\Sys_userUpdate;
-// models
-use App\Model\helpdesk\Agent\Assign_team_agent;
 use App\Model\helpdesk\Agent_panel\Organization;
 use App\Model\helpdesk\Agent_panel\User_org;
-use App\Model\helpdesk\Notification\Notification;
-use App\Model\helpdesk\Notification\UserNotification;
 use App\Model\helpdesk\Settings\CommonSettings;
-use App\Model\helpdesk\Settings\Email;
 use App\Model\helpdesk\Ticket\Ticket_Thread;
 use App\Model\helpdesk\Ticket\Tickets;
 use App\Model\helpdesk\Utility\CountryCode;
 use App\Model\helpdesk\Utility\Otp;
 use App\User;
-// classes
 use Auth;
 use Datatables;
 use DateTime;
@@ -42,6 +30,19 @@ use Illuminate\Http\Request;
 use Input;
 use Lang;
 use Redirect;
+
+// requests
+/*  Include Sys_user Model  */
+
+/* For validation include Sys_userRequest in create  */
+
+/* For validation include Sys_userUpdate in update  */
+
+/*  include guest_note model */
+
+// change password request
+// models
+// classes
 
 /**
  * UserController
@@ -82,13 +83,13 @@ class UserController extends Controller
             /* get all values in Sys_user */
 
             $table = \ Datatable::table()
-            ->addColumn(Lang::get('lang.name'),
-                Lang::get('lang.email'),
-                Lang::get('lang.phone'),
-                Lang::get('lang.status'),
-                Lang::get('lang.last_login'),
-                Lang::get('lang.role'),
-                Lang::get('lang.action'))  // these are the column headings to be shown
+                ->addColumn(Lang::get('lang.name'),
+                    Lang::get('lang.email'),
+                    Lang::get('lang.phone'),
+                    Lang::get('lang.status'),
+                    Lang::get('lang.last_login'),
+                    Lang::get('lang.role'),
+                    Lang::get('lang.action'))// these are the column headings to be shown
                 ->noScript();
 
             return view('themes.default1.agent.helpdesk.user.index', compact('table'));
@@ -134,102 +135,108 @@ class UserController extends Controller
             $users = User::where('role', '!=', 'admin')->where('is_delete', '=', 0);
         }
 
-        $users = $users->select('user_name', 'email', 'mobile', 'active', 'updated_at', 'role', 'id', 'last_name', 'country_code', 'phone_number');
+        $users = $users->select('user_name', 'email', 'mobile', 'active', 'updated_at', 'role', 'id', 'last_name',
+            'country_code', 'phone_number');
 
         if ($search !== '') {
             $users = $users->where(function ($query) use ($search) {
-                $query->where('user_name', 'LIKE', '%'.$search.'%');
-                $query->orWhere('email', 'LIKE', '%'.$search.'%');
-                $query->orWhere('first_name', 'LIKE', '%'.$search.'%');
-                $query->orWhere('last_name', 'LIKE', '%'.$search.'%');
-                $query->orWhere('mobile', 'LIKE', '%'.$search.'%');
-                $query->orWhere('updated_at', 'LIKE', '%'.$search.'%');
-                $query->orWhere('country_code', 'LIKE', '%'.$search.'%');
+                $query->where('user_name', 'LIKE', '%' . $search . '%');
+                $query->orWhere('email', 'LIKE', '%' . $search . '%');
+                $query->orWhere('first_name', 'LIKE', '%' . $search . '%');
+                $query->orWhere('last_name', 'LIKE', '%' . $search . '%');
+                $query->orWhere('mobile', 'LIKE', '%' . $search . '%');
+                $query->orWhere('updated_at', 'LIKE', '%' . $search . '%');
+                $query->orWhere('country_code', 'LIKE', '%' . $search . '%');
             });
         }
         // displaying list of users with chumper datatables
         // return \Datatable::collection(User::where('role', "!=", "admin")->get())
         return \Datatables::of($users)
-                        /* column username */
-                        ->removeColumn('id', 'last_name', 'country_code', 'phone_number')
-                        ->addColumn('user_name', function ($model) {
-                            if ($model->first_name) {
-                                $string = strip_tags($model->first_name.' '.$model->last_name);
-                            } else {
-                                $string = strip_tags($model->user_name);
-                            }
-                            if (strlen($string) > 30) {
-                                // truncate string
-                                $stringCut = mb_substr($string, 0, 30, 'UTF-8').'...';
-                            } else {
-                                $stringCut = $string;
-                            }
+            /* column username */
+            ->removeColumn('id', 'last_name', 'country_code', 'phone_number')
+            ->addColumn('user_name', function ($model) {
+                if ($model->first_name) {
+                    $string = strip_tags($model->first_name . ' ' . $model->last_name);
+                } else {
+                    $string = strip_tags($model->user_name);
+                }
+                if (strlen($string) > 30) {
+                    // truncate string
+                    $stringCut = mb_substr($string, 0, 30, 'UTF-8') . '...';
+                } else {
+                    $stringCut = $string;
+                }
 
-                            return "<a href='".route('user.show', $model->id)."' title='".$string."''>".$stringCut.'</a>';
-                        })
-                        /* column email */
-                        ->addColumn('email', function ($model) {
-                            $email = "<a href='".route('user.show', $model->id)."'>".$model->email.'</a>';
+                return "<a href='" . route('user.show',
+                        $model->id) . "' title='" . $string . "''>" . $stringCut . '</a>';
+            })
+            /* column email */
+            ->addColumn('email', function ($model) {
+                $email = "<a href='" . route('user.show', $model->id) . "'>" . $model->email . '</a>';
 
-                            return $email;
-                        })
-                        /* column phone */
-                        ->addColumn('mobile', function ($model) {
-                            $phone = '';
-                            if ($model->phone_number) {
-                                $phone = $model->ext.' '.$model->phone_number;
-                            }
-                            $mobile = '';
-                            if ($model->mobile) {
-                                $mobile = $model->mobile;
-                            }
-                            $phone = $phone.'&nbsp;&nbsp;&nbsp;'.$mobile;
+                return $email;
+            })
+            /* column phone */
+            ->addColumn('mobile', function ($model) {
+                $phone = '';
+                if ($model->phone_number) {
+                    $phone = $model->ext . ' ' . $model->phone_number;
+                }
+                $mobile = '';
+                if ($model->mobile) {
+                    $mobile = $model->mobile;
+                }
+                $phone = $phone . '&nbsp;&nbsp;&nbsp;' . $mobile;
 
-                            return $phone;
-                        })
-                        /* column account status */
-                        ->addColumn('active', function ($model) {
-                            $status = $model->active;
-                            if ($status == 1) {
-                                $stat = '<button class="btn btn-success btn-xs">Active</button>';
-                            } else {
-                                $stat = '<button class="btn btn-danger btn-xs">Inactive</button>';
-                            }
+                return $phone;
+            })
+            /* column account status */
+            ->addColumn('active', function ($model) {
+                $status = $model->active;
+                if ($status == 1) {
+                    $stat = '<button class="btn btn-success btn-xs">Active</button>';
+                } else {
+                    $stat = '<button class="btn btn-danger btn-xs">Inactive</button>';
+                }
 
-                            return $stat;
-                        })
-                        /* column last login date */
-                        ->addColumn('updated_at', function ($model) {
-                            $t = $model->updated_at;
+                return $stat;
+            })
+            /* column last login date */
+            ->addColumn('updated_at', function ($model) {
+                $t = $model->updated_at;
 
-                            return TicketController::usertimezone($t);
-                        })
-                        /* column Role */
-                        ->addColumn('role', function ($model) {
-                            $role = $model->role;
+                return TicketController::usertimezone($t);
+            })
+            /* column Role */
+            ->addColumn('role', function ($model) {
+                $role = $model->role;
 
-                            return $role;
-                        })
-                        /* column actions */
-                        ->addColumn('Actions', function ($model) {
-                            if ($model->is_delete == 0) {
-                                return '<a href="'.route('user.edit', $model->id).'" class="btn btn-warning btn-xs">'.\Lang::get('lang.edit').'</a>&nbsp; <a href="'.route('user.show', $model->id).'" class="btn btn-primary btn-xs">'.\Lang::get('lang.view').'</a>';
-                            } else {
-                                if (Auth::user()->role == 'admin') {
-                                    // @if(Auth::user()->role == 'admin')
+                return $role;
+            })
+            /* column actions */
+            ->addColumn('Actions', function ($model) {
+                if ($model->is_delete == 0) {
+                    return '<a href="' . route('user.edit',
+                            $model->id) . '" class="btn btn-warning btn-xs">' . \Lang::get('lang.edit') . '</a>&nbsp; <a href="' . route('user.show',
+                            $model->id) . '" class="btn btn-primary btn-xs">' . \Lang::get('lang.view') . '</a>';
+                } else {
+                    if (Auth::user()->role == 'admin') {
+                        // @if(Auth::user()->role == 'admin')
 
-                                    return '<a href="'.route('user.show', $model->id).'" class="btn btn-primary btn-xs">'.\Lang::get('lang.view').'</a>';
-                                }
+                        return '<a href="' . route('user.show',
+                                $model->id) . '" class="btn btn-primary btn-xs">' . \Lang::get('lang.view') . '</a>';
+                    }
 
-                                if (Auth::user()->role == 'agent') {
-                                    // @if(Auth::user()->role == 'admin')
-                                    if ($model->role == 'user') {
-                                        return '<a href="'.route('user.show', $model->id).'" class="btn btn-primary btn-xs">'.\Lang::get('lang.view').'</a>';
-                                    }
-                                }
-                            }
-                        })
-                        ->make();
+                    if (Auth::user()->role == 'agent') {
+                        // @if(Auth::user()->role == 'admin')
+                        if ($model->role == 'user') {
+                            return '<a href="' . route('user.show',
+                                    $model->id) . '" class="btn btn-primary btn-xs">' . \Lang::get('lang.view') . '</a>';
+                        }
+                    }
+                }
+            })
+            ->make();
     }
 
     public function restoreUser($id)
@@ -259,7 +266,8 @@ class UserController extends Controller
             $phonecode = $code->where('iso', '=', $location->iso_code)->first();
             $org = Organization::lists('name', 'id')->toArray();
 
-            return view('themes.default1.agent.helpdesk.user.create', compact('org', 'settings', 'email_mandatory'))->with('phonecode', $phonecode->phonecode);
+            return view('themes.default1.agent.helpdesk.user.create',
+                compact('org', 'settings', 'email_mandatory'))->with('phonecode', $phonecode->phonecode);
         } catch (Exception $e) {
             return redirect()->back()->with('fails', $e->errorInfo[2]);
         }
@@ -301,11 +309,17 @@ class UserController extends Controller
 
         try {
             if ($request->get('country_code') == '' && ($request->get('phone_number') != '' || $request->get('mobile') != '')) {
-                return redirect()->back()->with(['fails' => Lang::get('lang.country-code-required-error'), 'country_code_error' => 1])->withInput();
+                return redirect()->back()->with([
+                    'fails' => Lang::get('lang.country-code-required-error'),
+                    'country_code_error' => 1
+                ])->withInput();
             } else {
                 $code = CountryCode::select('phonecode')->where('phonecode', '=', $request->get('country_code'))->get();
                 if (!count($code)) {
-                    return redirect()->back()->with(['fails' => Lang::get('lang.incorrect-country-code-error'), 'country_code_error' => 1])->withInput();
+                    return redirect()->back()->with([
+                        'fails' => Lang::get('lang.incorrect-country-code-error'),
+                        'country_code_error' => 1
+                    ])->withInput();
                 }
             }
             // save user credentails
@@ -320,15 +334,24 @@ class UserController extends Controller
                 if ($request->input('send_email')) {
                     try {
                         // send mail on registration
-                        $this->PhpMailController->sendmail($from = $this->PhpMailController->mailfrom('1', '0'), $to = ['name' => $name, 'email' => $email], $message = ['subject' => null, 'scenario' => 'registration-notification'], $template_variables = ['user' => $name, 'email_address' => $email, 'user_password' => $password]);
+                        $this->PhpMailController->sendmail($from = $this->PhpMailController->mailfrom('1', '0'),
+                            $to = ['name' => $name, 'email' => $email],
+                            $message = ['subject' => null, 'scenario' => 'registration-notification'],
+                            $template_variables = [
+                                'user' => $name,
+                                'email_address' => $email,
+                                'user_password' => $password
+                            ]);
                     } catch (Exception $e) {
                         // returns if try fails
-                        return redirect('user')->with('warning', Lang::get('lang.user_send_mail_error_on_user_creation'));
+                        return redirect('user')->with('warning',
+                            Lang::get('lang.user_send_mail_error_on_user_creation'));
                     }
                 }
                 // returns for the success case
                 // returns for the success case
-                $email_mandatory = CommonSettings::select('status')->where('option_name', '=', 'email_mandatory')->first();
+                $email_mandatory = CommonSettings::select('status')->where('option_name', '=',
+                    'email_mandatory')->first();
                 if (($request->input('active') == '0' || $request->input('active') == 0) || ($email_mandatory->status == '0') || $email_mandatory->status == 0) {
                     \Event::fire(new \App\Events\LoginEvent($request));
                 }
@@ -342,6 +365,42 @@ class UserController extends Controller
             /* redirect to Index page with Fails Message */
             return redirect('user')->with('fails', $e->getMessage());
         }
+    }
+
+    /**
+     * Generate a random string for password.
+     *
+     * @param type $length
+     *
+     * @return string
+     */
+    public function generateRandomString($length = 10)
+    {
+        // list of supported characters
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        // character length checked
+        $charactersLength = strlen($characters);
+        // creating an empty variable for random string
+        $randomString = '';
+        // fetching random string
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        // return random string
+        return $randomString;
+    }
+
+    public function storeUserOrgRelation($userid, $orgid)
+    {
+        $org_relations = new User_org();
+        $org_relation = $org_relations->where('user_id', $userid)->first();
+        if ($org_relation) {
+            $org_relation->delete();
+        }
+        $org_relations->create([
+            'user_id' => $userid,
+            'org_id' => $orgid,
+        ]);
     }
 
     /**
@@ -390,7 +449,9 @@ class UserController extends Controller
             $email = $user->email;
 
             $this->PhpMailController->sendmail($from = $this->PhpMailController
-                    ->mailfrom('1', '0'), $to = ['name' => $name, 'email' => $email], $message = ['subject' => null, 'scenario' => 'reset_new_password'], $template_variables = ['user' => $name, 'user_password' => $password]);
+                ->mailfrom('1', '0'), $to = ['name' => $name, 'email' => $email],
+                $message = ['subject' => null, 'scenario' => 'reset_new_password'],
+                $template_variables = ['user' => $name, 'user_password' => $password]);
 
             return redirect('user')->with('success', Lang::get('lang.password_change_successfully'));
         } catch (Exception $e) {
@@ -399,7 +460,7 @@ class UserController extends Controller
     }
 
     /**
-     * @param type    $id
+     * @param type $id
      * @param Request $request
      *
      * @return type
@@ -421,7 +482,7 @@ class UserController extends Controller
     }
 
     /**
-     * @param type    $id
+     * @param type $id
      * @param Request $request
      *
      * @return type
@@ -529,7 +590,7 @@ class UserController extends Controller
 
                         $ticket->assigned_to = $assign_to[1];
                         $user_detail = User::where('id', '=', $assign_to[1])->first();
-                        $assignee = $user_detail->first_name.' '.$user_detail->last_name;
+                        $assignee = $user_detail->first_name . ' ' . $user_detail->last_name;
                         $ticket_number = $ticket->ticket_number;
                         $ticket->save();
 
@@ -537,7 +598,7 @@ class UserController extends Controller
                         $thread->ticket_id = $ticket->id;
                         $thread->user_id = Auth::user()->id;
                         $thread->is_internal = 1;
-                        $thread->body = 'This Ticket has been assigned to '.$assignee;
+                        $thread->body = 'This Ticket has been assigned to ' . $assignee;
                         $thread->save();
                     }
                     $user = User::find($id);
@@ -546,7 +607,8 @@ class UserController extends Controller
                     $users->ban = 1;
                     $users->save();
 
-                    return redirect('user')->with('success', Lang::get('lang.agent_delete_successfully_and_ticket_assign_to_another_agent'));
+                    return redirect('user')->with('success',
+                        Lang::get('lang.agent_delete_successfully_and_ticket_assign_to_another_agent'));
                 }
 
                 // if (User_org::where('user_id', '=', $id)) {
@@ -597,8 +659,8 @@ class UserController extends Controller
             }
         }
         // } catch (Exception $e) {
-            /* redirect to Index page with Fails Message */
-            // return redirect('user')->with('fails', $e->getMessage());
+        /* redirect to Index page with Fails Message */
+        // return redirect('user')->with('fails', $e->getMessage());
         // }
     }
 
@@ -652,7 +714,9 @@ class UserController extends Controller
             // $org_name=Organization::where('id','=',$org_id)->lists('name')->first();
             // dd($org_name);
 
-            return view('themes.default1.agent.helpdesk.user.edit', compact('users', 'orgs', '$settings', '$email_mandatory', 'organization_id'))->with('phonecode', $phonecode->phonecode);
+            return view('themes.default1.agent.helpdesk.user.edit',
+                compact('users', 'orgs', '$settings', '$email_mandatory', 'organization_id'))->with('phonecode',
+                $phonecode->phonecode);
         } catch (Exception $e) {
             return redirect()->back()->with('fails', $e->getMessage());
         }
@@ -676,11 +740,17 @@ class UserController extends Controller
         /* Check whether function success or not */
         try {
             if ($request->get('country_code') == '' && ($request->get('phone_number') != '' || $request->get('mobile') != '')) {
-                return redirect()->back()->with(['fails' => Lang::get('lang.country-code-required-error'), 'country_code_error' => 1])->withInput();
+                return redirect()->back()->with([
+                    'fails' => Lang::get('lang.country-code-required-error'),
+                    'country_code_error' => 1
+                ])->withInput();
             } else {
                 $code = CountryCode::select('phonecode')->where('phonecode', '=', $request->get('country_code'))->get();
                 if (!count($code)) {
-                    return redirect()->back()->with(['fails' => Lang::get('lang.incorrect-country-code-error'), 'country_code_error' => 1])->withInput();
+                    return redirect()->back()->with([
+                        'fails' => Lang::get('lang.incorrect-country-code-error'),
+                        'country_code_error' => 1
+                    ])->withInput();
                 } else {
                     $users->country_code = $request->country_code;
                 }
@@ -732,8 +802,10 @@ class UserController extends Controller
 
         try {
             return view('themes.default1.agent.helpdesk.user.profile-edit', compact('user'))
-                            ->with(['phonecode' => $phonecode->phonecode,
-                                'verify'        => $status, ]);
+                ->with([
+                    'phonecode' => $phonecode->phonecode,
+                    'verify' => $status,
+                ]);
         } catch (Exception $e) {
             return redirect()->back()->with('fails', $e->getMessage());
         }
@@ -753,11 +825,17 @@ class UserController extends Controller
             // geet authenticated user details
             $user = Auth::user();
             if ($request->get('country_code') == '' && ($request->get('phone_number') != '' || $request->get('mobile') != '')) {
-                return redirect()->back()->with(['fails' => Lang::get('lang.country-code-required-error'), 'country_code_error' => 1])->withInput();
+                return redirect()->back()->with([
+                    'fails' => Lang::get('lang.country-code-required-error'),
+                    'country_code_error' => 1
+                ])->withInput();
             } else {
                 $code = CountryCode::select('phonecode')->where('phonecode', '=', $request->get('country_code'))->get();
                 if (!count($code)) {
-                    return redirect()->back()->with(['fails' => Lang::get('lang.incorrect-country-code-error'), 'country_code_error' => 1])->withInput();
+                    return redirect()->back()->with([
+                        'fails' => Lang::get('lang.incorrect-country-code-error'),
+                        'country_code_error' => 1
+                    ])->withInput();
                 }
                 $user->country_code = $request->country_code;
             }
@@ -770,7 +848,7 @@ class UserController extends Controller
                 // fetching upload destination path
                 $destinationPath = 'uploads/profilepic';
                 // adding a random value to profile picture filename
-                $fileName = rand(0000, 9999).'.'.$name;
+                $fileName = rand(0000, 9999) . '.' . $name;
                 // moving the picture to a destination folder
                 Input::file('profile_pic')->move($destinationPath, $fileName);
                 // saving filename to database
@@ -815,7 +893,8 @@ class UserController extends Controller
                 return redirect('profile-edit')->with('fails', $e->getMessage());
             }
         } else {
-            return redirect('profile-edit')->with('fails1', Lang::get('lang.password_was_not_updated_incorrect_old_password'));
+            return redirect('profile-edit')->with('fails1',
+                Lang::get('lang.password_was_not_updated_incorrect_old_password'));
         }
     }
 
@@ -931,42 +1010,6 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Generate a random string for password.
-     *
-     * @param type $length
-     *
-     * @return string
-     */
-    public function generateRandomString($length = 10)
-    {
-        // list of supported characters
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        // character length checked
-        $charactersLength = strlen($characters);
-        // creating an empty variable for random string
-        $randomString = '';
-        // fetching random string
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
-        }
-        // return random string
-        return $randomString;
-    }
-
-    public function storeUserOrgRelation($userid, $orgid)
-    {
-        $org_relations = new User_org();
-        $org_relation = $org_relations->where('user_id', $userid)->first();
-        if ($org_relation) {
-            $org_relation->delete();
-        }
-        $org_relations->create([
-            'user_id' => $userid,
-            'org_id'  => $orgid,
-        ]);
-    }
-
     public function getExportUser()
     {
         try {
@@ -982,13 +1025,13 @@ class UserController extends Controller
             $date = $request->input('date');
             $date = str_replace(' ', '', $date);
             $date_array = explode(':', $date);
-            $first = $date_array[0].' 00:00:00';
-            $second = $date_array[1].' 23:59:59';
+            $first = $date_array[0] . ' 00:00:00';
+            $second = $date_array[1] . ' 23:59:59';
             $first_date = $this->convertDate($first);
             $second_date = $this->convertDate($second);
             $users = $this->getUsers($first_date, $second_date);
             $excel_controller = new \App\Http\Controllers\Common\ExcelController();
-            $filename = 'users'.$date;
+            $filename = 'users' . $date;
             $excel_controller->export($filename, $users);
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -1006,13 +1049,14 @@ class UserController extends Controller
     {
         $user = new User();
         $users = $user->leftJoin('user_assign_organization', 'users.id', '=', 'user_assign_organization.user_id')
-                ->leftJoin('organization', 'user_assign_organization.org_id', '=', 'organization.id')
-                ->whereBetween('users.created_at', [$first, $last])
-                ->where('role', 'user')
-                ->where('active', 1)
-                ->select('users.user_name as Username', 'users.email as Email', 'users.first_name as Fisrtname', 'users.last_name as Lastname', 'organization.name as Organization')
-                ->get()
-                ->toArray();
+            ->leftJoin('organization', 'user_assign_organization.org_id', '=', 'organization.id')
+            ->whereBetween('users.created_at', [$first, $last])
+            ->where('role', 'user')
+            ->where('active', 1)
+            ->select('users.user_name as Username', 'users.email as Email', 'users.first_name as Fisrtname',
+                'users.last_name as Lastname', 'organization.name as Organization')
+            ->get()
+            ->toArray();
 
         return $users;
     }
@@ -1036,7 +1080,7 @@ class UserController extends Controller
         // dd(Input::all());
         // $user = User::select('id', 'mobile', 'user_name')->where('email', '=', $request->input('email'))->first();
         $otp = Otp::select('otp', 'updated_at')->where('user_id', '=', Input::get('u_id'))
-                ->first();
+            ->first();
         if ($otp != null) {
             $otp_length = strlen(Input::get('otp'));
             if (($otp_length == 6 && !preg_match('/[a-z]/i', Input::get('otp')))) {
@@ -1053,7 +1097,7 @@ class UserController extends Controller
                 } else {
                     if (Hash::check(Input::get('otp'), $otp->otp)) {
                         Otp::where('user_id', '=', Input::get('u_id'))
-                                ->update(['otp' => '']);
+                            ->update(['otp' => '']);
                         // User::where('id', '=', $user->id)
                         //     ->update(['active' => 1]);
                         // $this->openTicketAfterVerification($user->id);
@@ -1080,7 +1124,7 @@ class UserController extends Controller
     {
         $users = User::where('role', '<>', 'user')->where('active', '=', 1)->orderBy('first_name')->get();
         foreach ($users as $user) {
-            echo "<option value='user_$user->id'>".$user->name().'</option>';
+            echo "<option value='user_$user->id'>" . $user->name() . '</option>';
         }
     }
 }

@@ -1,10 +1,6 @@
 <?php
 
-use App\Model\Common\Template;
-use App\Model\Common\TemplateSet;
-use App\Model\Common\TemplateType;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 
 class CreateSdAddTemplateTable extends Migration
 {

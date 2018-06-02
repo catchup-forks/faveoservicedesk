@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Model\helpdesk\Ticket\Tickets;
-
 class HomeController extends Controller
 {
     /*
@@ -53,24 +51,27 @@ class HomeController extends Controller
         $date2 = strtotime(date('Y-m-d'));
         $date3 = date('Y-m-d');
         $format = 'Y-m-d';
-        $date1 = strtotime(date($format, strtotime('-1 month'.$date3)));
+        $date1 = strtotime(date($format, strtotime('-1 month' . $date3)));
 
         $return = '';
         $last = '';
         for ($i = $date1; $i <= $date2; $i = $i + 86400) {
             $thisDate = date('Y-m-d', $i);
 
-            $created = \DB::table('tickets')->select('created_at')->where('created_at', 'LIKE', '%'.$thisDate.'%')->count();
-            $closed = \DB::table('tickets')->select('closed_at')->where('closed_at', 'LIKE', '%'.$thisDate.'%')->count();
-            $reopened = \DB::table('tickets')->select('reopened_at')->where('reopened_at', 'LIKE', '%'.$thisDate.'%')->count();
+            $created = \DB::table('tickets')->select('created_at')->where('created_at', 'LIKE',
+                '%' . $thisDate . '%')->count();
+            $closed = \DB::table('tickets')->select('closed_at')->where('closed_at', 'LIKE',
+                '%' . $thisDate . '%')->count();
+            $reopened = \DB::table('tickets')->select('reopened_at')->where('reopened_at', 'LIKE',
+                '%' . $thisDate . '%')->count();
 
             $value = ['date' => $thisDate, 'open' => $created, 'closed' => $closed, 'reopened' => $reopened];
             $array = array_map('htmlentities', $value);
             $json = html_entity_decode(json_encode($array));
-            $return .= $json.',';
+            $return .= $json . ',';
         }
         $last = rtrim($return, ',');
 
-        return '['.$last.']';
+        return '[' . $last . ']';
     }
 }

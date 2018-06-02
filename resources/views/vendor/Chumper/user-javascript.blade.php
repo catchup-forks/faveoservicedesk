@@ -1,8 +1,8 @@
 <?php
 $segments = \Request::segments();
 $segment = "";
-foreach($segments as $seg){
-    $segment.="/".$seg;
+foreach ($segments as $seg) {
+    $segment .= "/" . $seg;
 }
 ?>
 <script type="text/javascript">
@@ -10,19 +10,18 @@ foreach($segments as $seg){
         var show = 'all';
         var searchTerm = '';
         oTable = myFunction(show, searchTerm);
-        
+
         $("select[name=type_of_profile]").change(function () {
             //alert($('select[name=type_of_profile]').val());
             $("#chumper").dataTable().fnDestroy();
             myFunction();
         });
 
-        function myFunction(show)
-        {
+        function myFunction(show) {
             return jQuery('#chumper').dataTable({
-                "sDom": "<'row'<'col-xs-6'l><'col-xs-6'>r>"+
-                        "t"+
-                        "<'row'<'col-xs-6'i><'col-xs-6'p>>",
+                "sDom": "<'row'<'col-xs-6'l><'col-xs-6'>r>" +
+                    "t" +
+                    "<'row'<'col-xs-6'i><'col-xs-6'p>>",
                 "sPaginationType": "full_numbers",
                 "bProcessing": true,
                 "bServerSide": true,
@@ -33,64 +32,64 @@ foreach($segments as $seg){
                         d.searchTerm = searchTerm;
                     }
                 }
-                
+
             });
         }
 
-        $('.all').on('click', function(){
+        $('.all').on('click', function () {
             show = 'all';
-            classname = '.'+show;
+            classname = '.' + show;
             filterTable(show);
             toggleActiveClass(classname);
         });
 
-        $('.active-users').on('click', function(){
+        $('.active-users').on('click', function () {
             show = 'active-users';
-            classname = '.'+show;
+            classname = '.' + show;
             filterTable(show);
             toggleActiveClass(classname);
-            
+
         });
 
-        $('.inactive').on('click', function(){
+        $('.inactive').on('click', function () {
             show = 'inactive';
-            classname = '.'+show;
+            classname = '.' + show;
             filterTable(show);
             toggleActiveClass(classname);
         });
 
-        $('.agents').on('click', function(){
+        $('.agents').on('click', function () {
             show = 'agents';
-            classname = '.'+show;
+            classname = '.' + show;
             filterTable(show);
             toggleActiveClass(classname);
         });
 
-        $('.users').on('click', function(){
+        $('.users').on('click', function () {
             show = 'users';
-            classname = '.'+show;
+            classname = '.' + show;
             filterTable(show);
             toggleActiveClass(classname);
         });
 
-        $('.banned').on('click', function(){
+        $('.banned').on('click', function () {
             show = 'banned';
-            classname = '.'+show;
+            classname = '.' + show;
             filterTable(show);
             toggleActiveClass(classname);
         });
 
-        $('.deleted').on('click', function(){
+        $('.deleted').on('click', function () {
             show = 'deleted';
-            classname = '.'+show;
+            classname = '.' + show;
             filterTable(show);
             toggleActiveClass(classname);
         });
 
-        document.getElementById('search-text').onkeypress = function(e){
+        document.getElementById('search-text').onkeypress = function (e) {
             if (!e) e = window.event;
             var keyCode = e.keyCode || e.which;
-            if (keyCode == '13'){ 
+            if (keyCode == '13') {
                 searchTerm = $('input[name=search]').val();
                 $("#chumper").dataTable().fnDestroy();
                 myFunction(show, searchTerm);

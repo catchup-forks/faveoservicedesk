@@ -25,9 +25,9 @@ class CreateVendorRequest extends Request
     {
         return [
 
-             'name'           => 'required',
+            'name' => 'required',
             'primary_contact' => 'required',
-            'email'           => 'required',
+            'email' => 'required',
 //            'description' => 'required',
             'address' => 'required',
 //            'all_department' => 'required',

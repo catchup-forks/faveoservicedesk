@@ -4,17 +4,19 @@
         <div class="pull-right">
             <div class="btn-group">
 
-                <a href="#add" data-toggle="modal" class="btn btn-primary" data-target="#add{{$product->id}}">Add New</a>
+                <a href="#add" data-toggle="modal" class="btn btn-primary" data-target="#add{{$product->id}}">Add
+                    New</a>
 
             </div>
             <div class="btn-group">
 
-                <a href="#existing" data-toggle="modal" class="btn btn-primary" data-target="#existing{{$product->id}}">Add Existing</a>
+                <a href="#existing" data-toggle="modal" class="btn btn-primary" data-target="#existing{{$product->id}}">Add
+                    Existing</a>
 
             </div>
         </div>
     </div>
-    <!--/.box-header--> 
+    <!--/.box-header-->
     <div class="box-body">
         <table class="table table-condensed">
             <tr>
@@ -29,27 +31,30 @@
             $i = 1;
             ?>
             @forelse($product->vendors() as $vendor)
-            <tr>
-                <td>{{$i}}</td>
-                <td><a href="{{url('service-desk/vendor/'.$vendor->id.'/show')}}">{{$vendor->name}}</a></td>
-                <td>{{$vendor->email}}</td>
-                <td>{{$vendor->primary_contact}}</td>
-                <td>
-                    <div class="btn-group">
-                        <a href="{{url('service-desk/vendor/'.$vendor->id.'/edit')}}" class="btn btn-info">Edit</a>
-                    </div>
-                    <div class="btn-group">
-                        <?php
-                        $url = url('service-desk/products/' . $product->id . '/remove/' . $vendor->id . '/vendor');
-                        $delete = \App\Plugins\ServiceDesk\Controllers\Library\UtilityController::deletePopUp($vendor->id, $url, "Delete $vendor->name", "btn btn-danger");
-                        ?>
-                        {!! $delete !!}
-                    </div>
-                </td>
-            </tr>
-            <?php $i++; ?>
-            @empty 
-            <tr><td>No vendor Associated</td></tr>
+                <tr>
+                    <td>{{$i}}</td>
+                    <td><a href="{{url('service-desk/vendor/'.$vendor->id.'/show')}}">{{$vendor->name}}</a></td>
+                    <td>{{$vendor->email}}</td>
+                    <td>{{$vendor->primary_contact}}</td>
+                    <td>
+                        <div class="btn-group">
+                            <a href="{{url('service-desk/vendor/'.$vendor->id.'/edit')}}" class="btn btn-info">Edit</a>
+                        </div>
+                        <div class="btn-group">
+                            <?php
+                            $url = url('service-desk/products/' . $product->id . '/remove/' . $vendor->id . '/vendor');
+                            $delete = \App\Plugins\ServiceDesk\Controllers\Library\UtilityController::deletePopUp($vendor->id,
+                                $url, "Delete $vendor->name", "btn btn-danger");
+                            ?>
+                            {!! $delete !!}
+                        </div>
+                    </td>
+                </tr>
+                <?php $i++; ?>
+            @empty
+                <tr>
+                    <td>No vendor Associated</td>
+                </tr>
             @endforelse
 
         </table>

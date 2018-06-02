@@ -13,11 +13,13 @@ class Organization extends BaseModel
     /* Define the fillable fields */
     protected $fillable = ['id', 'name', 'phone', 'website', 'address', 'head', 'internal_notes'];
 
-    public function userRelation()
+    public function users()
     {
-        $related = "App\Model\helpdesk\Agent_panel\User_org";
+        $user = new \App\User();
+        $user_ids = $this->getUserIds();
+        $users = $user->whereIn('id', $user_ids);
 
-        return $this->hasMany($related, 'org_id');
+        return $users;
     }
 
     public function getUserIds()
@@ -27,12 +29,10 @@ class Organization extends BaseModel
         return $user_relations;
     }
 
-    public function users()
+    public function userRelation()
     {
-        $user = new \App\User();
-        $user_ids = $this->getUserIds();
-        $users = $user->whereIn('id', $user_ids);
+        $related = "App\Model\helpdesk\Agent_panel\User_org";
 
-        return $users;
+        return $this->hasMany($related, 'org_id');
     }
 }

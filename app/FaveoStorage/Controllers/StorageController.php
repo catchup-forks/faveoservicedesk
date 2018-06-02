@@ -41,6 +41,16 @@ class StorageController extends Controller
         $this->rackspace_username = $this->rackspaceUsername();
     }
 
+    public function defaults()
+    {
+        $default = 'local';
+        if ($this->settings('default')) {
+            $default = $this->settings('default');
+        }
+
+        return $default;
+    }
+
     protected function settings($option)
     {
         $settings = new CommonSettings();
@@ -51,16 +61,6 @@ class StorageController extends Controller
         }
 
         return $value;
-    }
-
-    public function defaults()
-    {
-        $default = 'local';
-        if ($this->settings('default')) {
-            $default = $this->settings('default');
-        }
-
-        return $default;
     }
 
     public function driver()
@@ -88,29 +88,9 @@ class StorageController extends Controller
         return $this->settings('s3_region');
     }
 
-    public function s3Secret()
-    {
-        return $this->settings('s3_secret');
-    }
-
     public function s3Bucket()
     {
         return $this->settings('s3_bucket');
-    }
-
-    public function rackspaceKey()
-    {
-        return $this->settings('root');
-    }
-
-    public function rackspaceRegion()
-    {
-        return $this->settings('rackspace_region');
-    }
-
-    public function rackspaceUsername()
-    {
-        return $this->settings('rackspace_username');
     }
 
     public function rackspaceContainer()
@@ -123,60 +103,48 @@ class StorageController extends Controller
         return $this->settings('rackspace_endpoint');
     }
 
+    public function rackspaceKey()
+    {
+        return $this->settings('root');
+    }
+
+    public function rackspaceRegion()
+    {
+        return $this->settings('rackspace_region');
+    }
+
     public function rackspaceUrlType()
     {
         return $this->settings('rackspace_url_type');
     }
 
-    protected function setFileSystem()
+    public function rackspaceUsername()
     {
-        $config = $this->config();
-        //dd($config);
-        foreach ($config as $key => $con) {
-            if (is_array($con)) {
-                foreach ($con as $k => $v) {
-                    Config::set("filesystem.$key.$k", $v);
+        return $this->settings('rackspace_username');
+    }
+
+    public function s3Secret()
+    {
+        return $this->settings('s3_secret');
+    }
+
+    public function saveAttachments($thread_id, $attachments = [])
+    {
+        if (is_array($attachments) && count($attachments) > 0) {
+            foreach ($attachments as $attachment) {
+                $structure = $attachment->getStructure();
+                $disposition = 'ATTACHMENT';
+                if (isset($structure->disposition)) {
+                    $disposition = $structure->disposition;
                 }
+                $filename = str_random(16) . '-' . $attachment->getFileName();
+                $type = $attachment->getMimeType();
+                $size = $attachment->getSize();
+                $data = $attachment->getData();
+                $this->upload($data, $filename, $type, $size, $disposition, $thread_id);
+                $this->updateBody($attachment, $thread_id, $filename);
             }
-            Config::set("filesystem.$key", $con);
         }
-
-        return Config::get('filesystem');
-    }
-
-    protected function config()
-    {
-        return [
-            'default' => $this->default,
-            'cloud'   => 's3',
-            'disks'   => $this->disks(),
-        ];
-    }
-
-    protected function disks()
-    {
-        return [
-            'local' => [
-                'driver' => 'local',
-                'root'   => $this->root.'/attachments',
-            ],
-            's3' => [
-                'driver' => 's3',
-                'key'    => $this->s3_key,
-                'secret' => $this->s3_secret,
-                'region' => $this->s3_region,
-                'bucket' => $this->s3_bucket,
-            ],
-            'rackspace' => [
-                'driver'    => 'rackspace',
-                'username'  => $this->rackspace_username,
-                'key'       => $this->rackspace_key,
-                'container' => $this->rackspace_container,
-                'endpoint'  => $this->rackspace_endpoint,
-                'region'    => $this->rackspace_region,
-                'url_type'  => $this->rackspace_url_type,
-            ],
-        ];
     }
 
     public function upload($data, $filename, $type, $size, $disposition, $thread_id)
@@ -200,23 +168,55 @@ class StorageController extends Controller
         }
     }
 
-    public function saveAttachments($thread_id, $attachments = [])
+    protected function setFileSystem()
     {
-        if (is_array($attachments) && count($attachments) > 0) {
-            foreach ($attachments as $attachment) {
-                $structure = $attachment->getStructure();
-                $disposition = 'ATTACHMENT';
-                if (isset($structure->disposition)) {
-                    $disposition = $structure->disposition;
+        $config = $this->config();
+        //dd($config);
+        foreach ($config as $key => $con) {
+            if (is_array($con)) {
+                foreach ($con as $k => $v) {
+                    Config::set("filesystem.$key.$k", $v);
                 }
-                $filename = str_random(16).'-'.$attachment->getFileName();
-                $type = $attachment->getMimeType();
-                $size = $attachment->getSize();
-                $data = $attachment->getData();
-                $this->upload($data, $filename, $type, $size, $disposition, $thread_id);
-                $this->updateBody($attachment, $thread_id, $filename);
             }
+            Config::set("filesystem.$key", $con);
         }
+
+        return Config::get('filesystem');
+    }
+
+    protected function config()
+    {
+        return [
+            'default' => $this->default,
+            'cloud' => 's3',
+            'disks' => $this->disks(),
+        ];
+    }
+
+    protected function disks()
+    {
+        return [
+            'local' => [
+                'driver' => 'local',
+                'root' => $this->root . '/attachments',
+            ],
+            's3' => [
+                'driver' => 's3',
+                'key' => $this->s3_key,
+                'secret' => $this->s3_secret,
+                'region' => $this->s3_region,
+                'bucket' => $this->s3_bucket,
+            ],
+            'rackspace' => [
+                'driver' => 'rackspace',
+                'username' => $this->rackspace_username,
+                'key' => $this->rackspace_key,
+                'container' => $this->rackspace_container,
+                'endpoint' => $this->rackspace_endpoint,
+                'region' => $this->rackspace_region,
+                'url_type' => $this->rackspace_url_type,
+            ],
+        ];
     }
 
     public function updateBody($attachment, $thread_id, $filename)
@@ -231,7 +231,7 @@ class StorageController extends Controller
             $threads = new Ticket_Thread();
             $thread = $threads->find($thread_id);
             $body = $thread->body;
-            $body = str_replace('cid:'.$id, $filename, $body);
+            $body = str_replace('cid:' . $id, $filename, $body);
             $thread->body = $body;
             $thread->save();
         }

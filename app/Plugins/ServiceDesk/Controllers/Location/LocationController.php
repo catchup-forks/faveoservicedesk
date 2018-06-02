@@ -31,22 +31,24 @@ class LocationController extends BaseServiceDeskController
     {
         try {
             $locationcategorys = new SdLocations();
-            $locationcategory = $locationcategorys->select('id', 'location_category_id', 'title', 'email', 'phone', 'address', 'all_department_access', 'departments', 'status', 'created_at', 'updated_at')->get();
+            $locationcategory = $locationcategorys->select('id', 'location_category_id', 'title', 'email', 'phone',
+                'address', 'all_department_access', 'departments', 'status', 'created_at', 'updated_at')->get();
 
             return \Datatable::Collection($locationcategory)
-                            ->addColumn('location_category_id', function ($model) {
-                                $location_category = new SdLocationcategories();
-                                $location_category_name = $location_category->where('id', $model->location_category_id)->first()->name;
+                ->addColumn('location_category_id', function ($model) {
+                    $location_category = new SdLocationcategories();
+                    $location_category_name = $location_category->where('id',
+                        $model->location_category_id)->first()->name;
 
-                                return $location_category_name;
-                            })
-                            ->showColumns('title', 'email', 'phone', 'address')
-                            ->addColumn('action', function ($model) {
-                                return '<a href='.url('service-desk/location-types/'.$model->id.'/edit')." class='btn btn-info btn-sm'>Edit</a> <a href=".url('service-desk/location-types/'.$model->id.'/show')." class='btn btn-primary btn-sm'>View</a>";
-                            })
-                            ->searchColumns('title', 'email', 'phone', 'address')
-                            ->orderColumns('location_category_id', 'title', 'email', 'phone', 'address')
-                            ->make();
+                    return $location_category_name;
+                })
+                ->showColumns('title', 'email', 'phone', 'address')
+                ->addColumn('action', function ($model) {
+                    return '<a href=' . url('service-desk/location-types/' . $model->id . '/edit') . " class='btn btn-info btn-sm'>Edit</a> <a href=" . url('service-desk/location-types/' . $model->id . '/show') . " class='btn btn-primary btn-sm'>View</a>";
+                })
+                ->searchColumns('title', 'email', 'phone', 'address')
+                ->orderColumns('location_category_id', 'title', 'email', 'phone', 'address')
+                ->make();
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
@@ -108,7 +110,9 @@ class LocationController extends BaseServiceDeskController
             $location_category = SdLocationcategories::all(['id', 'name']);
             $organizations = \App\Model\helpdesk\Agent_panel\Organization::lists('name', 'id')->toArray();
 
-            return view('service::location.edit', compact('departments', 'location_category', 'location_category_name', 'departments_name', 'sd_location', 'organizations'));
+            return view('service::location.edit',
+                compact('departments', 'location_category', 'location_category_name', 'departments_name', 'sd_location',
+                    'organizations'));
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
@@ -150,7 +154,8 @@ class LocationController extends BaseServiceDeskController
             $sd_location = SdLocations::findOrFail($id);
             $sd_location->delete();
 
-            return \Redirect::route('service-desk.location-category.index')->with('message', 'Location  successfully delete !!!');
+            return \Redirect::route('service-desk.location-category.index')->with('message',
+                'Location  successfully delete !!!');
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
@@ -179,7 +184,7 @@ class LocationController extends BaseServiceDeskController
         $locations = $location->lists('title', 'id')->toArray();
         if (count($locations) > 0) {
             foreach ($locations as $key => $value) {
-                $html .= "<option value='".$key."'>".$value.'</option>';
+                $html .= "<option value='" . $key . "'>" . $value . '</option>';
             }
         }
 

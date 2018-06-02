@@ -15,7 +15,7 @@ class UtilityController extends Controller
     public static function assetSearch($query, $format = 'json')
     {
         $assets = new SdAssets();
-        $asset = $assets->where('name', 'LIKE', '%'.$query.'%')->select('name as label', 'id as value');
+        $asset = $assets->where('name', 'LIKE', '%' . $query . '%')->select('name as label', 'id as value');
 
         if ($format == 'json') {
             $asset = $asset->get()->toJson();
@@ -47,7 +47,7 @@ class UtilityController extends Controller
     public static function saveTicketRelation($ticketid, $table, $id)
     {
         $relation = new \App\Plugins\ServiceDesk\Model\Common\TicketRelation();
-        $relations = $relation->where('ticket_id', $ticketid)->where('owner', 'LIKE', $table.'%')->get();
+        $relations = $relation->where('ticket_id', $ticketid)->where('owner', 'LIKE', $table . '%')->get();
         if ($relations->count() > 0) {
             foreach ($relations as $del) {
                 $del->delete();
@@ -57,14 +57,14 @@ class UtilityController extends Controller
             foreach ($id as $i) {
                 $relation->create([
                     'ticket_id' => $ticketid,
-                    'owner'     => "$table:$i",
+                    'owner' => "$table:$i",
                 ]);
             }
         } else {
             $owner = "$table:$id";
             $relation->create([
                 'ticket_id' => $ticketid,
-                'owner'     => $owner,
+                'owner' => $owner,
             ]);
         }
     }
@@ -84,7 +84,7 @@ class UtilityController extends Controller
         }
         $relation->create([
             'asset_ids' => $assetid,
-            'owner'     => $owner,
+            'owner' => $owner,
         ]);
     }
 
@@ -106,7 +106,7 @@ class UtilityController extends Controller
     public static function getRelationOfTicketByTable($ticketid, $table)
     {
         $realtions = new \App\Plugins\ServiceDesk\Model\Common\TicketRelation();
-        $realtion = $realtions->where('ticket_id', $ticketid)->where('owner', 'LIKE', $table.'%')->first();
+        $realtion = $realtions->where('ticket_id', $ticketid)->where('owner', 'LIKE', $table . '%')->first();
         if ($realtion) {
             return $realtion;
         }
@@ -188,45 +188,6 @@ class UtilityController extends Controller
         return $thread->body;
     }
 
-    public static function attachment($id, $table, $attachments, $saved = 2)
-    {
-        //dd($id);
-        $owner = "$table:$id";
-        $value = '';
-        $type = '';
-        $size = '';
-
-        if (count($attachments) > 0) {
-            foreach ($attachments as $attachment) {
-                if ($attachment) {
-                    $name = $attachment->getClientOriginalName();
-                    $destinationPath = 'uploads/service-desk/attachments';
-                    $value = rand(0000, 9999).'.'.$name;
-                    $type = $attachment->getClientOriginalExtension();
-                    $size = $attachment->getSize();
-                    if ($saved == 2) {
-                        $attachment->move($destinationPath, $value);
-                    } else {
-                        $value = file_get_contents($attachment->getRealPath());
-                    }
-                    self::storeAttachment($saved, $owner, $value, $type, $size);
-                }
-            }
-        }
-    }
-
-    public static function storeAttachment($saved, $owner, $value, $type, $size)
-    {
-        $attachments = new Attachments();
-        $attachments->create([
-            'saved' => $saved,
-            'owner' => $owner,
-            'value' => $value,
-            'type'  => $type,
-            'size'  => $size,
-        ]);
-    }
-
     public static function deleteAttachments($id, $table)
     {
         $owner = "$table:$id";
@@ -243,7 +204,7 @@ class UtilityController extends Controller
         $saved = $attachment->saved;
         if ($saved == 2) {
             $file = $attachment->value;
-            $path = public_path('uploads'.DIRECTORY_SEPARATOR.'service-desk'.DIRECTORY_SEPARATOR.'attachments'.DIRECTORY_SEPARATOR.$file);
+            $path = public_path('uploads' . DIRECTORY_SEPARATOR . 'service-desk' . DIRECTORY_SEPARATOR . 'attachments' . DIRECTORY_SEPARATOR . $file);
             unlink($path);
         }
         $attachment->delete();
@@ -254,7 +215,7 @@ class UtilityController extends Controller
         $saved = $attachment->saved;
         if ($saved == 2) {
             $file = $attachment->value;
-            $attach = public_path('uploads'.DIRECTORY_SEPARATOR.'service-desk'.DIRECTORY_SEPARATOR.'attachments'.DIRECTORY_SEPARATOR.$file);
+            $attach = public_path('uploads' . DIRECTORY_SEPARATOR . 'service-desk' . DIRECTORY_SEPARATOR . 'attachments' . DIRECTORY_SEPARATOR . $file);
         } else {
             $attach = $attachment->value;
         }
@@ -306,13 +267,13 @@ class UtilityController extends Controller
     {
         $defaults = [
             'namespaceSeparator' => ':', //you may want this to be something other than a colon
-            'attributePrefix'    => '', //to distinguish between attributes and nodes with the same name
-            'alwaysArray'        => [], //array of xml tag names which should always become arrays
-            'autoArray'          => true, //only create arrays for tags which appear more than once
-            'textContent'        => 'option-name', //key used for the text content of elements
-            'autoText'           => true, //skip textContent key if node has no attributes or child nodes
-            'keySearch'          => false, //optional search and replace on tag and attribute names
-            'keyReplace'         => false,       //replace values for above search values (as passed to str_replace())
+            'attributePrefix' => '', //to distinguish between attributes and nodes with the same name
+            'alwaysArray' => [], //array of xml tag names which should always become arrays
+            'autoArray' => true, //only create arrays for tags which appear more than once
+            'textContent' => 'option-name', //key used for the text content of elements
+            'autoText' => true, //skip textContent key if node has no attributes or child nodes
+            'keySearch' => false, //optional search and replace on tag and attribute names
+            'keyReplace' => false,       //replace values for above search values (as passed to str_replace())
         ];
         $options = array_merge($defaults, $options);
         $namespaces = $xml->getDocNamespaces();
@@ -326,9 +287,9 @@ class UtilityController extends Controller
                     $attributeName = str_replace($options['keySearch'], $options['keyReplace'], $attributeName);
                 }
                 $attributeKey = $options['attributePrefix']
-                        .($prefix ? $prefix.$options['namespaceSeparator'] : '')
-                        .$attributeName;
-                $attributesArray[$attributeKey] = (string) $attribute;
+                    . ($prefix ? $prefix . $options['namespaceSeparator'] : '')
+                    . $attributeName;
+                $attributesArray[$attributeKey] = (string)$attribute;
             }
         }
 
@@ -346,15 +307,17 @@ class UtilityController extends Controller
                 }
                 //add namespace prefix, if any
                 if ($prefix) {
-                    $childTagName = $prefix.$options['namespaceSeparator'].$childTagName;
+                    $childTagName = $prefix . $options['namespaceSeparator'] . $childTagName;
                 }
 
                 if (!isset($tagsArray[$childTagName])) {
                     //only entry with this key
                     //test if tags of this type should always be arrays, no matter the element count
-                    $tagsArray[$childTagName] = in_array($childTagName, $options['alwaysArray']) || !$options['autoArray'] ? [$childProperties] : $childProperties;
+                    $tagsArray[$childTagName] = in_array($childTagName,
+                        $options['alwaysArray']) || !$options['autoArray'] ? [$childProperties] : $childProperties;
                 } elseif (
-                        is_array($tagsArray[$childTagName]) && array_keys($tagsArray[$childTagName]) === range(0, count($tagsArray[$childTagName]) - 1)
+                    is_array($tagsArray[$childTagName]) && array_keys($tagsArray[$childTagName]) === range(0,
+                        count($tagsArray[$childTagName]) - 1)
                 ) {
                     //key already exists and is integer indexed array
                     $tagsArray[$childTagName][] = $childProperties;
@@ -367,13 +330,14 @@ class UtilityController extends Controller
 
         //get text content of node
         $textContentArray = [];
-        $plainText = trim((string) $xml);
+        $plainText = trim((string)$xml);
         if ($plainText !== '') {
             $textContentArray[$options['textContent']] = $plainText;
         }
 
         //stick it all together
-        $propertiesArray = !$options['autoText'] || $attributesArray || $tagsArray || ($plainText === '') ? array_merge($attributesArray, $tagsArray, $textContentArray) : $plainText;
+        $propertiesArray = !$options['autoText'] || $attributesArray || $tagsArray || ($plainText === '') ? array_merge($attributesArray,
+            $tagsArray, $textContentArray) : $plainText;
 
         //return node as array
         return [
@@ -393,8 +357,8 @@ class UtilityController extends Controller
                     $value = self::value($item);
                     $options = true;
                 } elseif ($options == false) {
-                    $it = '='.'"'.$item.'" ';
-                    $field .= $index.$it;
+                    $it = '=' . '"' . $item . '" ';
+                    $field .= $index . $it;
                 }
             }
 
@@ -414,25 +378,31 @@ class UtilityController extends Controller
     {
         $result = '';
         foreach ($item as $k => $v) {
-            $result .= '<option value='.'"'.$k.'"'.'>'.$v.'</option>';
+            $result .= '<option value=' . '"' . $k . '"' . '>' . $v . '</option>';
         }
 
         return $result;
     }
 
-    public static function deletePopUp($id, $url, $title = 'Delete', $class = 'btn btn-sm btn-danger', $btn_name = 'Delete', $button_check = true)
-    {
+    public static function deletePopUp(
+        $id,
+        $url,
+        $title = 'Delete',
+        $class = 'btn btn-sm btn-danger',
+        $btn_name = 'Delete',
+        $button_check = true
+    ) {
         $button = '';
         if ($button_check == true) {
-            $button = '<a href="#delete" class="'.$class.'" data-toggle="modal" data-target="#delete'.$id.'">'.$btn_name.'</a>';
+            $button = '<a href="#delete" class="' . $class . '" data-toggle="modal" data-target="#delete' . $id . '">' . $btn_name . '</a>';
         }
 
-        return $button.'<div class="modal fade" id="delete'.$id.'">
+        return $button . '<div class="modal fade" id="delete' . $id . '">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title">'.$title.'</h4>
+                                <h4 class="modal-title">' . $title . '</h4>
                             </div>
                             <div class="modal-body">
                                 <div class="row">
@@ -443,7 +413,7 @@ class UtilityController extends Controller
                             </div>
                             <div class="modal-footer">
                                 <button type="button" id="close" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                                <a href="'.$url.'" class="btn btn-danger">Delete</a>
+                                <a href="' . $url . '" class="btn btn-danger">Delete</a>
                             </div>
                         </div>
                     </div>
@@ -502,21 +472,21 @@ class UtilityController extends Controller
         //dd($url);
         if ($user) {
             $email = $user->email;
-            $name = $user->first_name.' '.$user->last_name;
+            $name = $user->first_name . ' ' . $user->last_name;
             if ($leader) {
-                $heads = $leader->first_name.' '.$leader->last_name;
+                $heads = $leader->first_name . ' ' . $leader->last_name;
             }
             //dd([$email,$name,$heads,$url]);
             $php_mailer = new \App\Http\Controllers\Common\PhpMailController();
             $php_mailer->sendmail(
-                    $from = $php_mailer->mailfrom('1', '0'), $to = ['name' => $name, 'email' => $email], $message = [
-                'subject'  => 'Requesting For CAB Approval',
+                $from = $php_mailer->mailfrom('1', '0'), $to = ['name' => $name, 'email' => $email], $message = [
+                'subject' => 'Requesting For CAB Approval',
                 'scenario' => 'sd-cab-vote',
-                    ], $template_variables = [
-                'user'         => $name,
-                'system_link'  => $url,
+            ], $template_variables = [
+                'user' => $name,
+                'system_link' => $url,
                 '$system_from' => $heads,
-                    ]
+            ]
             );
         }
     }
@@ -537,7 +507,7 @@ class UtilityController extends Controller
                 if ($value !== '') {
                     $general->create([
                         'owner' => $owner,
-                        'key'   => $key,
+                        'key' => $key,
                         'value' => $value,
                     ]);
                 }
@@ -552,11 +522,50 @@ class UtilityController extends Controller
         return 'success';
     }
 
+    public static function attachment($id, $table, $attachments, $saved = 2)
+    {
+        //dd($id);
+        $owner = "$table:$id";
+        $value = '';
+        $type = '';
+        $size = '';
+
+        if (count($attachments) > 0) {
+            foreach ($attachments as $attachment) {
+                if ($attachment) {
+                    $name = $attachment->getClientOriginalName();
+                    $destinationPath = 'uploads/service-desk/attachments';
+                    $value = rand(0000, 9999) . '.' . $name;
+                    $type = $attachment->getClientOriginalExtension();
+                    $size = $attachment->getSize();
+                    if ($saved == 2) {
+                        $attachment->move($destinationPath, $value);
+                    } else {
+                        $value = file_get_contents($attachment->getRealPath());
+                    }
+                    self::storeAttachment($saved, $owner, $value, $type, $size);
+                }
+            }
+        }
+    }
+
+    public static function storeAttachment($saved, $owner, $value, $type, $size)
+    {
+        $attachments = new Attachments();
+        $attachments->create([
+            'saved' => $saved,
+            'owner' => $owner,
+            'value' => $value,
+            'type' => $type,
+            'size' => $size,
+        ]);
+    }
+
     public static function getAttachmentSize($size)
     {
         $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
         $power = $size > 0 ? floor(log($size, 1024)) : 0;
-        $value = number_format($size / pow(1024, $power), 2, '.', ',').' '.$units[$power];
+        $value = number_format($size / pow(1024, $power), 2, '.', ',') . ' ' . $units[$power];
 
         return $value;
     }

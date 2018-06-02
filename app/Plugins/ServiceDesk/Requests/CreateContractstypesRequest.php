@@ -26,7 +26,7 @@ class CreateContractstypesRequest extends Request
         $id = $this->segment(3);
 
         return [
-            'name' => 'required|unique:sd_contract_types,name,'.$id,
+            'name' => 'required|unique:sd_contract_types,name,' . $id,
         ];
     }
 }

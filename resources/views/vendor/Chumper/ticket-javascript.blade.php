@@ -1,8 +1,8 @@
 <?php
 $segments = \Request::segments();
 $segment = "";
-foreach($segments as $seg){
-    $segment.="/".$seg;
+foreach ($segments as $seg) {
+    $segment .= "/" . $seg;
 }
 ?>
 <script type="text/javascript">
@@ -21,12 +21,11 @@ foreach($segments as $seg){
             myFunction();
         });
 
-        function myFunction()
-        {
+        function myFunction() {
             return jQuery('#chumper').dataTable({
-                "sDom": "<'row'<'col-xs-6'l><'col-xs-6'f>r>"+
-                        "t"+
-                        "<'row'<'col-xs-6'i><'col-xs-6'p>>",
+                "sDom": "<'row'<'col-xs-6'l><'col-xs-6'f>r>" +
+                    "t" +
+                    "<'row'<'col-xs-6'i><'col-xs-6'p>>",
                 "sPaginationType": "full_numbers",
                 "bProcessing": true,
                 "bServerSide": true,
@@ -41,36 +40,63 @@ foreach($segments as $seg){
                 },
                 "aaSorting": sort,
                 "columnDefs": [
-                    { "searchable": false, "targets": [6,7] },
-                    { "visible": last, "targets": 6 },
-                    {"visible": create, "targets":7},
+                    {"searchable": false, "targets": [6, 7]},
+                    {"visible": last, "targets": 6},
+                    {"visible": create, "targets": 7},
                 ],
                 "fnCreatedRow": function (nRow, aData, iDataIndex) {
                     var str = aData[3];
                     if (str.search("#000") == -1) {
-                        $("td", nRow).css({"background-color": "#F3F3F3", "font-weight": "600", "border-bottom": "solid 0.5px #ddd", "border-right": "solid 0.5px #F3F3F3"});
+                        $("td", nRow).css({
+                            "background-color": "#F3F3F3",
+                            "font-weight": "600",
+                            "border-bottom": "solid 0.5px #ddd",
+                            "border-right": "solid 0.5px #F3F3F3"
+                        });
                         $("td", nRow).mouseenter(function () {
-                            $("td", nRow).css({"background-color": "#DEDFE0", "font-weight": "600", "border-bottom": "solid 0.5px #ddd", "border-right": "solid 0.5px #DEDFE0"});
+                            $("td", nRow).css({
+                                "background-color": "#DEDFE0",
+                                "font-weight": "600",
+                                "border-bottom": "solid 0.5px #ddd",
+                                "border-right": "solid 0.5px #DEDFE0"
+                            });
                         });
                         $("td", nRow).mouseleave(function () {
-                            $("td", nRow).css({"background-color": "#F3F3F3", "font-weight": "600", "border-bottom": "solid 0.5px #ddd", "border-right": "solid 0.5px #F3F3F3"});
+                            $("td", nRow).css({
+                                "background-color": "#F3F3F3",
+                                "font-weight": "600",
+                                "border-bottom": "solid 0.5px #ddd",
+                                "border-right": "solid 0.5px #F3F3F3"
+                            });
                         });
                     } else {
-                        $("td", nRow).css({"background-color": "white", "border-bottom": "solid 0.5px #ddd", "border-right": "solid 0.5px white"});
+                        $("td", nRow).css({
+                            "background-color": "white",
+                            "border-bottom": "solid 0.5px #ddd",
+                            "border-right": "solid 0.5px white"
+                        });
                         $("td", nRow).mouseenter(function () {
-                            $("td", nRow).css({"background-color": "#DEDFE0", "border-bottom": "solid 0.5px #ddd", "border-right": "solid 0.5px #DEDFE0"});
+                            $("td", nRow).css({
+                                "background-color": "#DEDFE0",
+                                "border-bottom": "solid 0.5px #ddd",
+                                "border-right": "solid 0.5px #DEDFE0"
+                            });
                         });
                         $("td", nRow).mouseleave(function () {
-                            $("td", nRow).css({"background-color": "white", "border-bottom": "solid 0.5px #ddd", "border-right": "solid 0.5px white"});
+                            $("td", nRow).css({
+                                "background-color": "white",
+                                "border-bottom": "solid 0.5px #ddd",
+                                "border-right": "solid 0.5px white"
+                            });
                         });
                     }
                 }
             });
         }
-        $('a.toggle-vis').on( 'click', function (e)
-        {
-            clicked = clicked+1;
-            if((clicked%2)== 0){
+
+        $('a.toggle-vis').on('click', function (e) {
+            clicked = clicked + 1;
+            if ((clicked % 2) == 0) {
                 last = false;
                 create = true;
                 sort = [[7, "desc"]]

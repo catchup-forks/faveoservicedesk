@@ -17,7 +17,10 @@ class Condition extends Model
             $condition_value = explode(',', $condition->value);
             $value = ['condition' => $condition_value, 'at' => ''];
             if (is_array($condition_value)) {
-                $value = ['condition' => $this->checkArray(0, $condition_value), 'at' => $this->checkArray(1, $condition_value)];
+                $value = [
+                    'condition' => $this->checkArray(0, $condition_value),
+                    'at' => $this->checkArray(1, $condition_value)
+                ];
             }
         }
 

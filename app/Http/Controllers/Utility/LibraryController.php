@@ -55,7 +55,7 @@ class LibraryController extends Controller
     public static function encryptByFaveoPublicKey($data)
     {
         try {
-            $path = storage_path().DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'public.key';
+            $path = storage_path() . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'public.key';
             //dd($path);
             $key_content = file_get_contents($path);
             $public_key = openssl_get_publickey($key_content);
@@ -83,7 +83,7 @@ class LibraryController extends Controller
                 $envelope = $encrypted->envelope;
                 $input = base64_decode($sealed_data);
                 $einput = base64_decode($envelope);
-                $path = storage_path('app'.DIRECTORY_SEPARATOR.'private.key');
+                $path = storage_path('app' . DIRECTORY_SEPARATOR . 'private.key');
                 $key_content = file_get_contents($path);
                 $private_key = openssl_get_privatekey($key_content);
                 $plaintext = null;

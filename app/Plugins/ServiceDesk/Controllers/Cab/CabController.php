@@ -17,6 +17,33 @@ class CabController extends BaseServiceDeskController
         $this->middleware('auth');
     }
 
+    public static function votedUser($userid)
+    {
+        $users = new \App\User();
+        $user = $users->find($userid);
+        $name = '';
+        if ($user) {
+            $name = $user->first_name . ' ' . $user->last_name;
+            if ($name == ' ') {
+                $name = $user->user_name;
+            }
+        }
+
+        return ucfirst($name);
+    }
+
+    public static function checkVote($vote)
+    {
+        $value = '';
+        if ($vote == 1) {
+            $value = 'Voted for proceed';
+        } else {
+            $value = 'Voted for not proceed';
+        }
+
+        return $value;
+    }
+
     public function index()
     {
         try {
@@ -31,23 +58,23 @@ class CabController extends BaseServiceDeskController
         $cabs = new Cab();
 
         return Datatable::Collection($cabs->select('name', 'head', 'id')->get())
-                        ->showColumns('name')
-                        ->addColumn('head', function ($model) {
-                            $users = new User();
-                            $head = '--';
-                            $user = $users->find($model->head);
-                            if ($user) {
-                                $head = $user->email;
-                            }
+            ->showColumns('name')
+            ->addColumn('head', function ($model) {
+                $users = new User();
+                $head = '--';
+                $user = $users->find($model->head);
+                if ($user) {
+                    $head = $user->email;
+                }
 
-                            return $head;
-                        })
-                        ->addColumn('action', function ($model) {
-                            return '<a href='.url('service-desk/cabs/'.$model->id.'/edit')." class='btn btn-info'>Edit</a>";
-                        })
-                        ->orderColumns('name', 'head')
-                        ->searchColumns('name', 'head')
-                        ->make();
+                return $head;
+            })
+            ->addColumn('action', function ($model) {
+                return '<a href=' . url('service-desk/cabs/' . $model->id . '/edit') . " class='btn btn-info'>Edit</a>";
+            })
+            ->orderColumns('name', 'head')
+            ->searchColumns('name', 'head')
+            ->make();
     }
 
     public function edit($id)
@@ -143,11 +170,11 @@ class CabController extends BaseServiceDeskController
                 return redirect('/service-desk/problems')->with('fails', 'Already voted');
             }
             $votes->create([
-                'cab_id'  => $cabid,
+                'cab_id' => $cabid,
                 'user_id' => $authid,
                 'comment' => $request->input('comment'),
-                'vote'    => $request->input('vote'),
-                'owner'   => $owner,
+                'vote' => $request->input('vote'),
+                'owner' => $owner,
             ]);
 
             return redirect('/service-desk/problems')->with('success', 'Voted successfully');
@@ -166,32 +193,5 @@ class CabController extends BaseServiceDeskController
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
-    }
-
-    public static function votedUser($userid)
-    {
-        $users = new \App\User();
-        $user = $users->find($userid);
-        $name = '';
-        if ($user) {
-            $name = $user->first_name.' '.$user->last_name;
-            if ($name == ' ') {
-                $name = $user->user_name;
-            }
-        }
-
-        return ucfirst($name);
-    }
-
-    public static function checkVote($vote)
-    {
-        $value = '';
-        if ($vote == 1) {
-            $value = 'Voted for proceed';
-        } else {
-            $value = 'Voted for not proceed';
-        }
-
-        return $value;
     }
 }

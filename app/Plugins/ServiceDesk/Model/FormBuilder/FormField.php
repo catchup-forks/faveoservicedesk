@@ -21,14 +21,14 @@ class FormField extends Model
         'role',
     ];
 
-    public function fieldValue()
-    {
-        return $this->hasMany('App\Plugins\ServiceDesk\Model\FormBuilder\FormValue', 'field_id');
-    }
-
     public function delete()
     {
         $this->fieldValue()->delete();
         parent::delete();
+    }
+
+    public function fieldValue()
+    {
+        return $this->hasMany('App\Plugins\ServiceDesk\Model\FormBuilder\FormValue', 'field_id');
     }
 }

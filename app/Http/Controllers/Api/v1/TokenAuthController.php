@@ -6,7 +6,6 @@ use App\Http\Controllers\Common\PhpMailController;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
@@ -50,7 +49,7 @@ class TokenAuthController extends Controller
         //$credentials = $request->only('email', 'password');
 
         try {
-            if (!$token = JWTAuth::attempt([$field => $usernameinput, 'password' => $password, 'active'=>1])) {
+            if (!$token = JWTAuth::attempt([$field => $usernameinput, 'password' => $password, 'active' => 1])) {
                 return response()->json(['error' => 'invalid_credentials', 'status_code' => 401]);
             }
         } catch (JWTException $e) {
@@ -134,7 +133,7 @@ class TokenAuthController extends Controller
     {
         try {
             $v = \Validator::make($request->all(), [
-                        'url' => 'required|url',
+                'url' => 'required|url',
             ]);
             if ($v->fails()) {
                 $error = $v->errors();
@@ -143,7 +142,7 @@ class TokenAuthController extends Controller
             }
 
             $url = $this->request->input('url');
-            $url = $url.'/api/v1/helpdesk/check-url';
+            $url = $url . '/api/v1/helpdesk/check-url';
         } catch (Exception $ex) {
             $error = $e->getMessage();
 
@@ -155,7 +154,7 @@ class TokenAuthController extends Controller
     {
         try {
             $v = \Validator::make($request->all(), [
-                        'email' => 'required|email|exists:users,email',
+                'email' => 'required|email|exists:users,email',
             ]);
             if ($v->fails()) {
                 $error = $v->errors();
@@ -171,14 +170,26 @@ class TokenAuthController extends Controller
                 $code = str_random(60);
                 $password_reset_table = \DB::table('password_resets')->where('email', '=', $user->email)->first();
                 if (isset($password_reset_table)) {
-                    $password_reset_table = \DB::table('password_resets')->where('email', '=', $user->email)->update(['token' => $code, 'created_at' => $date]);
+                    $password_reset_table = \DB::table('password_resets')->where('email', '=',
+                        $user->email)->update(['token' => $code, 'created_at' => $date]);
                     // $password_reset_table->token = $code;
-                // $password_reset_table->update(['token' => $code]);
+                    // $password_reset_table->update(['token' => $code]);
                 } else {
-                    $create_password_reset = \DB::table('password_resets')->insert(['email' => $user->email, 'token' => $code, 'created_at' => $date]);
+                    $create_password_reset = \DB::table('password_resets')->insert([
+                        'email' => $user->email,
+                        'token' => $code,
+                        'created_at' => $date
+                    ]);
                 }
 
-                $this->PhpMailController->sendmail($from = $this->PhpMailController->mailfrom('1', '0'), $to = ['name' => $user->user_name, 'email' => $user->email], $message = ['subject' => 'Your Password Reset Link', 'scenario' => 'reset-password'], $template_variables = ['user' => $user->user_name, 'email_address' => $user->email, 'password_reset_link' => url('password/reset/'.$code)]);
+                $this->PhpMailController->sendmail($from = $this->PhpMailController->mailfrom('1', '0'),
+                    $to = ['name' => $user->user_name, 'email' => $user->email],
+                    $message = ['subject' => 'Your Password Reset Link', 'scenario' => 'reset-password'],
+                    $template_variables = [
+                        'user' => $user->user_name,
+                        'email_address' => $user->email,
+                        'password_reset_link' => url('password/reset/' . $code)
+                    ]);
                 $result = 'We have e-mailed your password reset link!';
 
                 return response()->json(compact('result'));

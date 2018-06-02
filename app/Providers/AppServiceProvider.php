@@ -22,13 +22,13 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind('Illuminate\Contracts\Auth\Registrar');
-        require_once __DIR__.'/../Http/helpers.php';
+        require_once __DIR__ . '/../Http/helpers.php';
     }
 
     public function boot()
     {
         Queue::failing(function (JobFailed $event) {
-            loging('Failed Job - '.$event->connectionName, json_encode($event->data));
+            loging('Failed Job - ' . $event->connectionName, json_encode($event->data));
             $failedid = $event->failedId;
             //\Artisan::call('queue:retry',['id'=>[$failedid]]);
         });

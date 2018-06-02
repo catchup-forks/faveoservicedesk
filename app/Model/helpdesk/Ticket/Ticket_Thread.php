@@ -10,18 +10,31 @@ class Ticket_Thread extends Model
 {
     protected $table = 'ticket_thread';
     protected $fillable = [
-        'id', 'ticket_id', 'staff_id', 'user_id', 'thread_type', 'poster', 'source', 'is_internal', 'title', 'body', 'format', 'ip_address', 'created_at', 'updated_at',
+        'id',
+        'ticket_id',
+        'staff_id',
+        'user_id',
+        'thread_type',
+        'poster',
+        'source',
+        'is_internal',
+        'title',
+        'body',
+        'format',
+        'ip_address',
+        'created_at',
+        'updated_at',
     ];
-
-    public function attach()
-    {
-        return $this->hasMany('App\Model\helpdesk\Ticket\Ticket_attachments', 'thread_id');
-    }
 
     public function delete()
     {
         $this->attach()->delete();
         parent::delete();
+    }
+
+    public function attach()
+    {
+        return $this->hasMany('App\Model\helpdesk\Ticket\Ticket_attachments', 'thread_id');
     }
 
     //    public function setTitleAttribute($value) {
@@ -41,10 +54,38 @@ class Ticket_Thread extends Model
         return $this->purify($content);
     }
 
+    public function purify()
+    {
+        $value = $this->attributes['body'];
+        $str = str_replace("'", '"', $value);
+        $html = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $str);
+        $string = trim(preg_replace('/\s+/', ' ', $html));
+        $content = $this->inlineAttachment($string);
+
+        return $content;
+    }
+
+    public function inlineAttachment($body)
+    {
+        $attachments = $this->attach;
+        if ($attachments->count() > 0) {
+            foreach ($attachments as $key => $attach) {
+                if ($attach->poster == 'INLINE' || $attach->poster == 'inline') {
+                    $search = $attach->name;
+                    $replace = "data:$attach->type;base64," . $attach->file;
+                    $b = str_replace($search, $replace, $body);
+                    $body = $b;
+                }
+            }
+        }
+
+        return $body;
+    }
+
     public function purifyOld($value)
     {
-        require_once base_path('vendor'.DIRECTORY_SEPARATOR.'htmlpurifier'.DIRECTORY_SEPARATOR.'library'.DIRECTORY_SEPARATOR.'HTMLPurifier.auto.php');
-        $path = base_path('vendor'.DIRECTORY_SEPARATOR.'htmlpurifier'.DIRECTORY_SEPARATOR.'library'.DIRECTORY_SEPARATOR.'HTMLPurifier'.DIRECTORY_SEPARATOR.'DefinitionCache'.DIRECTORY_SEPARATOR.'Serializer');
+        require_once base_path('vendor' . DIRECTORY_SEPARATOR . 'htmlpurifier' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'HTMLPurifier.auto.php');
+        $path = base_path('vendor' . DIRECTORY_SEPARATOR . 'htmlpurifier' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'HTMLPurifier' . DIRECTORY_SEPARATOR . 'DefinitionCache' . DIRECTORY_SEPARATOR . 'Serializer');
         if (!File::exists($path)) {
             File::makeDirectory($path, $mode = 0777, true, true);
         }
@@ -58,17 +99,6 @@ class Ticket_Thread extends Model
         }
 
         return $value;
-    }
-
-    public function purify()
-    {
-        $value = $this->attributes['body'];
-        $str = str_replace("'", '"', $value);
-        $html = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $str);
-        $string = trim(preg_replace('/\s+/', ' ', $html));
-        $content = $this->inlineAttachment($string);
-
-        return $content;
     }
 
     public function setTitleAttribute($value)
@@ -111,23 +141,6 @@ class Ticket_Thread extends Model
         }
 
         return 'no';
-    }
-
-    public function inlineAttachment($body)
-    {
-        $attachments = $this->attach;
-        if ($attachments->count() > 0) {
-            foreach ($attachments as $key => $attach) {
-                if ($attach->poster == 'INLINE' || $attach->poster == 'inline') {
-                    $search = $attach->name;
-                    $replace = "data:$attach->type;base64,".$attach->file;
-                    $b = str_replace($search, $replace, $body);
-                    $body = $b;
-                }
-            }
-        }
-
-        return $body;
     }
 
     public function getSubject()

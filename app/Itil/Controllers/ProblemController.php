@@ -37,41 +37,42 @@ class ProblemController extends BaseServiceDeskController
             $problems = $problem->select('id', 'department', 'status_type_id', 'from', 'subject')->get();
 
             return \Datatable::Collection($problems)
-                            ->showColumns('from')
-                            ->addColumn('subject', function ($model) {
-                                return str_limit($model->subject, 10);
-                            })
-                            ->addColumn('department', function ($model) {
-                                $depertment_type_name = 'Common';
-                                $depertment_types = new Department();
-                                $depertment_type = $depertment_types->where('id', $model->department)->first();
-                                if ($depertment_type) {
-                                    $depertment_type_name = $depertment_type->name;
-                                }
+                ->showColumns('from')
+                ->addColumn('subject', function ($model) {
+                    return str_limit($model->subject, 10);
+                })
+                ->addColumn('department', function ($model) {
+                    $depertment_type_name = 'Common';
+                    $depertment_types = new Department();
+                    $depertment_type = $depertment_types->where('id', $model->department)->first();
+                    if ($depertment_type) {
+                        $depertment_type_name = $depertment_type->name;
+                    }
 
-                                return $depertment_type_name;
-                            })
-                            ->addColumn('ticket_type', function ($model) {
-                                $ticket_status_name = '';
-                                $ticket_statuses = new TicketType();
-                                $ticket_status = $ticket_statuses->where('id', $model->status_type_id)->first();
-                                if ($ticket_status) {
-                                    $ticket_status_name = $ticket_status->name;
-                                }
+                    return $depertment_type_name;
+                })
+                ->addColumn('ticket_type', function ($model) {
+                    $ticket_status_name = '';
+                    $ticket_statuses = new TicketType();
+                    $ticket_status = $ticket_statuses->where('id', $model->status_type_id)->first();
+                    if ($ticket_status) {
+                        $ticket_status_name = $ticket_status->name;
+                    }
 
-                                return $ticket_status_name;
-                            })
-                            ->addColumn('Action', function ($model) {
-                                $url = url('service-desk/problem/'.$model->id.'/delete');
-                                $delete = \App\Itil\Controllers\UtilityController::deletePopUp($model->id, $url, "Delete $model->subject");
+                    return $ticket_status_name;
+                })
+                ->addColumn('Action', function ($model) {
+                    $url = url('service-desk/problem/' . $model->id . '/delete');
+                    $delete = \App\Itil\Controllers\UtilityController::deletePopUp($model->id, $url,
+                        "Delete $model->subject");
 
-                                return '<a href='.url('service-desk/problem/'.$model->id.'/edit')." class='btn btn-info btn-sm'>Edit</a> "
-                                        .$delete
-                                        .' <a href='.url('service-desk/problem/'.$model->id.'/show')." class='btn btn-primary btn-sm'>View</a>";
-                            })
-                            ->searchColumns('description')
-                            ->orderColumns('department', 'ticket_type', 'priority_id', 'location_type_id', 'agent_id')
-                            ->make();
+                    return '<a href=' . url('service-desk/problem/' . $model->id . '/edit') . " class='btn btn-info btn-sm'>Edit</a> "
+                        . $delete
+                        . ' <a href=' . url('service-desk/problem/' . $model->id . '/show') . " class='btn btn-primary btn-sm'>View</a>";
+                })
+                ->searchColumns('description')
+                ->orderColumns('department', 'ticket_type', 'priority_id', 'location_type_id', 'agent_id')
+                ->make();
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
@@ -90,7 +91,9 @@ class ProblemController extends BaseServiceDeskController
             $from = User::lists('email', 'email')->toArray();
             //            $assets = SdAssets::lists('name', 'id')->toArray();
 
-            return view('itil::problem.create', compact('departments', 'assigned_ids', 'group_ids', 'impact_ids', 'location_type_ids', 'priority_ids', 'status_type_ids', 'from'));
+            return view('itil::problem.create',
+                compact('departments', 'assigned_ids', 'group_ids', 'impact_ids', 'location_type_ids', 'priority_ids',
+                    'status_type_ids', 'from'));
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
@@ -105,6 +108,26 @@ class ProblemController extends BaseServiceDeskController
 
             return \Redirect::route('service-desk.problem.index')->with('success', 'Problem Created Successfully');
         } catch (Exception $ex) {
+            return redirect()->back()->with('fails', $ex->getMessage());
+        }
+    }
+
+    public function store($request)
+    {
+        try {
+            $sd_problems = new SdProblem();
+            $assetid = $request->input('asset');
+            $attachments = $request->file('attachment');
+            $sd_problems->fill($request->input())->save();
+            \App\Itil\Controllers\UtilityController::attachment($sd_problems->id, 'sd_problem', $attachments);
+            if (isAsset() == true) {
+                \App\Itil\Controllers\UtilityController::storeAssetRelation('sd_problem', $sd_problems->id, $assetid);
+            }
+
+            return $sd_problems;
+        } catch (Exception $ex) {
+            dd($ex);
+
             return redirect()->back()->with('fails', $ex->getMessage());
         }
     }
@@ -124,7 +147,9 @@ class ProblemController extends BaseServiceDeskController
             //            $assets = SdAssets::lists('name', 'id')->toArray();
             $from = User::lists('email', 'email')->toArray();
 
-            return view('itil::problem.edit', compact('assets', 'problem', 'assigned_ids', 'group_ids', 'impact_ids', 'location_type_ids', 'priority_ids', 'status_type_ids', 'departments', 'from'));
+            return view('itil::problem.edit',
+                compact('assets', 'problem', 'assigned_ids', 'group_ids', 'impact_ids', 'location_type_ids',
+                    'priority_ids', 'status_type_ids', 'departments', 'from'));
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
@@ -137,6 +162,27 @@ class ProblemController extends BaseServiceDeskController
 
             return \Redirect::route('service-desk.problem.index')->with('success', 'Problem Updated Successfully');
         } catch (Exception $ex) {
+            return redirect()->back()->with('fails', $ex->getMessage());
+        }
+    }
+
+    public function update($id, $request)
+    {
+        try {
+            $sd_problems = new SdProblem();
+            $sd_problem = $sd_problems->find($id);
+            $assetid = $request->input('asset');
+            $attachments = $request->file('attachment');
+            $sd_problem->fill($request->input())->save();
+            \App\Itil\Controllers\UtilityController::attachment($sd_problem->id, 'sd_problem', $attachments);
+            if (isAsset() == true) {
+                \App\Itil\Controllers\UtilityController::storeAssetRelation('sd_problem', $sd_problems->id, $assetid);
+            }
+
+            return 'success';
+        } catch (Exception $ex) {
+            dd($ex);
+
             return redirect()->back()->with('fails', $ex->getMessage());
         }
     }
@@ -190,47 +236,6 @@ class ProblemController extends BaseServiceDeskController
         }
     }
 
-    public function store($request)
-    {
-        try {
-            $sd_problems = new SdProblem();
-            $assetid = $request->input('asset');
-            $attachments = $request->file('attachment');
-            $sd_problems->fill($request->input())->save();
-            \App\Itil\Controllers\UtilityController::attachment($sd_problems->id, 'sd_problem', $attachments);
-            if (isAsset() == true) {
-                \App\Itil\Controllers\UtilityController::storeAssetRelation('sd_problem', $sd_problems->id, $assetid);
-            }
-
-            return $sd_problems;
-        } catch (Exception $ex) {
-            dd($ex);
-
-            return redirect()->back()->with('fails', $ex->getMessage());
-        }
-    }
-
-    public function update($id, $request)
-    {
-        try {
-            $sd_problems = new SdProblem();
-            $sd_problem = $sd_problems->find($id);
-            $assetid = $request->input('asset');
-            $attachments = $request->file('attachment');
-            $sd_problem->fill($request->input())->save();
-            \App\Itil\Controllers\UtilityController::attachment($sd_problem->id, 'sd_problem', $attachments);
-            if (isAsset() == true) {
-                \App\Itil\Controllers\UtilityController::storeAssetRelation('sd_problem', $sd_problems->id, $assetid);
-            }
-
-            return 'success';
-        } catch (Exception $ex) {
-            dd($ex);
-
-            return redirect()->back()->with('fails', $ex->getMessage());
-        }
-    }
-
     public function getAttachableProblem()
     {
         $model = new SdProblem();
@@ -238,28 +243,28 @@ class ProblemController extends BaseServiceDeskController
         $problems = \App\Itil\Controllers\UtilityController::getModelWithSelect($model, $select);
 
         return \Datatable::Collection($problems->get())
-                        ->addColumn('id', function ($model) {
-                            return \Form::radio('problemid', $model->id);
-                        })
-                        ->addColumn('subject', function ($model) {
-                            $subject = str_limit($model->subject, 20, '...');
+            ->addColumn('id', function ($model) {
+                return \Form::radio('problemid', $model->id);
+            })
+            ->addColumn('subject', function ($model) {
+                $subject = str_limit($model->subject, 20, '...');
 
-                            return "<p title=$model->subject>$subject<p>";
-                        })
-                        ->addColumn('status', function ($model) {
-                            $status = '';
-                            $statusid = $model->status_type_id;
-                            $ticket_statuses = new \App\Model\helpdesk\Ticket\Ticket_Status();
-                            $ticket_status = $ticket_statuses->find($statusid);
-                            if ($ticket_status) {
-                                $status = $ticket_status->name;
-                            }
+                return "<p title=$model->subject>$subject<p>";
+            })
+            ->addColumn('status', function ($model) {
+                $status = '';
+                $statusid = $model->status_type_id;
+                $ticket_statuses = new \App\Model\helpdesk\Ticket\Ticket_Status();
+                $ticket_status = $ticket_statuses->find($statusid);
+                if ($ticket_status) {
+                    $status = $ticket_status->name;
+                }
 
-                            return $status;
-                        })
-                        ->searchColumns('subject')
-                        ->orderColumns('subject')
-                        ->make();
+                return $status;
+            })
+            ->searchColumns('subject')
+            ->orderColumns('subject')
+            ->make();
     }
 
     public function timelineMarble($problem, $ticketid)
@@ -283,25 +288,26 @@ class ProblemController extends BaseServiceDeskController
     {
         $subject_trim = str_limit($subject, 20);
         $content_trim = str_limit($content, 20);
-        $url = url('service-desk/problem/detach/'.$ticketid.'/'.$problemid);
-        $detach_popup = \App\Itil\Controllers\UtilityController::deletePopUp($problemid, $url, 'Delete', ' ', 'Delete', true);
+        $url = url('service-desk/problem/detach/' . $ticketid . '/' . $problemid);
+        $detach_popup = \App\Itil\Controllers\UtilityController::deletePopUp($problemid, $url, 'Delete', ' ', 'Delete',
+            true);
 
         return "<div class='box box-primary'>"
-                ."<div class='box-header'>"
-                ."<h3 class='box-title'>Associated Problems</h3>"
-                .'</div>'
-                ."<div class='box-body row'>"
-                ."<div class='col-md-12'>"
-                ."<table class='table'>"
-                .'<tr>'
-                .'<th>'.ucfirst($subject_trim).'</th>'
-                .'<th>'.ucfirst($content_trim).'</th>'
-                .'<th>'.$detach_popup
-                .'  | <a href='.url('service-desk/problem/'.$problemid.'/show').'>View</a></th>'
-                .'</table>'
-                .'</div>'
-                .'</div>'
-                .'</div>';
+            . "<div class='box-header'>"
+            . "<h3 class='box-title'>Associated Problems</h3>"
+            . '</div>'
+            . "<div class='box-body row'>"
+            . "<div class='col-md-12'>"
+            . "<table class='table'>"
+            . '<tr>'
+            . '<th>' . ucfirst($subject_trim) . '</th>'
+            . '<th>' . ucfirst($content_trim) . '</th>'
+            . '<th>' . $detach_popup
+            . '  | <a href=' . url('service-desk/problem/' . $problemid . '/show') . '>View</a></th>'
+            . '</table>'
+            . '</div>'
+            . '</div>'
+            . '</div>';
     }
 
     public function detach($ticketid, $problemid)
@@ -356,15 +362,15 @@ class ProblemController extends BaseServiceDeskController
         $changes = $change->select('id', 'subject')->get();
 
         return \Datatable::Collection($changes)
-                        ->addColumn('id', function ($model) {
-                            return "<input type='radio' name='change' value='".$model->id."'>";
-                        })
-                        ->addColumn('subject', function ($model) {
-                            return str_limit($model->subject, 20);
-                        })
-                        ->orderColumns('subject')
-                        ->searchColumns('subject')
-                        ->make();
+            ->addColumn('id', function ($model) {
+                return "<input type='radio' name='change' value='" . $model->id . "'>";
+            })
+            ->addColumn('subject', function ($model) {
+                return str_limit($model->subject, 20);
+            })
+            ->orderColumns('subject')
+            ->searchColumns('subject')
+            ->make();
     }
 
     public function attachNewChange($id, CreateChangesRequest $request)
@@ -382,6 +388,16 @@ class ProblemController extends BaseServiceDeskController
         }
     }
 
+    public function changeAttach($problemid, $changeid)
+    {
+        $relation = new \App\Itil\Models\Problem\ProblemChangeRelation();
+
+        return $relation->create([
+            'problem_id' => $problemid,
+            'change_id' => $changeid,
+        ]);
+    }
+
     public function attachExistingChange($id, Request $request)
     {
         try {
@@ -393,16 +409,6 @@ class ProblemController extends BaseServiceDeskController
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
-    }
-
-    public function changeAttach($problemid, $changeid)
-    {
-        $relation = new \App\Itil\Models\Problem\ProblemChangeRelation();
-
-        return $relation->create([
-                    'problem_id' => $problemid,
-                    'change_id'  => $changeid,
-        ]);
     }
 
     public function detachChange($problemid)

@@ -8,11 +8,33 @@ class Emails extends BaseModel
 {
     protected $table = 'emails';
     protected $fillable = [
-        'email_address', 'email_name', 'department', 'priority', 'help_topic',
-        'user_name', 'password', 'fetching_host', 'fetching_port', 'fetching_protocol', 'fetching_encryption', 'mailbox_protocol',
-        'folder', 'sending_host', 'sending_port', 'sending_protocol', 'sending_encryption', 'internal_notes', 'auto_response',
-        'fetching_status', 'move_to_folder', 'delete_email', 'do_nothing',
-        'sending_status', 'authentication', 'header_spoofing', 'imap_config',
+        'email_address',
+        'email_name',
+        'department',
+        'priority',
+        'help_topic',
+        'user_name',
+        'password',
+        'fetching_host',
+        'fetching_port',
+        'fetching_protocol',
+        'fetching_encryption',
+        'mailbox_protocol',
+        'folder',
+        'sending_host',
+        'sending_port',
+        'sending_protocol',
+        'sending_encryption',
+        'internal_notes',
+        'auto_response',
+        'fetching_status',
+        'move_to_folder',
+        'delete_email',
+        'do_nothing',
+        'sending_status',
+        'authentication',
+        'header_spoofing',
+        'imap_config',
     ];
 
     public function getCurrentDrive()
@@ -41,23 +63,6 @@ class Emails extends BaseModel
         return $value;
     }
 
-    public function extraFieldRelation()
-    {
-        $related = "App\Model\MailJob\FaveoMail";
-
-        return $this->hasMany($related, 'email_id');
-    }
-
-    public function deleteExtraFields()
-    {
-        $fields = $this->extraFieldRelation()->get();
-        if ($fields->count() > 0) {
-            foreach ($fields as $field) {
-                $field->delete();
-            }
-        }
-    }
-
     public function getPasswordAttribute($value)
     {
         if ($value) {
@@ -71,5 +76,22 @@ class Emails extends BaseModel
     {
         $this->deleteExtraFields();
         parent::delete();
+    }
+
+    public function deleteExtraFields()
+    {
+        $fields = $this->extraFieldRelation()->get();
+        if ($fields->count() > 0) {
+            foreach ($fields as $field) {
+                $field->delete();
+            }
+        }
+    }
+
+    public function extraFieldRelation()
+    {
+        $related = "App\Model\MailJob\FaveoMail";
+
+        return $this->hasMany($related, 'email_id');
     }
 }

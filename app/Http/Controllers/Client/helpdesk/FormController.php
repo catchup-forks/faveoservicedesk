@@ -5,10 +5,7 @@ namespace App\Http\Controllers\Client\helpdesk;
 // controllers
 use App\Http\Controllers\Agent\helpdesk\TicketWorkflowController;
 use App\Http\Controllers\Controller;
-// requests
 use App\Http\Requests\helpdesk\ClientRequest;
-use App\Model\helpdesk\Agent\Department;
-// models
 use App\Model\helpdesk\Form\Fields;
 use App\Model\helpdesk\Manage\Help_topic;
 use App\Model\helpdesk\Settings\CommonSettings;
@@ -22,13 +19,16 @@ use App\Model\helpdesk\Ticket\Tickets;
 use App\Model\helpdesk\Utility\CountryCode;
 use App\User;
 use Exception;
-// classes
 use Form;
 use GeoIP;
 use Illuminate\Http\Request;
 use Input;
 use Lang;
 use Redirect;
+
+// requests
+// models
+// classes
 
 /**
  * FormController.
@@ -65,7 +65,10 @@ class FormController extends Controller
         $settings = CommonSettings::select('status')->where('option_name', '=', 'send_otp')->first();
         $email_mandatory = CommonSettings::select('status')->where('option_name', '=', 'email_mandatory')->first();
         if (!\Auth::check() && ($settings->status == 1 || $settings->status == '1')) {
-            return redirect('auth/login')->with(['login_require' => 'Please login to your account for submitting a ticket', 'referer' => 'form']);
+            return redirect('auth/login')->with([
+                'login_require' => 'Please login to your account for submitting a ticket',
+                'referer' => 'form'
+            ]);
         }
         $location = GeoIP::getLocation();
         $phonecode = $code->where('iso', '=', $location->iso_code)->first();
@@ -78,7 +81,8 @@ class FormController extends Controller
                 $phonecode = '';
             }
 
-            return view('themes.default1.client.helpdesk.form', compact('topics', 'codes', 'email_mandatory'))->with('phonecode', $phonecode);
+            return view('themes.default1.client.helpdesk.form',
+                compact('topics', 'codes', 'email_mandatory'))->with('phonecode', $phonecode);
         } else {
             return \Redirect::route('home');
         }
@@ -106,29 +110,29 @@ class FormController extends Controller
                         $form_fields = explode(',', $form_data->value);
                         $var = '';
                         foreach ($form_fields as $form_field) {
-                            $var .= '<option value="'.$form_field.'">'.$form_field.'</option>';
+                            $var .= '<option value="' . $form_field . '">' . $form_field . '</option>';
                         }
-                        echo '<br/><label>'.ucfirst($form_data->label).'</label><select class="form-control" name="'.$form_data->name.'">'.$var.'</select>';
+                        echo '<br/><label>' . ucfirst($form_data->label) . '</label><select class="form-control" name="' . $form_data->name . '">' . $var . '</select>';
                     } elseif ($form_data->type == 'radio') {
                         $type2 = $form_data->value;
                         $vals = explode(',', $type2);
-                        echo '<br/><label>'.ucfirst($form_data->label).'</label><br/>';
+                        echo '<br/><label>' . ucfirst($form_data->label) . '</label><br/>';
                         foreach ($vals as $val) {
-                            echo '<input type="'.$form_data->type.'" name="'.$form_data->name.'"> '.$form_data->value.'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+                            echo '<input type="' . $form_data->type . '" name="' . $form_data->name . '"> ' . $form_data->value . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
                         }
                         echo '<br/>';
                     } elseif ($form_data->type == 'textarea') {
                         $type3 = $form_data->value;
-                        echo '<br/><label>'.$form_data->label.'</label></br><textarea id="unique-textarea" name="'.$form_data->name.'" class="form-control" style="height:15%;"></textarea>';
+                        echo '<br/><label>' . $form_data->label . '</label></br><textarea id="unique-textarea" name="' . $form_data->name . '" class="form-control" style="height:15%;"></textarea>';
                     } elseif ($form_data->type == 'checkbox') {
                         $type4 = $form_data->value;
                         $checks = explode(',', $type4);
-                        echo '<br/><label>'.ucfirst($form_data->label).'</label><br/>';
+                        echo '<br/><label>' . ucfirst($form_data->label) . '</label><br/>';
                         foreach ($checks as $check) {
-                            echo '<input type="'.$form_data->type.'" name="'.$form_data->name.'">&nbsp&nbsp'.$check;
+                            echo '<input type="' . $form_data->type . '" name="' . $form_data->name . '">&nbsp&nbsp' . $check;
                         }
                     } else {
-                        echo '<br/><label>'.ucfirst($form_data->label).'</label><input type="'.$form_data->type.'" class="form-control"   name="'.$form_data->name.'" />';
+                        echo '<br/><label>' . ucfirst($form_data->label) . '</label><input type="' . $form_data->type . '" class="form-control"   name="' . $form_data->name . '" />';
                     }
                 }
                 echo '<br/><br/>';
@@ -144,10 +148,17 @@ class FormController extends Controller
      * @param type Request $request
      * @param type User    $user
      */
-    public function postedForm(User $user, ClientRequest $request, Ticket $ticket_settings, Ticket_source $ticket_source, Ticket_attachments $ta, CountryCode $code)
-    {
+    public function postedForm(
+        User $user,
+        ClientRequest $request,
+        Ticket $ticket_settings,
+        Ticket_source $ticket_source,
+        Ticket_attachments $ta,
+        CountryCode $code
+    ) {
         try {
-            $form_extras = $request->except('Name', 'Phone', 'Email', 'Subject', 'Details', 'helptopic', '_wysihtml5_mode', '_token', 'mobile', 'Code', 'priority', 'attachment');
+            $form_extras = $request->except('Name', 'Phone', 'Email', 'Subject', 'Details', 'helptopic',
+                '_wysihtml5_mode', '_token', 'mobile', 'Code', 'priority', 'attachment');
             $name = $request->input('Name');
             $phone = $request->input('Phone');
             if ($request->input('Email')) {
@@ -203,8 +214,8 @@ class FormController extends Controller
                 $geoipcode = $code->where('iso', '=', $location->iso_code)->first();
                 if ($phonecode == null) {
                     $data = [
-                        'fails'              => Lang::get('lang.country-code-required-error'),
-                        'phonecode'          => $geoipcode->phonecode,
+                        'fails' => Lang::get('lang.country-code-required-error'),
+                        'phonecode' => $geoipcode->phonecode,
                         'country_code_error' => 1,
                     ];
 
@@ -213,8 +224,8 @@ class FormController extends Controller
                     $code = CountryCode::select('phonecode')->where('phonecode', '=', $phonecode)->get();
                     if (!count($code)) {
                         $data = [
-                            'fails'              => Lang::get('lang.incorrect-country-code-error'),
-                            'phonecode'          => $geoipcode->phonecode,
+                            'fails' => Lang::get('lang.incorrect-country-code-error'),
+                            'phonecode' => $geoipcode->phonecode,
                             'country_code_error' => 1,
                         ];
 
@@ -223,7 +234,9 @@ class FormController extends Controller
                 }
             }
             \Event::fire(new \App\Events\ClientTicketFormPost($form_extras, $email, $source));
-            $result = $this->TicketWorkflowController->workflow($email, $name, $subject, $details, $phone, $phonecode, $mobile_number, $helptopic, $sla, $priority, $source, $collaborator, $department, $assignto, $team_assign, $status, $form_extras, $auto_response);
+            $result = $this->TicketWorkflowController->workflow($email, $name, $subject, $details, $phone, $phonecode,
+                $mobile_number, $helptopic, $sla, $priority, $source, $collaborator, $department, $assignto,
+                $team_assign, $status, $form_extras, $auto_response);
             // dd($result);
             if ($result[1] == 1) {
                 $ticketId = Tickets::where('ticket_number', '=', $result[0])->first();
@@ -236,14 +249,23 @@ class FormController extends Controller
                             $size = $attachment->getSize();
                             $data = file_get_contents($attachment->getRealPath());
                             $attachPath = $attachment->getRealPath();
-                            $ta->create(['thread_id' => $thread->id, 'name' => $name, 'size' => $size, 'type' => $type, 'file' => $data, 'poster' => 'ATTACHMENT']);
+                            $ta->create([
+                                'thread_id' => $thread->id,
+                                'name' => $name,
+                                'size' => $size,
+                                'type' => $type,
+                                'file' => $data,
+                                'poster' => 'ATTACHMENT'
+                            ]);
                         }
                     }
                 }
                 // dd($result);
-                return Redirect::back()->with('success', Lang::get('lang.Ticket-has-been-created-successfully-your-ticket-number-is').' '.$result[0].'. '.Lang::get('lang.Please-save-this-for-future-reference'));
+                return Redirect::back()->with('success',
+                    Lang::get('lang.Ticket-has-been-created-successfully-your-ticket-number-is') . ' ' . $result[0] . '. ' . Lang::get('lang.Please-save-this-for-future-reference'));
             } else {
-                return Redirect::back()->withInput($request->except('password'))->with('fails', Lang::get('lang.failed-to-create-user-tcket-as-mobile-has-been-taken'));
+                return Redirect::back()->withInput($request->except('password'))->with('fails',
+                    Lang::get('lang.failed-to-create-user-tcket-as-mobile-has-been-taken'));
             }
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
@@ -265,7 +287,7 @@ class FormController extends Controller
                 $tickets = Tickets::where('id', '=', $id)->first();
                 $thread = Ticket_Thread::where('ticket_id', '=', $tickets->id)->first();
 
-                $subject = $thread->title.'[#'.$tickets->ticket_number.']';
+                $subject = $thread->title . '[#' . $tickets->ticket_number . ']';
                 $body = $request->input('comment');
 
                 $user_cred = User::where('id', '=', $tickets->user_id)->first();
@@ -288,7 +310,9 @@ class FormController extends Controller
                 $ticket_status = null;
                 $auto_response = 0;
 
-                $this->TicketWorkflowController->workflow($fromaddress, $fromname, $subject, $body, $phone, $phonecode, $mobile_number, $helptopic, $sla, $priority, $source, $collaborator, $dept, $assign, $team_assign, $ticket_status, $form_data, $auto_response);
+                $this->TicketWorkflowController->workflow($fromaddress, $fromname, $subject, $body, $phone, $phonecode,
+                    $mobile_number, $helptopic, $sla, $priority, $source, $collaborator, $dept, $assign, $team_assign,
+                    $ticket_status, $form_data, $auto_response);
 
                 return \Redirect::back()->with('success1', Lang::get('lang.successfully_replied'));
             } else {

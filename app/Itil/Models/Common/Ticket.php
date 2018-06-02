@@ -6,15 +6,10 @@ use App\Model\helpdesk\Ticket\Tickets;
 
 class Ticket extends Tickets
 {
-    public function ticketRelation()
-    {
-        return $this->hasMany("App\Itil\Models\Common\TicketRelation", 'ticket_id');
-    }
-
     public function getTicketRelation($table)
     {
         //dd($table);
-        $relation = $this->ticketRelation()->where('owner', 'LIKE', $table.'%')->first();
+        $relation = $this->ticketRelation()->where('owner', 'LIKE', $table . '%')->first();
         if ($relation) {
             $owner = $relation->owner;
             $explode = explode(':', $owner);
@@ -25,6 +20,11 @@ class Ticket extends Tickets
                 return $model;
             }
         }
+    }
+
+    public function ticketRelation()
+    {
+        return $this->hasMany("App\Itil\Models\Common\TicketRelation", 'ticket_id');
     }
 
     public function switchCase($table, $id)
@@ -74,7 +74,7 @@ class Ticket extends Tickets
         $id = $this->attributes['id'];
         if ($thread) {
             $title = $thread->title;
-            $subject = '<a href='.url('thread/'.$id).'>'.$title.'</a>';
+            $subject = '<a href=' . url('thread/' . $id) . '>' . $title . '</a>';
         }
 
         return $subject;

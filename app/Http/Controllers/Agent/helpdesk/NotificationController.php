@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Agent\helpdesk;
 
 //  controllers
 use App\Http\Controllers\Common\PhpMailController;
-//  Model
 use App\Http\Controllers\Controller;
 use App\Model\helpdesk\Agent\Department;
 use App\Model\helpdesk\Agent\Teams;
@@ -13,6 +12,8 @@ use App\Model\helpdesk\Settings\Email;
 use App\Model\helpdesk\Utility\Log_notification;
 use App\User;
 use View;
+
+//  Model
 
 // classes
 
@@ -68,140 +69,6 @@ class NotificationController extends Controller
     }
 
     /**
-     *  Admin Notification/Report.
-     *
-     *  @param company
-     *
-     *  @return mail
-     * */
-    public function send_notification_to_admin($company)
-    {
-        // get all admin users
-        $users = User::where('role', '=', 'admin')->get();
-        foreach ($users as $user) {
-            // Send notification details to admin
-            $email = $user->email;
-            $user_name = $user->first_name.' '.$user->last_name;
-            $view = View::make('emails.notifications.admin', ['company' => $company, 'name' => $user_name]);
-            $contents = $view->render();
-            $from = $this->PhpMailController->mailfrom('1', '0');
-            $to = [
-                'name'  => $user_name,
-                'email' => $email,
-            ];
-            $message = [
-                'subject'  => 'Daily Report',
-                'scenario' => null,
-                'body'     => $contents,
-            ];
-
-            return $this->PhpMailController->sendEmail($from, $to, $message);
-        }
-    }
-
-    /**
-     *  Department Manager Notification/Report.
-     *
-     *  @return mail
-     * */
-    public function send_notification_to_manager($company)
-    {
-        // get all department managers
-        $depts = Department::all();
-        foreach ($depts as $dept) {
-            if (isset($dept->manager)) {
-                $dept_name = $dept->name;
-                $users = User::where('id', '=', $dept->manager)->get();
-                foreach ($users as $user) {
-                    // Send notification details to manager of a department
-                    $email = $user->email;
-                    $user_name = $user->first_name.' '.$user->last_name;
-                    $view = View::make('emails.notifications.manager', ['company' => $company, 'name' => $user_name]);
-                    $contents = $view->render();
-                    $from = $this->PhpMailController->mailfrom('1', '0');
-                    $to = [
-                        'name'  => $user_name,
-                        'email' => $email,
-                    ];
-                    $message = [
-                        'subject'  => 'Daily Report',
-                        'scenario' => null,
-                        'body'     => $contents,
-                    ];
-
-                    return $this->PhpMailController->sendEmail($from, $to, $message);
-                }
-            }
-        }
-    }
-
-    /**
-     *  Team Lead Notification/Report.
-     *
-     *  @return mail
-     * */
-    public function send_notification_to_team_lead($company)
-    {
-        // get all Team leads
-        $teams = Teams::all();
-        foreach ($teams as $team) {
-            if (isset($team->team_lead)) {
-                $team_name = $team->name;
-                $users = User::where('id', '=', $team->team_lead)->get();
-                foreach ($users as $user) {
-                    // Send notification details to team lead
-                    $email = $user->email;
-                    $user_name = $user->first_name.' '.$user->last_name;
-                    $view = View::make('emails.notifications.lead', ['company' => $company, 'name' => $user_name, 'team_id' => $team->id]);
-                    $contents = $view->render();
-                    $from = $this->PhpMailController->mailfrom('1', '0');
-                    $to = [
-                        'name'  => $user_name,
-                        'email' => $email,
-                    ];
-                    $message = [
-                        'subject'  => 'Daily Report',
-                        'scenario' => null,
-                        'body'     => $contents,
-                    ];
-
-                    return $this->PhpMailController->sendEmail($from, $to, $message);
-                }
-            }
-        }
-    }
-
-    /**
-     *  Agent Notification/Report.
-     *
-     *  @return mail
-     * */
-    public function send_notification_to_agent($company)
-    {
-        // get all agents users
-        $users = User::where('role', '=', 'agent')->get();
-        foreach ($users as $user) {
-            // Send notification details to all the agents
-            $email = $user->email;
-            $user_name = $user->first_name.' '.$user->last_name;
-            $view = View::make('emails.notifications.agent', ['company' => $company, 'name' => $user_name, 'user_id' => $user->id]);
-            $contents = $view->render();
-            $from = $this->PhpMailController->mailfrom('1', '0');
-            $to = [
-                'name'  => $user_name,
-                'email' => $email,
-            ];
-            $message = [
-                'subject'  => 'Daily Report',
-                'scenario' => null,
-                'body'     => $contents,
-            ];
-
-            return $this->PhpMailController->sendEmail($from, $to, $message);
-        }
-    }
-
-    /**
      * Fetching company name.
      *
      * @return type variable
@@ -218,5 +85,141 @@ class NotificationController extends Controller
         }
 
         return $company;
+    }
+
+    /**
+     *  Admin Notification/Report.
+     *
+     * @param company
+     *
+     * @return mail
+     * */
+    public function send_notification_to_admin($company)
+    {
+        // get all admin users
+        $users = User::where('role', '=', 'admin')->get();
+        foreach ($users as $user) {
+            // Send notification details to admin
+            $email = $user->email;
+            $user_name = $user->first_name . ' ' . $user->last_name;
+            $view = View::make('emails.notifications.admin', ['company' => $company, 'name' => $user_name]);
+            $contents = $view->render();
+            $from = $this->PhpMailController->mailfrom('1', '0');
+            $to = [
+                'name' => $user_name,
+                'email' => $email,
+            ];
+            $message = [
+                'subject' => 'Daily Report',
+                'scenario' => null,
+                'body' => $contents,
+            ];
+
+            return $this->PhpMailController->sendEmail($from, $to, $message);
+        }
+    }
+
+    /**
+     *  Team Lead Notification/Report.
+     *
+     * @return mail
+     * */
+    public function send_notification_to_team_lead($company)
+    {
+        // get all Team leads
+        $teams = Teams::all();
+        foreach ($teams as $team) {
+            if (isset($team->team_lead)) {
+                $team_name = $team->name;
+                $users = User::where('id', '=', $team->team_lead)->get();
+                foreach ($users as $user) {
+                    // Send notification details to team lead
+                    $email = $user->email;
+                    $user_name = $user->first_name . ' ' . $user->last_name;
+                    $view = View::make('emails.notifications.lead',
+                        ['company' => $company, 'name' => $user_name, 'team_id' => $team->id]);
+                    $contents = $view->render();
+                    $from = $this->PhpMailController->mailfrom('1', '0');
+                    $to = [
+                        'name' => $user_name,
+                        'email' => $email,
+                    ];
+                    $message = [
+                        'subject' => 'Daily Report',
+                        'scenario' => null,
+                        'body' => $contents,
+                    ];
+
+                    return $this->PhpMailController->sendEmail($from, $to, $message);
+                }
+            }
+        }
+    }
+
+    /**
+     *  Department Manager Notification/Report.
+     *
+     * @return mail
+     * */
+    public function send_notification_to_manager($company)
+    {
+        // get all department managers
+        $depts = Department::all();
+        foreach ($depts as $dept) {
+            if (isset($dept->manager)) {
+                $dept_name = $dept->name;
+                $users = User::where('id', '=', $dept->manager)->get();
+                foreach ($users as $user) {
+                    // Send notification details to manager of a department
+                    $email = $user->email;
+                    $user_name = $user->first_name . ' ' . $user->last_name;
+                    $view = View::make('emails.notifications.manager', ['company' => $company, 'name' => $user_name]);
+                    $contents = $view->render();
+                    $from = $this->PhpMailController->mailfrom('1', '0');
+                    $to = [
+                        'name' => $user_name,
+                        'email' => $email,
+                    ];
+                    $message = [
+                        'subject' => 'Daily Report',
+                        'scenario' => null,
+                        'body' => $contents,
+                    ];
+
+                    return $this->PhpMailController->sendEmail($from, $to, $message);
+                }
+            }
+        }
+    }
+
+    /**
+     *  Agent Notification/Report.
+     *
+     * @return mail
+     * */
+    public function send_notification_to_agent($company)
+    {
+        // get all agents users
+        $users = User::where('role', '=', 'agent')->get();
+        foreach ($users as $user) {
+            // Send notification details to all the agents
+            $email = $user->email;
+            $user_name = $user->first_name . ' ' . $user->last_name;
+            $view = View::make('emails.notifications.agent',
+                ['company' => $company, 'name' => $user_name, 'user_id' => $user->id]);
+            $contents = $view->render();
+            $from = $this->PhpMailController->mailfrom('1', '0');
+            $to = [
+                'name' => $user_name,
+                'email' => $email,
+            ];
+            $message = [
+                'subject' => 'Daily Report',
+                'scenario' => null,
+                'body' => $contents,
+            ];
+
+            return $this->PhpMailController->sendEmail($from, $to, $message);
+        }
     }
 }

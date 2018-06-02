@@ -40,13 +40,13 @@ class AssetstypesController extends BaseServiceDeskController
             $assets = $asset->select('id', 'name', 'parent_id', 'created_at', 'updated_at')->get();
 
             return \Datatable::Collection($assets)
-                            ->showColumns('name', 'created_at', 'updated_at')
-                            ->addColumn('action', function ($model) {
-                                return '<a href='.url('service-desk/assetstypes/'.$model->id.'/edit')." class='btn btn-info btn-xs'>Edit</a> ";
-                            })
-                            ->searchColumns('name', 'created_at', 'updated_at')
-                            ->orderColumns('name', 'created_at', 'updated_at')
-                            ->make();
+                ->showColumns('name', 'created_at', 'updated_at')
+                ->addColumn('action', function ($model) {
+                    return '<a href=' . url('service-desk/assetstypes/' . $model->id . '/edit') . " class='btn btn-info btn-xs'>Edit</a> ";
+                })
+                ->searchColumns('name', 'created_at', 'updated_at')
+                ->orderColumns('name', 'created_at', 'updated_at')
+                ->make();
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
@@ -80,10 +80,27 @@ class AssetstypesController extends BaseServiceDeskController
             $formid = $request->input('form');
             $save = $this->saveForm($sd_assetstypes->id, $formid);
 
-            return \Redirect::route('service-desk.assetstypes.index')->with('message', 'Assets Types successfully create !!!');
+            return \Redirect::route('service-desk.assetstypes.index')->with('message',
+                'Assets Types successfully create !!!');
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
+    }
+
+    public function saveForm($typeid, $formid)
+    {
+        $relation = new AssetFormRelation();
+        $relations = $relation->where('asset_type_id', $typeid)->first();
+        if ($relations) {
+            $relation = $relations;
+        }
+        if ($formid) {
+            $relation->asset_type_id = $typeid;
+            $relation->form_id = $formid;
+            $relation->save();
+        }
+
+        return 'success';
     }
 
     /**
@@ -114,7 +131,8 @@ class AssetstypesController extends BaseServiceDeskController
 
                 $save = $this->saveForm($sd_assets_types->id, $formid);
 
-                return \Redirect::route('service-desk.assetstypes.index')->with('message', 'Assets Types successfully Edit !!!');
+                return \Redirect::route('service-desk.assetstypes.index')->with('message',
+                    'Assets Types successfully Edit !!!');
             }
 
             throw new Exception('we can not find your request');
@@ -135,29 +153,14 @@ class AssetstypesController extends BaseServiceDeskController
             if ($sd_assets_types) {
                 $sd_assets_types->delete();
 
-                return \Redirect::route('service-desk.assetstypes.index')->with('message', 'Assets Types successfully delete !!!');
+                return \Redirect::route('service-desk.assetstypes.index')->with('message',
+                    'Assets Types successfully delete !!!');
             }
 
             throw new Exception('We can not find your request');
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
-    }
-
-    public function saveForm($typeid, $formid)
-    {
-        $relation = new AssetFormRelation();
-        $relations = $relation->where('asset_type_id', $typeid)->first();
-        if ($relations) {
-            $relation = $relations;
-        }
-        if ($formid) {
-            $relation->asset_type_id = $typeid;
-            $relation->form_id = $formid;
-            $relation->save();
-        }
-
-        return 'success';
     }
 
     public function renderForm(Request $request, $assetid = '')

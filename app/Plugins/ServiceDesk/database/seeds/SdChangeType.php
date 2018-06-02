@@ -19,24 +19,28 @@ class SdChangeType extends Seeder
         $updated_at = date('Y-d-m H:m:i');
 
         DB::table('sd_change_types')
-                ->insert(['name' => 'Minor',
-                    'created_at' => $created_at,
-                    'updated_at' => $updated_at,
-        ]);
+            ->insert([
+                'name' => 'Minor',
+                'created_at' => $created_at,
+                'updated_at' => $updated_at,
+            ]);
         DB::table('sd_change_types')
-                ->insert(['name' => 'Standard',
-                    'created_at' => $created_at,
-                    'updated_at' => $updated_at,
-        ]);
+            ->insert([
+                'name' => 'Standard',
+                'created_at' => $created_at,
+                'updated_at' => $updated_at,
+            ]);
         DB::table('sd_change_types')
-                ->insert(['name' => 'Major',
-                    'created_at' => $created_at,
-                    'updated_at' => $updated_at,
-        ]);
+            ->insert([
+                'name' => 'Major',
+                'created_at' => $created_at,
+                'updated_at' => $updated_at,
+            ]);
         DB::table('sd_change_types')
-                ->insert(['name' => 'Emergency',
-                    'created_at' => $created_at,
-                    'updated_at' => $updated_at,
-        ]);
+            ->insert([
+                'name' => 'Emergency',
+                'created_at' => $created_at,
+                'updated_at' => $updated_at,
+            ]);
     }
 }

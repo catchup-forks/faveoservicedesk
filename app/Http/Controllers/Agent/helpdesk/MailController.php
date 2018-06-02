@@ -13,8 +13,9 @@ use App\Model\helpdesk\Settings\Ticket;
 use App\Model\helpdesk\Ticket\Ticket_attachments;
 use App\Model\helpdesk\Ticket\Ticket_source;
 use App\Model\helpdesk\Ticket\Ticket_Thread;
-// classes
 use App\Model\helpdesk\Ticket\Tickets;
+
+// classes
 
 /**
  * MailController.
@@ -53,106 +54,6 @@ class MailController extends Controller
                 }
             }
         }
-    }
-
-    /**
-     * separate reply.
-     *
-     * @param type $body
-     *
-     * @return type string
-     */
-    public function separate_reply($body)
-    {
-        $body2 = explode('---Reply above this line---', $body);
-        $body3 = $body2[0];
-
-        return $body3;
-    }
-
-    /**
-     * @param object $email
-     *
-     * @return int
-     */
-    public function priority($email)
-    {
-        $priority = $email->priority;
-        if (!$priority) {
-            $priority = $this->ticketController()->getSystemDefaultPriority();
-        }
-
-        return $priority;
-    }
-
-    /**
-     * get department.
-     *
-     * @param object $email
-     *
-     * @return int
-     */
-    public function department($email)
-    {
-        $department = $email->department;
-        if (!$department) {
-            $department = $this->ticketController()->getSystemDefaultDepartment();
-        }
-
-        return $department;
-    }
-
-    /**
-     * get help topic.
-     *
-     * @param object $email
-     *
-     * @return int
-     */
-    public function helptopic($email)
-    {
-        //dd($email);
-        $helptopic = $email->help_topic;
-        if (!$helptopic) {
-            $helptopic = $this->ticketController()->getSystemDefaultHelpTopic();
-        }
-
-        return $helptopic;
-    }
-
-    /**
-     * get sla.
-     *
-     * @param object $email
-     *
-     * @return int
-     */
-    public function sla($email)
-    {
-        $helptopic = $this->helptopic($email);
-        $help = Help_topic::where('id', '=', $helptopic)->first();
-        if ($help) {
-            $sla = $help->sla_plan;
-        }
-        if (!$sla) {
-            $sla = $this->ticketController()->getSystemDefaultSla();
-        }
-
-        return $sla;
-    }
-
-    /**
-     * get ticket controller.
-     *
-     * @return \App\Http\Controllers\Agent\helpdesk\TicketController
-     */
-    public function ticketController()
-    {
-        $PhpMailController = new \App\Http\Controllers\Common\PhpMailController();
-        $NotificationController = new \App\Http\Controllers\Common\NotificationController();
-        $controller = new TicketController($PhpMailController, $NotificationController);
-
-        return $controller;
     }
 
     public function fetch($email)
@@ -205,102 +106,21 @@ class MailController extends Controller
         $this->workflow($address, $subject, $body, $collaborators, $attachments, $email);
     }
 
-    public function workflow($address, $subject, $body, $collaborator, $attachments, $email)
+    /**
+     * separate reply.
+     *
+     * @param type $body
+     *
+     * @return type string
+     */
+    public function separateReply($body)
     {
-        $fromaddress = checkArray('address', $address[0]);
-        $fromname = checkArray('name', $address[0]);
-        $helptopic = $this->helptopic($email);
-        $sla = $this->sla($email);
-        $priority = $this->priority($email);
-        $ticket_source = Ticket_source::where('name', '=', 'email')->first();
-        $source = $ticket_source->id;
-        $dept = $this->department($email);
-        $get_helptopic = Help_topic::where('id', '=', $helptopic)->first();
-        $assign = $get_helptopic->auto_assign;
-        $form_data = null;
-        $team_assign = null;
-        $ticket_status = null;
-        $auto_response = $email->auto_response;
-        $result = $this->TicketWorkflowController->workflow($fromaddress, $fromname, $subject, $body, $phone = '', $phonecode = '', $mobile_number = '', $helptopic, $sla, $priority, $source, $collaborator, $dept, $assign, $team_assign, $ticket_status, $form_data = [], $auto_response);
-        if ($result[1] == true) {
-            $this->updateThread($result[0], $body, $attachments);
-        }
-    }
-
-    public function updateThread($ticket_number, $body, $attachments)
-    {
-        $ticket_table = Tickets::where('ticket_number', '=', $ticket_number)->first();
-        $thread_id = Ticket_Thread::where('ticket_id', '=', $ticket_table->id)->max('id');
-        $thread = Ticket_Thread::where('id', '=', $thread_id)->first();
-        $thread->body = $this->separate_reply($body);
-        $thread->save();
-        if (file_exists(app_path('/FaveoStorage/Controllers/StorageController.php'))) {
-            try {
-                $storage = new \App\FaveoStorage\Controllers\StorageController();
-                $storage->saveAttachments($thread->id, $attachments);
-            } catch (\Exception $ex) {
-                loging('attachment', $ex->getMessage());
-            }
-        } else {
-            loging('attachment', 'FaveoStorage not installed');
+        $body2 = explode('---Reply above this line---', $body);
+        if (is_array($body2) && array_key_exists(0, $body2)) {
+            $body = $body2[0];
         }
 
-        \Log::info('Ticket has created : ', ['id' => $thread->ticket_id]);
-    }
-
-    public function saveAttachments($thread_id, $attachments = [])
-    {
-        if (is_array($attachments) && count($attachments) > 0) {
-            foreach ($attachments as $attachment) {
-                $structure = $attachment->getStructure();
-                $disposition = 'ATTACHMENT';
-                if (isset($structure->disposition)) {
-                    $disposition = $structure->disposition;
-                }
-
-                $filename = str_random(16).'-'.$attachment->getFileName();
-                $type = $attachment->getMimeType();
-                $size = $attachment->getSize();
-                $data = $attachment->getData();
-                //$path = storage_path('/');
-                //$attachment->saveToDirectory($path);
-                $this->manageAttachment($data, $filename, $type, $size, $disposition, $thread_id);
-                $this->updateBody($attachment, $thread_id, $filename);
-            }
-        }
-    }
-
-    public function manageAttachment($data, $filename, $type, $size, $disposition, $thread_id)
-    {
-        $upload = new Ticket_attachments();
-        $upload->file = $data;
-        $upload->thread_id = $thread_id;
-        $upload->name = $filename;
-        $upload->type = $type;
-        $upload->size = $size;
-        $upload->poster = $disposition;
-        if ($data && $size && $disposition) {
-            $upload->save();
-        }
-    }
-
-    public function updateBody($attachment, $thread_id, $filename)
-    {
-        $structure = $attachment->getStructure();
-        $disposition = 'ATTACHMENT';
-        if (isset($structure->disposition)) {
-            $disposition = $structure->disposition;
-        }
-        if ($disposition == 'INLINE' || $disposition == 'inline') {
-            $id = str_replace('>', '', str_replace('<', '', $structure->id));
-            //$filename = $attachment->getFileName();
-            $threads = new Ticket_Thread();
-            $thread = $threads->find($thread_id);
-            $body = $thread->body;
-            $body = str_replace('cid:'.$id, $filename, $body);
-            $thread->body = $body;
-            $thread->save();
-        }
+        return $body;
     }
 
     public function collaburators($message, $email)
@@ -343,6 +163,206 @@ class MailController extends Controller
         return $array;
     }
 
+    public function workflow($address, $subject, $body, $collaborator, $attachments, $email)
+    {
+        $fromaddress = checkArray('address', $address[0]);
+        $fromname = checkArray('name', $address[0]);
+        $helptopic = $this->helptopic($email);
+        $sla = $this->sla($email);
+        $priority = $this->priority($email);
+        $ticket_source = Ticket_source::where('name', '=', 'email')->first();
+        $source = $ticket_source->id;
+        $dept = $this->department($email);
+        $get_helptopic = Help_topic::where('id', '=', $helptopic)->first();
+        $assign = $get_helptopic->auto_assign;
+        $form_data = null;
+        $team_assign = null;
+        $ticket_status = null;
+        $auto_response = $email->auto_response;
+        $result = $this->TicketWorkflowController->workflow($fromaddress, $fromname, $subject, $body, $phone = '',
+            $phonecode = '', $mobile_number = '', $helptopic, $sla, $priority, $source, $collaborator, $dept, $assign,
+            $team_assign, $ticket_status, $form_data = [], $auto_response);
+        if ($result[1] == true) {
+            $this->updateThread($result[0], $body, $attachments);
+        }
+    }
+
+    /**
+     * get help topic.
+     *
+     * @param object $email
+     *
+     * @return int
+     */
+    public function helptopic($email)
+    {
+        //dd($email);
+        $helptopic = $email->help_topic;
+        if (!$helptopic) {
+            $helptopic = $this->ticketController()->getSystemDefaultHelpTopic();
+        }
+
+        return $helptopic;
+    }
+
+    /**
+     * get ticket controller.
+     *
+     * @return \App\Http\Controllers\Agent\helpdesk\TicketController
+     */
+    public function ticketController()
+    {
+        $PhpMailController = new \App\Http\Controllers\Common\PhpMailController();
+        $NotificationController = new \App\Http\Controllers\Common\NotificationController();
+        $controller = new TicketController($PhpMailController, $NotificationController);
+
+        return $controller;
+    }
+
+    /**
+     * get sla.
+     *
+     * @param object $email
+     *
+     * @return int
+     */
+    public function sla($email)
+    {
+        $helptopic = $this->helptopic($email);
+        $help = Help_topic::where('id', '=', $helptopic)->first();
+        if ($help) {
+            $sla = $help->sla_plan;
+        }
+        if (!$sla) {
+            $sla = $this->ticketController()->getSystemDefaultSla();
+        }
+
+        return $sla;
+    }
+
+    /**
+     * @param object $email
+     *
+     * @return int
+     */
+    public function priority($email)
+    {
+        $priority = $email->priority;
+        if (!$priority) {
+            $priority = $this->ticketController()->getSystemDefaultPriority();
+        }
+
+        return $priority;
+    }
+
+    /**
+     * get department.
+     *
+     * @param object $email
+     *
+     * @return int
+     */
+    public function department($email)
+    {
+        $department = $email->department;
+        if (!$department) {
+            $department = $this->ticketController()->getSystemDefaultDepartment();
+        }
+
+        return $department;
+    }
+
+    public function updateThread($ticket_number, $body, $attachments)
+    {
+        $ticket_table = Tickets::where('ticket_number', '=', $ticket_number)->first();
+        $thread_id = Ticket_Thread::where('ticket_id', '=', $ticket_table->id)->max('id');
+        $thread = Ticket_Thread::where('id', '=', $thread_id)->first();
+        $thread->body = $this->separate_reply($body);
+        $thread->save();
+        if (file_exists(app_path('/FaveoStorage/Controllers/StorageController.php'))) {
+            try {
+                $storage = new \App\FaveoStorage\Controllers\StorageController();
+                $storage->saveAttachments($thread->id, $attachments);
+            } catch (\Exception $ex) {
+                loging('attachment', $ex->getMessage());
+            }
+        } else {
+            loging('attachment', 'FaveoStorage not installed');
+        }
+
+        \Log::info('Ticket has created : ', ['id' => $thread->ticket_id]);
+    }
+
+    /**
+     * separate reply.
+     *
+     * @param type $body
+     *
+     * @return type string
+     */
+    public function separate_reply($body)
+    {
+        $body2 = explode('---Reply above this line---', $body);
+        $body3 = $body2[0];
+
+        return $body3;
+    }
+
+    public function saveAttachments($thread_id, $attachments = [])
+    {
+        if (is_array($attachments) && count($attachments) > 0) {
+            foreach ($attachments as $attachment) {
+                $structure = $attachment->getStructure();
+                $disposition = 'ATTACHMENT';
+                if (isset($structure->disposition)) {
+                    $disposition = $structure->disposition;
+                }
+
+                $filename = str_random(16) . '-' . $attachment->getFileName();
+                $type = $attachment->getMimeType();
+                $size = $attachment->getSize();
+                $data = $attachment->getData();
+                //$path = storage_path('/');
+                //$attachment->saveToDirectory($path);
+                $this->manageAttachment($data, $filename, $type, $size, $disposition, $thread_id);
+                $this->updateBody($attachment, $thread_id, $filename);
+            }
+        }
+    }
+
+    public function manageAttachment($data, $filename, $type, $size, $disposition, $thread_id)
+    {
+        $upload = new Ticket_attachments();
+        $upload->file = $data;
+        $upload->thread_id = $thread_id;
+        $upload->name = $filename;
+        $upload->type = $type;
+        $upload->size = $size;
+        $upload->poster = $disposition;
+        if ($data && $size && $disposition) {
+            $upload->save();
+        }
+    }
+
+    public function updateBody($attachment, $thread_id, $filename)
+    {
+        $structure = $attachment->getStructure();
+        $disposition = 'ATTACHMENT';
+        if (isset($structure->disposition)) {
+            $disposition = $structure->disposition;
+        }
+        if ($disposition == 'INLINE' || $disposition == 'inline') {
+            $id = str_replace('>', '', str_replace('<', '', $structure->id));
+            //$filename = $attachment->getFileName();
+            $threads = new Ticket_Thread();
+            $thread = $threads->find($thread_id);
+            $body = $thread->body;
+            $body = str_replace('cid:' . $id, $filename, $body);
+            $thread->body = $body;
+            $thread->save();
+        }
+    }
+
     /**
      * function to load data.
      *
@@ -354,34 +374,17 @@ class MailController extends Controller
     {
         $attachment = \App\Model\helpdesk\Ticket\Ticket_attachments::where('id', '=', $id)->first();
         if (mime($attachment->type) == true) {
-            echo "<img src=data:$attachment->type;base64,".$attachment->file.'>';
+            echo "<img src=data:$attachment->type;base64," . $attachment->file . '>';
         } else {
             $file = base64_decode($attachment->file);
 
             return response($file)
-                            ->header('Cache-Control', 'no-cache private')
-                            ->header('Content-Description', 'File Transfer')
-                            ->header('Content-Type', $attachment->type)
-                            ->header('Content-length', strlen($file))
-                            ->header('Content-Disposition', 'attachment; filename='.$attachment->name)
-                            ->header('Content-Transfer-Encoding', 'binary');
+                ->header('Cache-Control', 'no-cache private')
+                ->header('Content-Description', 'File Transfer')
+                ->header('Content-Type', $attachment->type)
+                ->header('Content-length', strlen($file))
+                ->header('Content-Disposition', 'attachment; filename=' . $attachment->name)
+                ->header('Content-Transfer-Encoding', 'binary');
         }
-    }
-
-    /**
-     * separate reply.
-     *
-     * @param type $body
-     *
-     * @return type string
-     */
-    public function separateReply($body)
-    {
-        $body2 = explode('---Reply above this line---', $body);
-        if (is_array($body2) && array_key_exists(0, $body2)) {
-            $body = $body2[0];
-        }
-
-        return $body;
     }
 }

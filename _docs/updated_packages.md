@@ -1,0 +1,7 @@
+  - Removing illuminate/html (v5.0.0)
+  - Removing davejamesmiller/laravel-breadcrumbs (3.0.3)
+  - Installing davejamesmiller/laravel-breadcrumbs (3.x-dev f81bad1): Downloading (100%)
+  - Installing composer/ca-bundle (1.1.1): Loading from cache
+  - Updating bugsnag/bugsnag (v2.9.2 => v3.12.1): Downloading (100%)
+  - Installing bugsnag/bugsnag-psr-logger (v1.4.1): Downloading (100%)
+  - Updating bugsnag/bugsnag-laravel (v1.7.0 => v2.14.1): Downloading (100%)

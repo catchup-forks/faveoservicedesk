@@ -78,16 +78,16 @@ class TemplateController extends Controller
         $id = $request->input('id');
 
         return \Datatable::collection($this->template->where('set_id', '=', $id)->select('id', 'name', 'type')->get())
-                        ->showColumns('name')
-                        ->addColumn('type', function ($model) {
-                            return $this->type->where('id', $model->type)->first()->name;
-                        })
-                        ->addColumn('action', function ($model) {
-                            return '<a href='.url('templates/'.$model->id.'/edit')." class='btn btn-sm btn-primary'>Edit</a>";
-                        })
-                        ->searchColumns('name')
-                        ->orderColumns('name')
-                        ->make();
+            ->showColumns('name')
+            ->addColumn('type', function ($model) {
+                return $this->type->where('id', $model->type)->first()->name;
+            })
+            ->addColumn('action', function ($model) {
+                return '<a href=' . url('templates/' . $model->id . '/edit') . " class='btn btn-sm btn-primary'>Edit</a>";
+            })
+            ->searchColumns('name')
+            ->orderColumns('name')
+            ->make();
     }
 
     /**
@@ -146,7 +146,7 @@ class TemplateController extends Controller
     /**
      * function to update a template.
      *
-     * @param type                                      $id
+     * @param type $id
      * @param \App\Http\Requests\helpdesk\TemplateUdate $request
      *
      * @return type
@@ -183,9 +183,9 @@ class TemplateController extends Controller
                     } else {
                         echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b>
+                    <b>" . \Lang::get('message.alert') . '!</b>
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.no-record').'
+                        ' . \Lang::get('message.no-record') . '
                 </div>';
                     }
                 }
@@ -193,22 +193,22 @@ class TemplateController extends Controller
                     <i class='fa fa-ban'></i>
                     <b>
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        ".\Lang::get('message.deleted-successfully').'
+                        " . \Lang::get('message.deleted-successfully') . '
                 </div>';
             } else {
                 echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b> 
+                    <b>" . \Lang::get('message.alert') . '!</b> 
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.\Lang::get('message.select-a-row').'
+                        ' . \Lang::get('message.select-a-row') . '
                 </div>';
             }
         } catch (\Exception $e) {
             echo "<div class='alert alert-danger alert-dismissable'>
                     <i class='fa fa-ban'></i>
-                    <b>".\Lang::get('message.alert').'!</b>
+                    <b>" . \Lang::get('message.alert') . '!</b>
                     <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-                        '.$e->getMessage().'
+                        ' . $e->getMessage() . '
                 </div>';
         }
     }
@@ -240,7 +240,8 @@ class TemplateController extends Controller
                         }
                         $currency = \Session::get('currency');
                         if ($this->price->where('product_id', $product->id)->where('currency', $currency)->first()) {
-                            $product_currency = $this->price->where('product_id', $product->id)->where('currency', $currency)->first();
+                            $product_currency = $this->price->where('product_id', $product->id)->where('currency',
+                                $currency)->first();
                             $code = $product_currency->currency;
                             $currency = $this->currency->where('code', $code)->first();
                             if ($currency->symbol) {
@@ -248,14 +249,22 @@ class TemplateController extends Controller
                             } else {
                                 $currency = $currency->code;
                             }
-                            $price = \App\Http\Controllers\Front\CartController::calculateTax($product->id, $product_currency->currency, 1, 0, 1);
+                            $price = \App\Http\Controllers\Front\CartController::calculateTax($product->id,
+                                $product_currency->currency, 1, 0, 1);
 
                             $subscription = $this->plan->where('id', $product_currency->subscription)->first()->name;
                         } else {
                             return redirect('/')->with('fails', \Lang::get('message.no-such-currency-in-system'));
                         }
 
-                        $array1 = ['{{title}}', '{{currency}}', '{{price}}', '{{subscription}}', '<li>{{feature}}</li>', '{{url}}'];
+                        $array1 = [
+                            '{{title}}',
+                            '{{currency}}',
+                            '{{price}}',
+                            '{{subscription}}',
+                            '<li>{{feature}}</li>',
+                            '{{url}}'
+                        ];
                         $array2 = [$title, $currency, $price, $subscription, $description, $url];
                         $template .= str_replace($array1, $array2, $data);
                     }

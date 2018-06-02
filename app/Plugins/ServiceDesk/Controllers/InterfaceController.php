@@ -9,7 +9,7 @@ class InterfaceController extends BaseServiceDeskController
 {
     public function agentSidebar()
     {
-        $path = app_path().'/Plugins/ServiceDesk/views/interface';
+        $path = app_path() . '/Plugins/ServiceDesk/views/interface';
         \View::addNamespace('plugins', $path);
 
         return view('plugins::agent.sidebar');
@@ -17,7 +17,7 @@ class InterfaceController extends BaseServiceDeskController
 
     public function agentTopbar()
     {
-        $path = app_path().'/Plugins/ServiceDesk/views/interface';
+        $path = app_path() . '/Plugins/ServiceDesk/views/interface';
         \View::addNamespace('plugins', $path);
 
         return view('plugins::agent.topbar');
@@ -25,7 +25,7 @@ class InterfaceController extends BaseServiceDeskController
 
     public function agentTopSubbar()
     {
-        $path = app_path().'/Plugins/ServiceDesk/views/interface';
+        $path = app_path() . '/Plugins/ServiceDesk/views/interface';
         \View::addNamespace('plugins', $path);
 
         return view('plugins::agent.topsubbar');
@@ -33,7 +33,7 @@ class InterfaceController extends BaseServiceDeskController
 
     public function adminSidebar()
     {
-        $path = app_path().'/Plugins/ServiceDesk/views/interface';
+        $path = app_path() . '/Plugins/ServiceDesk/views/interface';
         \View::addNamespace('plugins', $path);
 
         return view('plugins::admin.sidebar');
@@ -41,7 +41,7 @@ class InterfaceController extends BaseServiceDeskController
 
     public function adminTopbar()
     {
-        $path = app_path().'/Plugins/ServiceDesk/views/interface';
+        $path = app_path() . '/Plugins/ServiceDesk/views/interface';
         \View::addNamespace('plugins', $path);
 
         return view('plugins::admin.topbar');
@@ -49,7 +49,7 @@ class InterfaceController extends BaseServiceDeskController
 
     public function adminTopSubbar()
     {
-        $path = app_path().'/Plugins/ServiceDesk/views/interface';
+        $path = app_path() . '/Plugins/ServiceDesk/views/interface';
         \View::addNamespace('plugins', $path);
 
         return view('plugins::admin.topsubbar');
@@ -57,7 +57,7 @@ class InterfaceController extends BaseServiceDeskController
 
     public function adminSettings()
     {
-        $path = app_path().'/Plugins/ServiceDesk/views/interface';
+        $path = app_path() . '/Plugins/ServiceDesk/views/interface';
         \View::addNamespace('plugins', $path);
 
         return view('plugins::admin.settings');

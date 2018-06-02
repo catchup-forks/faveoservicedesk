@@ -1,37 +1,37 @@
 @extends('themes.default1.admin.layout.admin')
 
 @section('Settings')
-active
+    active
 @stop
 
 @section('settings-bar')
-active
+    active
 @stop
 
 @section('cron')
-class="active"
+    class="active"
 @stop
 
 @section('HeadInclude')
 @stop
 <!-- header -->
 @section('PageHeader')
-<h1>{{ Lang::get('lang.settings') }}</h1>
+    <h1>{{ Lang::get('lang.settings') }}</h1>
 @stop
 <!-- /header -->
 <!-- breadcrumbs -->
 @section('breadcrumbs')
-<ol class="breadcrumb">
-</ol>
+    <ol class="breadcrumb">
+    </ol>
 @stop
 <!-- /breadcrumbs -->
 <!-- content -->
 @section('content')
-<!-- open a form -->
+    <!-- open a form -->
 
-@if($warn!=="")
-@include('themes.default1.admin.helpdesk.settings.cron.cron-new')
-@else 
-@include('themes.default1.admin.helpdesk.settings.cron.cron-new')
-@endif
+    @if($warn!=="")
+        @include('themes.default1.admin.helpdesk.settings.cron.cron-new')
+    @else
+        @include('themes.default1.admin.helpdesk.settings.cron.cron-new')
+    @endif
 @stop

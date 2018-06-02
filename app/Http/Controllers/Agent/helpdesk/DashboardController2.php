@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Agent\helpdesk;
 
 // controllers
 use App\Http\Controllers\Controller;
-// models
-use App\User;
-// classes
 use Auth;
 use DB;
 use Exception;
 use View;
+
+// models
+// classes
 
 /**
  * DashboardController
@@ -72,25 +72,28 @@ class DashboardController2 extends Controller
             $date3 = date('Y-m-d');
             $format = 'Y-m-d';
             // generating a date range of 1 month
-            $date1 = strtotime(date($format, strtotime('-1 month'.$date3)));
+            $date1 = strtotime(date($format, strtotime('-1 month' . $date3)));
         }
         $return = '';
         $last = '';
         for ($i = $date1; $i <= $date2; $i = $i + 86400) {
             $thisDate = date('Y-m-d', $i);
 
-            $created = \DB::table('tickets')->select('created_at')->where('created_at', 'LIKE', '%'.$thisDate.'%')->count();
-            $closed = \DB::table('tickets')->select('closed_at')->where('closed_at', 'LIKE', '%'.$thisDate.'%')->count();
-            $reopened = \DB::table('tickets')->select('reopened_at')->where('reopened_at', 'LIKE', '%'.$thisDate.'%')->count();
+            $created = \DB::table('tickets')->select('created_at')->where('created_at', 'LIKE',
+                '%' . $thisDate . '%')->count();
+            $closed = \DB::table('tickets')->select('closed_at')->where('closed_at', 'LIKE',
+                '%' . $thisDate . '%')->count();
+            $reopened = \DB::table('tickets')->select('reopened_at')->where('reopened_at', 'LIKE',
+                '%' . $thisDate . '%')->count();
 
             $value = ['date' => $thisDate, 'open' => $created, 'closed' => $closed, 'reopened' => $reopened];
             $array = array_map('htmlentities', $value);
             $json = html_entity_decode(json_encode($array));
-            $return .= $json.',';
+            $return .= $json . ',';
         }
         $last = rtrim($return, ',');
 
-        return '['.$last.']';
+        return '[' . $last . ']';
 
         // $ticketlist = DB::table('tickets')
         //     ->select(DB::raw('MONTH(updated_at) as month'),DB::raw('SUM(CASE WHEN status = 3 THEN 1 ELSE 0 END) as closed'),DB::raw('SUM(CASE WHEN status = 2 THEN 1 ELSE 0 END) as reopened'),DB::raw('SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as open'),DB::raw('SUM(CASE WHEN status = 5 THEN 1 ELSE 0 END) as deleted'),

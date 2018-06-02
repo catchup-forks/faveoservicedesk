@@ -18,7 +18,7 @@ class Filter extends Model
             $labels = new Label();
             $label = $labels->whereIn('title', $labelids)->get();
             if ($label->count() > 0) {
-                foreach ($label as $key=>$l) {
+                foreach ($label as $key => $l) {
                     $output[$key] = $l->titleWithColor();
                 }
             }

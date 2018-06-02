@@ -5,24 +5,24 @@ namespace App\Http\Controllers\Agent\kb;
 // Controllers
 use App\Http\Controllers\Agent\helpdesk\TicketController;
 use App\Http\Controllers\Controller;
-// Request
 use App\Http\Requests\kb\ProfilePassword;
 use App\Http\Requests\kb\ProfileRequest;
 use App\Http\Requests\kb\SettingsRequests;
 use App\Model\helpdesk\Utility\Date_format;
-// Model
 use App\Model\helpdesk\Utility\Timezones;
 use App\Model\kb\Comment;
 use App\Model\kb\Settings;
 use Auth;
-// Classes
 use Config;
 use Exception;
 use Hash;
-use Illuminate\Http\Request;
 use Image;
 use Input;
 use Lang;
+
+// Request
+// Model
+// Classes
 
 /**
  * SettingsController
@@ -48,6 +48,19 @@ class SettingsController extends Controller
         // checking roles
         $this->middleware('roles');
         $this->language();
+    }
+
+    /**
+     * het locale for language.
+     *
+     * @return type config set
+     */
+    public static function language()
+    {
+        // $set = Settings::whereId(1)->first();
+        // $lang = $set->language;
+        Config::set('app.locale', 'en');
+        Config::get('app');
     }
 
     /**
@@ -79,30 +92,30 @@ class SettingsController extends Controller
             if (Input::file('logo')) {
                 $name = Input::file('logo')->getClientOriginalName();
                 $destinationPath = 'lb-faveo/dist/image';
-                $fileName = rand(0000, 9999).'.'.$name;
+                $fileName = rand(0000, 9999) . '.' . $name;
                 //echo $fileName;
                 Input::file('logo')->move($destinationPath, $fileName);
                 $settings->logo = $fileName;
                 //$thDestinationPath = 'dist/th';
-                Image::make($destinationPath.'/'.$fileName, [
-                    'width'     => 300,
-                    'height'    => 300,
+                Image::make($destinationPath . '/' . $fileName, [
+                    'width' => 300,
+                    'height' => 300,
                     'grayscale' => false,
-                ])->save('lb-faveo/dist/image/'.$fileName);
+                ])->save('lb-faveo/dist/image/' . $fileName);
             }
             if (Input::file('background')) {
                 $name = Input::file('background')->getClientOriginalName();
                 $destinationPath = 'lb-faveo/dist/image';
-                $fileName = rand(0000, 9999).'.'.$name;
+                $fileName = rand(0000, 9999) . '.' . $name;
                 echo $fileName;
                 Input::file('background')->move($destinationPath, $fileName);
                 $settings->background = $fileName;
                 //$thDestinationPath = 'dist/th';
-                Image::make($destinationPath.'/'.$fileName, [
-                    'width'     => 300,
-                    'height'    => 300,
+                Image::make($destinationPath . '/' . $fileName, [
+                    'width' => 300,
+                    'height' => 300,
                     'grayscale' => false,
-                ])->save('lb-faveo/dist/image/'.$fileName);
+                ])->save('lb-faveo/dist/image/' . $fileName);
             }
             /* Check whether function success or not */
             if ($settings->fill($request->except('logo', 'background'))->save() == true) {
@@ -138,40 +151,38 @@ class SettingsController extends Controller
     public function getData()
     {
         return \Datatable::collection(Comment::All())
-                        ->searchColumns('details', 'comment', 'created')
-                        ->orderColumns('details')
-                        ->addColumn('details', function ($model) {
-                            $name = "<p>$model->name</p><br>";
-                            $email = "<p>$model->email</p><br>";
-                            $website = "<p>$model->website</p><br>";
+            ->searchColumns('details', 'comment', 'created')
+            ->orderColumns('details')
+            ->addColumn('details', function ($model) {
+                $name = "<p>$model->name</p><br>";
+                $email = "<p>$model->email</p><br>";
+                $website = "<p>$model->website</p><br>";
 
-                            return $name.$email.$website;
-                        })
+                return $name . $email . $website;
+            })
+            ->addColumn('comment', function ($model) {
+                $created = TicketController::usertimezone(date($model->created_at));
 
-                        ->addColumn('comment', function ($model) {
-                            $created = TicketController::usertimezone(date($model->created_at));
-
-                            return $model->comment."<p>$created</p>";
-                        })
-                        ->addColumn('status', function ($model) {
-                            $status = $model->status;
-                            if ($status == 1) {
-                                return '<p style="color:blue"">'.\Lang::get('lang.published');
-                            } else {
-                                return '<p style="color:red"">'.\Lang::get('lang.not_published');
-                            }
-                        })
-
-                        ->addColumn('Actions', function ($model) {
-                            return '<div class="row"><div class="col-md-12"><a href=comment/delete/'.$model->id.' class="btn btn-danger btn-xs">'.\Lang::get('lang.delete').'</a></div><div class="col-md-12"><a href=published/'.$model->id.' class="btn btn-warning btn-xs">'.\Lang::get('lang.publish').'</a></div></div>';
-                        })
-                        ->make();
+                return $model->comment . "<p>$created</p>";
+            })
+            ->addColumn('status', function ($model) {
+                $status = $model->status;
+                if ($status == 1) {
+                    return '<p style="color:blue"">' . \Lang::get('lang.published');
+                } else {
+                    return '<p style="color:red"">' . \Lang::get('lang.not_published');
+                }
+            })
+            ->addColumn('Actions', function ($model) {
+                return '<div class="row"><div class="col-md-12"><a href=comment/delete/' . $model->id . ' class="btn btn-danger btn-xs">' . \Lang::get('lang.delete') . '</a></div><div class="col-md-12"><a href=published/' . $model->id . ' class="btn btn-warning btn-xs">' . \Lang::get('lang.publish') . '</a></div></div>';
+            })
+            ->make();
     }
 
     /**
      * Admin can publish the comment.
      *
-     * @param type         $id
+     * @param type $id
      * @param type Comment $comment
      *
      * @return bool
@@ -181,7 +192,7 @@ class SettingsController extends Controller
         $comment = $comment->whereId($id)->first();
         $comment->status = 1;
         if ($comment->save()) {
-            return redirect('comment')->with('success', $comment->name.'-'.Lang::get('lang.comment_published'));
+            return redirect('comment')->with('success', $comment->name . '-' . Lang::get('lang.comment_published'));
         } else {
             return redirect('comment')->with('fails', Lang::get('lang.can_not_process'));
         }
@@ -190,7 +201,7 @@ class SettingsController extends Controller
     /**
      * delete the comment.
      *
-     * @param type         $id
+     * @param type $id
      * @param type Comment $comment
      *
      * @return type
@@ -199,7 +210,7 @@ class SettingsController extends Controller
     {
         $comment = $comment->whereId($id)->first();
         if ($comment->delete()) {
-            return redirect('comment')->with('success', $comment->name."'s!".Lang::get('lang.comment_deleted'));
+            return redirect('comment')->with('success', $comment->name . "'s!" . Lang::get('lang.comment_deleted'));
         } else {
             return redirect('comment')->with('fails', Lang::get('lang.can_not_process'));
         }
@@ -245,7 +256,7 @@ class SettingsController extends Controller
             //$extension = Input::file('profile_pic')->getClientOriginalExtension();
             $name = Input::file('profile_pic')->getClientOriginalName();
             $destinationPath = 'lb-faveo/dist/img';
-            $fileName = rand(0000, 9999).'.'.$name;
+            $fileName = rand(0000, 9999) . '.' . $name;
             //echo $fileName;
             Input::file('profile_pic')->move($destinationPath, $fileName);
             $user->profile_pic = $fileName;
@@ -264,7 +275,7 @@ class SettingsController extends Controller
     /**
      * post profile password.
      *
-     * @param type                 $id
+     * @param type $id
      * @param type ProfilePassword $request
      *
      * @return type redirect
@@ -282,18 +293,5 @@ class SettingsController extends Controller
         } else {
             return redirect('profile')->with('fails2', 'Old password Wrong');
         }
-    }
-
-    /**
-     * het locale for language.
-     *
-     * @return type config set
-     */
-    public static function language()
-    {
-        // $set = Settings::whereId(1)->first();
-        // $lang = $set->language;
-        Config::set('app.locale', 'en');
-        Config::get('app');
     }
 }

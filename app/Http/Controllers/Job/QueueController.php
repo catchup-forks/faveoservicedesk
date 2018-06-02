@@ -59,8 +59,8 @@ class QueueController extends Controller
                 foreach ($values as $key => $value) {
                     $setting->create([
                         'service_id' => $id,
-                        'key'        => $key,
-                        'value'      => $value,
+                        'key' => $key,
+                        'value' => $value,
                     ]);
                 }
             }
@@ -102,30 +102,6 @@ class QueueController extends Controller
         $form = $this->getFormById($queueid);
 
         return $form;
-    }
-
-    public function getShortNameById($queueid)
-    {
-        $short = '';
-        $queues = new QueueService();
-        $queue = $queues->find($queueid);
-        if ($queue) {
-            $short = $queue->short_name;
-        }
-
-        return $short;
-    }
-
-    public function getIdByShortName($short)
-    {
-        $id = '';
-        $queues = new QueueService();
-        $queue = $queues->where('short_name', $short)->first();
-        if ($queue) {
-            $id = $queue->id;
-        }
-
-        return $id;
     }
 
     public function getFormById($id)
@@ -172,19 +148,44 @@ class QueueController extends Controller
         }
     }
 
+    public function getShortNameById($queueid)
+    {
+        $short = '';
+        $queues = new QueueService();
+        $queue = $queues->find($queueid);
+        if ($queue) {
+            $short = $queue->short_name;
+        }
+
+        return $short;
+    }
+
     public function form($short, $label, $name, $class, $placeholder = '')
     {
         $queueid = $this->getIdByShortName($short);
         $queues = new QueueService();
         $queue = $queues->find($queueid);
         if ($queue) {
-            $form = "<div class='".$class."'>".Form::label($name, $label)."<span class='text-red'> *</span>".
-                    Form::text($name, $queue->getExtraField($name), ['class' => 'form-control', 'placeholder' => $placeholder]).'</div>';
+            $form = "<div class='" . $class . "'>" . Form::label($name, $label) . "<span class='text-red'> *</span>" .
+                Form::text($name, $queue->getExtraField($name),
+                    ['class' => 'form-control', 'placeholder' => $placeholder]) . '</div>';
         } else {
-            $form = "<div class='".$class."'>".Form::label($name, $label)."<span class='text-red'> *</span>".
-                    Form::text($name, null, ['class' => 'form-control', 'placeholder' => $placeholder]).'</div>';
+            $form = "<div class='" . $class . "'>" . Form::label($name, $label) . "<span class='text-red'> *</span>" .
+                Form::text($name, null, ['class' => 'form-control', 'placeholder' => $placeholder]) . '</div>';
         }
 
         return $form;
+    }
+
+    public function getIdByShortName($short)
+    {
+        $id = '';
+        $queues = new QueueService();
+        $queue = $queues->where('short_name', $short)->first();
+        if ($queue) {
+            $id = $queue->id;
+        }
+
+        return $id;
     }
 }

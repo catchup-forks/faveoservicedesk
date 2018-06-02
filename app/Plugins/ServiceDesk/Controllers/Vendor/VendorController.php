@@ -27,31 +27,33 @@ class VendorController extends BaseServiceDeskController
     {
         try {
             $vandors = new SdVendors();
-            $vandor = $vandors->select('id', 'name', 'primary_contact', 'email', 'description', 'address', 'status')->get();
+            $vandor = $vandors->select('id', 'name', 'primary_contact', 'email', 'description', 'address',
+                'status')->get();
 
             return \Datatable::Collection($vandor)
-                            ->showColumns('name', 'primary_contact', 'email', 'address')
-                            ->addColumn('status', function ($model) {
-                                $status = 'Inactive';
-                                if ($model->status == 1) {
-                                    $status = 'Active';
-                                }
+                ->showColumns('name', 'primary_contact', 'email', 'address')
+                ->addColumn('status', function ($model) {
+                    $status = 'Inactive';
+                    if ($model->status == 1) {
+                        $status = 'Active';
+                    }
 
-                                return $status;
-                            })
-                            ->addColumn('Action', function ($model) {
-                                $url = url('service-desk/vendor/'.$model->id.'/delete');
-                                $delete = \App\Plugins\ServiceDesk\Controllers\Library\UtilityController::deletePopUp($model->id, $url, "Delete $model->subject");
+                    return $status;
+                })
+                ->addColumn('Action', function ($model) {
+                    $url = url('service-desk/vendor/' . $model->id . '/delete');
+                    $delete = \App\Plugins\ServiceDesk\Controllers\Library\UtilityController::deletePopUp($model->id,
+                        $url, "Delete $model->subject");
 
-                                return '<a href='.url('service-desk/vendor/'.$model->id.'/edit')." class='btn btn-info btn-sm'>Edit</a> "
-                                        .$delete
-                                        .' <a href='.url('service-desk/vendor/'.$model->id.'/show')." class='btn btn-primary btn-sm'>View</a>";
+                    return '<a href=' . url('service-desk/vendor/' . $model->id . '/edit') . " class='btn btn-info btn-sm'>Edit</a> "
+                        . $delete
+                        . ' <a href=' . url('service-desk/vendor/' . $model->id . '/show') . " class='btn btn-primary btn-sm'>View</a>";
 
-                                //return "<a href=" . url('service-desk/vendor/' . $model->id . '/edit') . " class='btn btn-info btn-xs'>Edit</a> <a href=" . url('service-desk/vendor/' . $model->id . '/delete') . " class='btn btn-warning btn-xs btn-flat'>Delete</a>";
-                            })
-                            ->searchColumns('name', 'primary_contact')
-                            ->orderColumns('name', 'primary_contact', 'email', 'description', 'address', 'all_department', 'status')
-                            ->make();
+                    //return "<a href=" . url('service-desk/vendor/' . $model->id . '/edit') . " class='btn btn-info btn-xs'>Edit</a> <a href=" . url('service-desk/vendor/' . $model->id . '/delete') . " class='btn btn-warning btn-xs btn-flat'>Delete</a>";
+                })
+                ->searchColumns('name', 'primary_contact')
+                ->orderColumns('name', 'primary_contact', 'email', 'description', 'address', 'all_department', 'status')
+                ->make();
         } catch (Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }

@@ -16,7 +16,7 @@
                                 </span>
                             </a>
                         </div>
-                        <p class="box-title" >Products</p>
+                        <p class="box-title">Products</p>
                     </div>
                 </div>
                 <div class="col-md-2 col-sm-6">
@@ -28,11 +28,11 @@
                                 </span>
                             </a>
                         </div>
-                        <p class="box-title" >Procurement Types</p>
+                        <p class="box-title">Procurement Types</p>
                     </div>
                 </div>
 
-              
+
                 <div class="col-md-2 col-sm-6">
                     <div class="settingiconblue">
                         <div class="settingdivblue">
@@ -42,7 +42,7 @@
                                 </span>
                             </a>
                         </div>
-                        <p class="box-title" >Contracts</p>
+                        <p class="box-title">Contracts</p>
                     </div>
                 </div>
                 <div class="col-md-2 col-sm-6">
@@ -54,7 +54,7 @@
                                 </span>
                             </a>
                         </div>
-                        <p class="box-title" >Contracts Types</p>
+                        <p class="box-title">Contracts Types</p>
                     </div>
                 </div>
                 <div class="col-md-2 col-sm-6">
@@ -66,11 +66,11 @@
                                 </span>
                             </a>
                         </div>
-                        <p class="box-title" >License Types</p>
+                        <p class="box-title">License Types</p>
                     </div>
                 </div>
 
-                
+
                 <div class="col-md-2 col-sm-6">
                     <div class="settingiconblue">
                         <div class="settingdivblue">
@@ -80,11 +80,11 @@
                                 </span>
                             </a>
                         </div>
-                        <p class="box-title" >Vendors</p>
+                        <p class="box-title">Vendors</p>
                     </div>
                 </div>
-                
-                 <div class="col-md-2 col-sm-6">
+
+                <div class="col-md-2 col-sm-6">
                     <div class="settingiconblue">
                         <div class="settingdivblue">
                             <a href="{{ url('service-desk/form-builder') }}">
@@ -93,7 +93,7 @@
                                 </span>
                             </a>
                         </div>
-                        <p class="box-title" >Form Builder</p>
+                        <p class="box-title">Form Builder</p>
                     </div>
                 </div>
                 <div class="col-md-2 col-sm-6">
@@ -105,7 +105,7 @@
                                 </span>
                             </a>
                         </div>
-                        <p class="box-title" >Asset Types</p>
+                        <p class="box-title">Asset Types</p>
                     </div>
                 </div>
                 <div class="col-md-2 col-sm-6">
@@ -117,7 +117,7 @@
                                 </span>
                             </a>
                         </div>
-                        <p class="box-title" >Cab</p>
+                        <p class="box-title">Cab</p>
                     </div>
                 </div>
                 <div class="col-md-2 col-sm-6">
@@ -129,7 +129,7 @@
                                 </span>
                             </a>
                         </div>
-                        <p class="box-title" >Locations</p>
+                        <p class="box-title">Locations</p>
                     </div>
                 </div>
                 <div class="col-md-2 col-sm-6">
@@ -141,7 +141,7 @@
                                 </span>
                             </a>
                         </div>
-                        <p class="box-title" >Location Category</p>
+                        <p class="box-title">Location Category</p>
                     </div>
                 </div>
                 <div class="col-md-2 col-sm-6">
@@ -153,7 +153,7 @@
                                 </span>
                             </a>
                         </div>
-                        <p class="box-title" >Announcement</p>
+                        <p class="box-title">Announcement</p>
                     </div>
                 </div>
                 <!--/.col-md-2-->

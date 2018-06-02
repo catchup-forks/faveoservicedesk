@@ -51,12 +51,17 @@ class NotificationController extends Controller
         try {
             if (empty($forwhome)) {
                 $ticket = Tickets::where('id', '=', $model_id)->first();
-                $forwhome = $this->user->where('role', '=', 'agent')->where('primary_dpt', '=', $ticket->dept_id)->get();
+                $forwhome = $this->user->where('role', '=', 'agent')->where('primary_dpt', '=',
+                    $ticket->dept_id)->get();
                 $forwhome2 = $this->user->where('role', '=', 'admin')->get();
                 $forwhome = $forwhome->merge($forwhome2);
             }
             // system notification
-            $notify = Notification::create(['model_id' => $model_id, 'userid_created' => $userid_created, 'type_id' => $type_id]);
+            $notify = Notification::create([
+                'model_id' => $model_id,
+                'userid_created' => $userid_created,
+                'type_id' => $type_id
+            ]);
             foreach ($forwhome as $agent) {
                 $type_message = NotificationType::where('id', '=', $type_id)->first();
                 UserNotification::create(['notification_id' => $notify->id, 'user_id' => $agent['id'], 'is_read' => 0]);
@@ -94,7 +99,8 @@ class NotificationController extends Controller
      */
     public function markRead($id)
     {
-        $markasread = UserNotification::where('notification_id', '=', $id)->where('user_id', '=', \Auth::user()->id)->where('is_read', '=', '0')->get();
+        $markasread = UserNotification::where('notification_id', '=', $id)->where('user_id', '=',
+            \Auth::user()->id)->where('is_read', '=', '0')->get();
         foreach ($markasread as $mark) {
             $mark->is_read = '1';
             $mark->save();
@@ -116,6 +122,28 @@ class NotificationController extends Controller
     }
 
     /**
+     * get the page to list the notifications.
+     *
+     * @return response
+     */
+    public static function getNotifications()
+    {
+        $notifications = UserNotification::with([
+            'notification.type' => function ($query) {
+                $query->select('id', 'message', 'type');
+            },
+            'users' => function ($query) {
+                $query->select('id', 'email', 'profile_pic');
+            },
+            'notification.model' => function ($query) {
+                $query->select('id', 'ticket_number');
+            },
+        ])->where('user_id', '=', \Auth::user()->id);
+
+        return $notifications;
+    }
+
+    /**
      * function to delete notifications.
      *
      * @param type $id
@@ -124,7 +152,8 @@ class NotificationController extends Controller
      */
     public function delete($id)
     {
-        $markasread = UserNotification::where('notification_id', '=', $id)->where('user_id', '=', \Auth::user()->id)->get();
+        $markasread = UserNotification::where('notification_id', '=', $id)->where('user_id', '=',
+            \Auth::user()->id)->get();
         foreach ($markasread as $mark) {
             $mark->delete();
         }
@@ -147,25 +176,5 @@ class NotificationController extends Controller
         } catch (\Exception $ex) {
             return redirect()->back()->with('fails', $ex->getMessage());
         }
-    }
-
-    /**
-     * get the page to list the notifications.
-     *
-     * @return response
-     */
-    public static function getNotifications()
-    {
-        $notifications = UserNotification::with([
-                    'notification.type' => function ($query) {
-                        $query->select('id', 'message', 'type');
-                    }, 'users' => function ($query) {
-                        $query->select('id', 'email', 'profile_pic');
-                    }, 'notification.model' => function ($query) {
-                        $query->select('id', 'ticket_number');
-                    },
-        ])->where('user_id', '=', \Auth::user()->id);
-
-        return $notifications;
     }
 }
