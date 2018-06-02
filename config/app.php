@@ -97,7 +97,7 @@ return [
       | will not be safe. Please do this before deploying an application!
       |
      */
-    'key' => env('APP_KEY', 'ChangeThisAppKey'),
+    'key' => env('APP_KEY', 'base64:Dh5a8ouk0W+WIkRseTi6B72gVRODfhr8npqw66XBGdo='),
     'cipher' => 'AES-256-CBC',
     /*
       |--------------------------------------------------------------------------

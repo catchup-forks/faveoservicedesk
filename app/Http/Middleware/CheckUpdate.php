@@ -19,18 +19,18 @@ class CheckUpdate
      */
     public function handle($request, Closure $next)
     {
-        $check = $this->process();
+        //$check = $this->process();
         //dd($check);
-        if ($check == true) {
+        //if ($check == true) {
             //$this->notificationBar();
-            $this->checkNewUpdate();
+            //$this->checkNewUpdate();
             //            if (Utility::getFileVersion() > Utility::getDatabaseVersion()) {
 //                return redirect('database-update');
 //            }
 //            if (Utility::getFileVersion() < Utility::getDatabaseVersion()) {
 //                return redirect('file-update');
 //            }
-        }
+        //}
 
         return $next($request);
     }

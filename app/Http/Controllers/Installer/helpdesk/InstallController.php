@@ -273,7 +273,7 @@ class InstallController extends Controller
     public function accountcheck(InstallerRequest $request)
     {
         // checking is the installation was done previously
-        try {
+        /*try {
             $check_for_pre_installation = System::all();
             if ($check_for_pre_installation) {
                 rename(base_path() . DIRECTORY_SEPARATOR . '.env', base_path() . DIRECTORY_SEPARATOR . 'example.env');
@@ -282,15 +282,15 @@ class InstallController extends Controller
                 return redirect()->route('configuration');
             }
         } catch (Exception $e) {
-        }
-        if ($request->input('dummy-data') == 'on') {
+        }*/
+        /*if ($request->input('dummy-data') == 'on') {
             $path = base_path() . '/DB/dummy-data.sql';
             DB::unprepared(file_get_contents($path));
-        } else {
+        } else {*/
             // migrate database
-            Artisan::call('migrate', ['--force' => true]);
-            Artisan::call('db:seed', ['--force' => true]);
-        }
+            /*Artisan::call('migrate', ['--force' => true]);
+            Artisan::call('db:seed', ['--force' => true]);*/
+        //}
         // create user
         $firstname = $request->input('firstname');
         $lastname = $request->input('Lastname');
@@ -307,23 +307,25 @@ class InstallController extends Controller
             return \Redirect::back()->with('fails', 'Invalid language');
         }
         // checking requested timezone for the admin and system
-        $timezones = Timezones::where('name', '=', $timezone)->first();
+        /*$timezones = Timezones::where('name', '=', $timezone)->first();
         if ($timezones == null) {
             return redirect()->back()->with('fails', 'Invalid time-zone');
-        }
+        }*/
 
         // checking requested date time format for the admin and system
-        $date_time_format = Date_time_format::where('format', '=', $datetime)->first();
+        /*$date_time_format = Date_time_format::where('format', '=', $datetime)->first();
         if ($date_time_format == null) {
             return redirect()->back()->with('fails', 'invalid date-time format');
-        }
+        }*/
 
         // Creating minum settings for system
         $system = new System();
         $system->status = 1;
         $system->department = 1;
-        $system->date_time_format = $date_time_format->id;
-        $system->time_zone = $timezones->id;
+        $system->date_time_format = 1;
+        //$system->date_time_format = $date_time_format->id;
+        //$system->time_zone = $timezones->id;
+        $system->time_zone =1;
         $version = \Config::get('app.version');
         $version = explode(' ', $version);
         $version = $version[1];

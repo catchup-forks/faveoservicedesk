@@ -76,7 +76,7 @@
              * @param string $val
              * @return integer
              */
-            function php_config_value_to_bytes($val)
+            /*function php_config_value_to_bytes($val)
             {
                 $val = trim($val);
                 $last = strtolower($val{strlen($val) - 1});
@@ -91,7 +91,7 @@
                 } // if
 
                 return (integer)$val;
-            } // php_config_value_to_bytes
+            } // php_config_value_to_bytes*/
 
             /**
              * to check file permissions
@@ -129,18 +129,20 @@
              */
             function validate_memory_limit(&$results)
             {
-                $memory_limit = php_config_value_to_bytes(ini_get('memory_limit'));
+                return true;
+
+                /*$memory_limit = php_config_value_to_bytes(ini_get('memory_limit'));
 
                 $formatted_memory_limit = $memory_limit === -1 ? 'unlimited' : format_file_size($memory_limit);
 
                 if ($memory_limit === -1 || $memory_limit >= 67108864) {
                     $results[] = new TestResult('Your memory limit is: ' . $formatted_memory_limit, STATUS_OK);
-                    return true;
+
                 } else {
                     $results[] = new TestResult('Your memory is too low to complete the installation. Minimal value is 64MB, and you have it set to ' . $formatted_memory_limit,
                         STATUS_ERROR);
                     return false;
-                } // if
+                } // if*/
             } // validate_memory_limit
 
             /**
@@ -151,6 +153,9 @@
              */
             function format_file_size($value)
             {
+
+                $value = '';
+
                 $data = array(
                     'TB' => 1099511627776,
                     'GB' => 1073741824,
@@ -161,12 +166,12 @@
                 // commented because of integer overflow on 32bit sistems
                 // http://php.net/manual/en/language.types.integer.php#language.types.integer.overflow
                 // $value = (integer) $value;
-                foreach ($data as $unit => $bytes) {
+                /*foreach ($data as $unit => $bytes) {
                     $in_unit = $value / $bytes;
                     if ($in_unit > 0.9) {
                         return trim(trim(number_format($in_unit, 2), '0'), '.') . $unit;
                     } // if
-                } // foreach
+                } // foreach*/
 
                 return $value . 'b';
             } // format_file_size

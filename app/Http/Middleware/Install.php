@@ -16,11 +16,11 @@ class Install
      */
     public function handle($request, Closure $next)
     {
-        $env = base_path('.env');
+        /*$env = base_path('.env');
         if (\File::exists($env)) {
             return $next($request);
         } else {
             return redirect('step1');
-        }
+        }*/
     }
 }

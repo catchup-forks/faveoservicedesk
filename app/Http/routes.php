@@ -11,7 +11,7 @@
   |
  */
 Route::group(['middleware' => ['web']], function () {
-    Route::group(['middleware' => 'update', 'middleware' => 'install'], function () {
+    Route::group(['middleware' => 'update'], function () {
         Route::controllers([
             'auth' => 'Auth\AuthController',
             'password' => 'Auth\PasswordController',
@@ -70,7 +70,7 @@ Route::group(['middleware' => ['web']], function () {
       | Here is defining entire routes for the Admin Panel
       |
      */
-    Route::group(['middleware' => 'roles', 'middleware' => 'auth', 'middleware' => 'install', 'middleware' => 'update'],
+    Route::group(['middleware' => 'roles', 'middleware' => 'update'],
         function () {
             //Notification marking
             Route::post('mark-read/{id}', 'Common\NotificationController@markRead');
@@ -435,7 +435,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::group([
         'middleware' => 'role.agent',
         'middleware' => 'auth',
-        'middleware' => 'install',
+        //'middleware' => 'install',
         'middleware' => 'update'
     ], function () {
         Route::post('chart-range/{date1}/{date2}',

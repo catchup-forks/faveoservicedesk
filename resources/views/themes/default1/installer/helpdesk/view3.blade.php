@@ -76,7 +76,7 @@
                     <label for="box1">Host<span style="color: red;font-size:12px;">*</span></label>
                 </td>
                 <td>
-                    <input type="text" name="host">
+                    <input type="text" name="host" value = "127.0.0.1">
                 </td>
                 <td>
                     <button type="button" data-toggle="popover" data-placement="right" data-arrowcolor="#eeeeee"

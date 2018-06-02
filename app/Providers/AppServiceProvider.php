@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Model\Update\BarNotification;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Support\ServiceProvider;
+//use Illuminate\Support\Facades\Schema;
 use Queue;
 use View;
 
@@ -27,7 +28,9 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        Queue::failing(function (JobFailed $event) {
+        //Schema::defaultStringLength(191);
+
+            Queue::failing(function (JobFailed $event) {
             loging('Failed Job - ' . $event->connectionName, json_encode($event->data));
             $failedid = $event->failedId;
             //\Artisan::call('queue:retry',['id'=>[$failedid]]);
