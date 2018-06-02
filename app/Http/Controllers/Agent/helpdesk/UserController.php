@@ -709,7 +709,7 @@ class UserController extends Controller
             $phonecode = $code->where('iso', '=', $location->iso_code)->first();
             $orgs = Organization::all();
             // dd($org);
-            $organization_id = User_org::where('user_id', '=', $id)->lists('org_id')->first();
+            $organization_id = User_org::where('user_id', '=', $id)->pluck('org_id')->first();
 
             // $org_name=Organization::where('id','=',$org_id)->lists('name')->first();
             // dd($org_name);
@@ -910,7 +910,7 @@ class UserController extends Controller
         $org_name = Input::get('org');
 
         if ($org_name) {
-            $org = Organization::where('name', '=', $org_name)->lists('id')->first();
+            $org = Organization::where('name', '=', $org_name)->pluck('id')->first();
             if ($org) {
                 $user_org = new User_org();
                 $user_org->org_id = $org;

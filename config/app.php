@@ -97,7 +97,7 @@ return [
       | will not be safe. Please do this before deploying an application!
       |
      */
-    'key' => env('APP_KEY', 'base64:Dh5a8ouk0W+WIkRseTi6B72gVRODfhr8npqw66XBGdo='),
+    'key' => env('APP_KEY', 'randomkey'),
     'cipher' => 'AES-256-CBC',
     /*
       |--------------------------------------------------------------------------
@@ -145,7 +145,7 @@ return [
          */
 
         'Illuminate\Auth\AuthServiceProvider',
-        'Illuminate\Bus\BusServiceProvider',
+        //'Illuminate\Bus\BusServiceProvider',
         'Illuminate\Cache\CacheServiceProvider',
         'Illuminate\Foundation\Providers\ConsoleSupportServiceProvider',
         'Illuminate\Cookie\CookieServiceProvider',
@@ -190,11 +190,11 @@ return [
         App\FaveoLog\LaravelLogViewerServiceProvider::class,
         App\FaveoStorage\StorageServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
-        Collective\Bus\BusServiceProvider::class,
+        //Collective\Bus\BusServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         App\Itil\ItilServiceProvider::class,
         App\Plugins\ServiceDesk\ServiceProvider::class,
-
+        //Chumper\Zipper\ZipperServiceProvider::class
 
     ],
     /*
@@ -264,7 +264,7 @@ return [
 
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
-
+        //'Zipper' => Chumper\Zipper\Zipper::class
 
     ],
 

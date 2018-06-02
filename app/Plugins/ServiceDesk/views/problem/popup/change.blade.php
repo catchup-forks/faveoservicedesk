@@ -7,7 +7,7 @@ $sd_impact_types = \App\Plugins\ServiceDesk\Model\Changes\SdImpacttypes::lists('
 $sd_locations = \App\Plugins\ServiceDesk\Model\Releases\SdLocations::lists('title', 'id')->toArray();
 $users = \App\Plugins\ServiceDesk\Model\Cab\Cab::lists('name', 'id')->toArray();
 $assets = \App\Plugins\ServiceDesk\Model\Assets\SdAssets::lists('name', 'id')->toArray();
-$requester = App\User::where('role', 'agent')->orWhere('role', 'admin')->lists('email', 'id')->toArray();
+$requester = App\User::where('role', 'agent')->orWhere('role', 'admin')->pluck('email', 'id')->toArray();
 ?>
 <div class="modal fade" id="changenew{{$problem->id}}">
     <div class="modal-dialog">

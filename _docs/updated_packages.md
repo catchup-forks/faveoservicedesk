@@ -22,3 +22,27 @@
   - Updating laravel/framework (v5.2.45 => v5.3.31): Downloading (100%)
   - Updating laravelcollective/bus (v5.2 => v5.3.0): Downloading (100%)
   - Updating laravelcollective/html (v5.2.6 => v5.3.2): Downloading (100%)
+  
+  - Removing league/fractal (0.17.0)
+  - Removing jakub-onderka/php-console-highlighter (v0.3.2)
+  - Removing jakub-onderka/php-console-color (0.1)
+  - Removing dnoegel/php-xdg-base-dir (0.1)
+  - Removing classpreloader/classpreloader (3.2.0)
+  - Removing psy/psysh (v0.8.18)
+  - Removing laravelcollective/bus (v5.3.0)
+  - Updating symfony/var-dumper (v3.1.10 => v3.4.11): Loading from cache
+  - Updating symfony/routing (v3.1.10 => v3.4.11): Downloading (100%)
+  - Updating symfony/process (v3.1.10 => v3.4.11): Downloading (100%)
+  - Installing symfony/polyfill-php70 (v1.8.0): Loading from cache
+  - Updating symfony/http-foundation (v3.1.10 => v3.4.11): Downloading (100%)
+  - Updating symfony/debug (v3.1.10 => v3.4.11): Downloading (100%)
+  - Updating symfony/http-kernel (v3.1.10 => v3.4.11): Downloading (100%)
+  - Updating symfony/finder (v3.1.10 => v3.4.11): Downloading (100%)
+  - Updating symfony/console (v3.1.10 => v3.4.11): Downloading (100%)
+  - Updating symfony/translation (v3.1.10 => v4.1.0): Downloading (100%)
+  - Installing erusev/parsedown (1.7.1): Loading from cache
+  - Updating laravel/framework (v5.3.31 => v5.4.36): Loading from cache
+  - Updating laravelcollective/html (v5.3.2 => v5.4.9): Loading from cache
+  - Updating yajra/laravel-datatables-oracle (v6.29.3 => v7.10.2): Downloading (100%)
+  - Updating symfony/yaml (v3.3.17 => v3.4.11): Downloading (100%)
+  - Updating nikic/php-parser (v3.1.5 => v4.0.1): Loading from cache
