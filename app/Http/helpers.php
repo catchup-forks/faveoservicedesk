@@ -46,10 +46,10 @@ function removeUnderscore($string)
 
 function isItil()
 {
-    $check = false;
-    if (\Schema::hasTable('sd_releases') && \Schema::hasTable('sd_changes') && \Schema::hasTable('sd_problem')) {
-        $check = true;
-    }
+    $check = true;
+    /*if (\Schema::hasTable('sd_releases') && \Schema::hasTable('sd_changes') && \Schema::hasTable('sd_problem')) {
+
+    }*/
 
     return $check;
 }
@@ -67,12 +67,15 @@ function isAsset()
 function itilEnabled()
 {
     $check = false;
-    if (\Schema::hasTable('common_settings')) {
+    /*if (\Schema::hasTable('common_settings')) {
         $settings = \DB::table('common_settings')->where('option_name', 'itil')->first();
         if ($settings && $settings->status == 1) {
             $check = true;
         }
-    }
+    }*/
+    echo "hellyeah";
+    dd("d
+    ump");
 
     return $check;
 }

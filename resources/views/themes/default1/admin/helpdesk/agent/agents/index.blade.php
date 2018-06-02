@@ -75,6 +75,13 @@
                     {{-- <th width="100px">{{Lang::get('lang.lastlogin')}}</th> --}}
                     <th width="100px">{{Lang::get('lang.action')}}</th>
                 </tr>
+
+
+@php
+dd($user);
+@endphp
+
+
                 @foreach($user as $use)
                     @if($use->role == 'admin' || $use->role == 'agent')
                         <tr>

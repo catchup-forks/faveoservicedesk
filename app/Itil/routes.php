@@ -1,6 +1,12 @@
 <?php
 
 if (itilEnabled() == true && !view()->exists('service::assets.index')) {
+
+
+
+
+
+
     Route::group(['prefix' => 'service-desk', 'middleware' => ['web', 'auth']], function () {
         \Event::listen('service.desk.agent.sidebar.replace', function () {
             return 0;
@@ -247,4 +253,10 @@ if (itilEnabled() == true && !view()->exists('service::assets.index')) {
         Route::get('general/{owner}/{identifier}/delete',
             ['as' => 'attach.delete', 'uses' => 'App\Itil\Controllers\InterfaceController@deleteGeneralByIdentifier']);
     });
+
+
+
+
+
+
 }

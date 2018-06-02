@@ -237,7 +237,7 @@
     <div class="site-hero clearfix">
 
 
-        {!! Breadcrumbs::render() !!}
+        {{--{!! Breadcrumbs::render() !!}--}}
     </div>
     <!-- Main content -->
     <div id="main" class="site-main clearfix">
