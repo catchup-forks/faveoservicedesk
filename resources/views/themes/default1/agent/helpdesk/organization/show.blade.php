@@ -116,26 +116,6 @@
                             <th>{!! Lang::get('lang.status') !!}</th>
                             <th>{!! Lang::get('lang.ban') !!}</th>
                         </tr>
-                        @foreach($user_orgs as $user_org)
-                            <?php
-                            $user_detail = App\User::where('id', '=', $user_org->user_id)->first();
-                            ?>
-                            <tr>
-                                <td>
-                                    <a href="{!! route('user.show',$user_detail->id) !!}">{!! $user_detail->user_name !!}</a>
-                                </td>
-                                <td>
-                                    <a href="{!! route('user.show',$user_detail->id) !!}">{!! $user_detail->email !!}</a>
-                                </td>
-                                <td>{!! $user_detail->phone_number !!}</td>
-                                @if($user_detail->active == 1)
-                                    <td><span class="label label-success">{!! Lang::get('lang.active') !!}</span></td>
-                                @elseif($user_detail->active == 0)
-                                    <td><span class="label label-warning">{!! Lang::get('lang.inactive') !!}</span></td>
-                                @endif
-                                <td>{!! $user_detail->ban !!}</td>
-                            </tr>
-                        @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -144,27 +124,27 @@
             <?php
             $user_orga_relation_id = "";
             $user_orga_relations = App\Model\helpdesk\Agent_panel\User_org::where('org_id', '=', $orgs->id)->get();
-            foreach ($user_orga_relations as $user_orga_relation) {
+            /*foreach ($user_orga_relations as $user_orga_relation) {
                 $user_orga_relation_id[] = $user_orga_relation->user_id;
-            }
-            //        dd($user_orga_relation_id);
+            }*/
+                   //dd($user_orga_relations);
             //        $models = \App\Model\helpdesk\Ticket\Tickets::whereIn('user_id', $user_orga_relation_id)->get();
 
-            $open = count(\App\Model\helpdesk\Ticket\Tickets::whereIn('user_id',
+            /*$open = count(\App\Model\helpdesk\Ticket\Tickets::whereIn('user_id',
                 $user_orga_relation_id)->where('status', '=', '1')->get());
             $counted = count(\App\Model\helpdesk\Ticket\Tickets::whereIn('user_id',
                 $user_orga_relation_id)->where('status', '=', '2')->get());
             $deleted = count(\App\Model\helpdesk\Ticket\Tickets::whereIn('user_id',
-                $user_orga_relation_id)->where('status', '=', '5')->get());
-            //        dd($open);
+                $user_orga_relation_id)->where('status', '=', '5')->get());*/
+                    //dd($open);
             ?>
             <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#tab_1" data-toggle="tab">{!! Lang::get('lang.open_tickets') !!}
-                            ({{$open}})</a></li>
-                    <li><a href="#tab_2" data-toggle="tab">{!! Lang::get('lang.closed_tickets') !!} ({{$counted}})</a>
+                            test</a></li>
+                    <li><a href="#tab_2" data-toggle="tab">{!! Lang::get('lang.closed_tickets') !!} counted</a>
                     </li>
-                    <li><a href="#tab_3" data-toggle="tab">{!! Lang::get('lang.deleted_tickets') !!} ({{$deleted}})</a>
+                    <li><a href="#tab_3" data-toggle="tab">{!! Lang::get('lang.deleted_tickets') !!} deleted</a>
                     </li>
                 </ul>
                 <div class="tab-content no-padding">
@@ -213,6 +193,7 @@
                                 <p style="display:none;text-align:center; position:fixed; margin-left:40%;margin-top:-70px;"
                                    id="show" class="text-red"><b>Loading...</b></p>
                                 <!-- table -->
+
                                 <table class="table table-hover table-bordered">
                                     <thead>
                                     <th>
@@ -228,6 +209,15 @@
                                     <?php $tickets = App\Model\helpdesk\Ticket\Tickets::whereIn('user_id',
                                         $user_orga_relation_id)->where('status', '=', '1')->orderBy('id',
                                         'DESC')->paginate(20); ?>
+
+
+<?php
+$tickets;
+
+
+?>
+
+
                                     @foreach ($tickets  as $ticket)
                                         <tr <?php if ($ticket->seen_by == null) { ?> style="color:green;" <?php }
                                             ?> >

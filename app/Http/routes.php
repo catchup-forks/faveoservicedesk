@@ -12,10 +12,10 @@
  */
 Route::group(['middleware' => ['web']], function () {
     Route::group(['middleware' => 'update'], function () {
-        Route::controllers([
+        /*Route::controllers([
             'auth' => 'Auth\AuthController',
             'password' => 'Auth\PasswordController',
-        ]);
+        ]);*/
         Route::get('social/login/redirect/{provider}/{redirect?}',
             ['uses' => 'Auth\AuthController@redirectToProvider', 'as' => 'social.login']);
         Route::get('social/login/{provider}',

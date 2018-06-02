@@ -135,6 +135,11 @@ return [
 
         'Illuminate\Broadcasting\BroadcastServiceProvider',
         'DaveJamesMiller\Breadcrumbs\ServiceProvider',
+
+        //'App\Providers\BroadcastServiceProvider',
+
+
+
         /*
          * Laravel Framework Service Providers...
          */

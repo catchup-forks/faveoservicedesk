@@ -18,12 +18,13 @@ class TicketDetailTable extends Event
      *
      * @return void
      */
-    public function __construct($para1 = '', $para2 = '', $para3 = '', $para4 = '', $para5 = '')
+    //$para1 = '', $para2 = '', $para3 = '', $para4 = '', $para5 = ''
+    public function __construct()
     {
-        $this->para1 = $para1;
+        /*$this->para1 = $para1;
         $this->para2 = $para2;
         $this->para3 = $para3;
         $this->para4 = $para4;
-        $this->para5 = $para5;
+        $this->para5 = $para5;*/
     }
 }

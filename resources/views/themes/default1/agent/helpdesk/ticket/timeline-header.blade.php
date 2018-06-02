@@ -34,5 +34,5 @@ $collection = collect($array);
     </div>
 @endforeach
 @include('themes.default1.agent.helpdesk.filters.tags')
-<?php Event::fire(new App\Events\TicketDetailTable($TicketData)); ?>
+<?php //Event::fire(new App\Events\TicketDetailTable($TicketData)); ?>
         

@@ -377,7 +377,7 @@ if ($thread->title != "") {
                                         <td><b>{!! Lang::get('lang.organization') !!}:</b></td>
                                         <td>{!!$LastResponse->getOrgWithLink()!!}</td>
                                     </tr>
-                                    <?php Event::fire(new App\Events\TicketDetailTable($TicketData)); ?>
+                                    <?php //Event::fire(new App\Events\TicketDetailTable($TicketData)); ?>
                                 </div>
                             </table>
                         </div>

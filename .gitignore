@@ -1,8 +1,21 @@
+# Please try and keep this file organized by alphabetical order. Single files first, then directories.
 # Laravel 5 & Lumen specific
 .env.*.php
 .env.php
 .env
-/vendor/
+Homestead.yaml
+Homestead.json
+/composer.lock
+/config/lfm.php
+/nbproject/
+/nbproject/private/
+
 # Rocketeer PHP task runner and deployment package. https://github.com/rocketeers/rocketeer
 .rocketeer/
 /nbproject/private/
+/.idea
+/node_modules
+/app/FaveoJob
+/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php
+
+/vendor
